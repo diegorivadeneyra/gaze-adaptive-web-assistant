@@ -1,0 +1,61 @@
+#gaze-info {
+
+    position: fixed;
+
+    top: 10px;
+    right: 10px;
+
+    background: black;
+    color: white;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    font-family: Arial;
+}
+
+#current-element {
+
+    position: fixed;
+
+    top: 60px;
+    right: 10px;
+
+    background: #1e1e1e;
+    color: white;
+
+    padding: 10px;
+
+    border-radius: 8px;
+}
+
+#content-type {
+
+    position: fixed;
+
+    top: 110px;
+    right: 10px;
+
+    background: #2c3e50;
+    color: white;
+
+    padding: 10px;
+
+    border-radius: 8px;
+}
+
+#dwell-time {
+
+    position: fixed;
+
+    top: 160px;
+    right: 10px;
+
+    background: #8e44ad;
+    color: white;
+
+    padding: 10px;
+
+    border-radius: 8px;
+}
