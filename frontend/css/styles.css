@@ -59,3 +59,39 @@
 
     border-radius: 8px;
 }
+
+#content-info {
+
+    position: fixed;
+
+    top: 210px;
+    right: 10px;
+
+    width: 350px;
+
+    background: #34495e;
+    color: white;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    overflow-wrap: break-word;
+}
+
+#analysis-result {
+
+    position: fixed;
+
+    top: 380px;
+    right: 10px;
+
+    width: 350px;
+
+    background: #16a085;
+    color: white;
+
+    padding: 10px;
+
+    border-radius: 8px;
+}

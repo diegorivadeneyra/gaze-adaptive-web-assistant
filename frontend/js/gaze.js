@@ -2,6 +2,7 @@ let mouseX = 0;
 let mouseY = 0;
 let currentObservedElement = null;
 let observationStartTime = null;
+let analysisTriggered = false;
 
 const gazeInfo = document.getElementById("gaze-info");
 const currentElementBox =
@@ -12,6 +13,12 @@ const contentTypeBox =
 
 const dwellTimeBox =
     document.getElementById("dwell-time");
+
+const contentInfoBox =
+    document.getElementById("content-info");
+
+const analysisResultBox =
+    document.getElementById("analysis-result");
 
 function classifyElement(element) {
 
@@ -41,6 +48,71 @@ function classifyElement(element) {
     }
 }
 
+function extractContent(element) {
+
+    if (!element)
+        return "Sin contenido";
+
+    const tag = element.tagName;
+
+    switch(tag) {
+
+        case "P":
+        case "SPAN":
+        case "H1":
+        case "H2":
+        case "H3":
+
+            return element.innerText;
+
+        case "IMG":
+
+            return element.src;
+
+        case "BUTTON":
+
+            return element.textContent;
+
+        default:
+
+            return "Contenido no soportado";
+    }
+}
+
+function analyzeContent(content) {
+
+    const text =
+        content.toLowerCase();
+
+    if (
+        text.includes("criptografía") ||
+        text.includes("seguridad") ||
+        text.includes("cifrado")
+    ) {
+
+        return {
+            topic: "Seguridad Informática",
+            difficulty: "Media"
+        };
+    }
+
+    if (
+        text.includes("inteligencia artificial") ||
+        text.includes("machine learning")
+    ) {
+
+        return {
+            topic: "Inteligencia Artificial",
+            difficulty: "Alta"
+        };
+    }
+
+    return {
+        topic: "Desconocido",
+        difficulty: "Desconocida"
+    };
+}
+
 document.addEventListener("mousemove", (event) => {
 
     // Actualizar coordenadas primero
@@ -57,6 +129,7 @@ document.addEventListener("mousemove", (event) => {
         currentObservedElement = hoveredElement;
 
         observationStartTime = Date.now();
+        analysisTriggered = false;
 
     }
 
@@ -92,10 +165,21 @@ document.addEventListener("mousemove", (event) => {
         `Dwell Time: ${dwellTime.toFixed(1)} s`;
 
     // Umbral de activación
-    if (dwellTime >= 2) {
+    if (dwellTime >= 1.5 && !analysisTriggered) {
+        analysisTriggered = true;
+        const content = extractContent(currentObservedElement);
+        const diagnosis = analyzeContent(content);
 
-        console.log("ACTIVAR ANALISIS");
+        contentInfoBox.innerText =
+            `Contenido:\n${content}`;
 
+        analysisResultBox.innerText =
+            `
+            Tema: ${diagnosis.topic}
+
+            Dificultad:
+            ${diagnosis.difficulty}
+            `;
     }
 
 });
