@@ -20,6 +20,12 @@ const contentInfoBox =
 const analysisResultBox =
     document.getElementById("analysis-result");
 
+const assistantActionBox =
+    document.getElementById("assistant-action");
+
+const adaptiveTooltip =
+    document.getElementById("adaptive-tooltip");
+
 function classifyElement(element) {
 
     const tag = element.tagName;
@@ -63,15 +69,23 @@ function extractContent(element) {
         case "H2":
         case "H3":
 
-            return element.innerText;
+            return {
+                type: "text",
+                value: element.innerText
+            };
 
         case "IMG":
-
-            return element.src;
+            return {
+                type: "image",
+                value: element.src
+            };
 
         case "BUTTON":
 
-            return element.textContent;
+            return {
+                type: "text",
+                value: element.textContent
+            };
 
         default:
 
@@ -79,107 +93,154 @@ function extractContent(element) {
     }
 }
 
-function analyzeContent(content) {
+function showTooltip(message) {
 
-    const text =
-        content.toLowerCase();
+    console.log("MOSTRANDO TOOLTIP");
 
-    if (
-        text.includes("criptografía") ||
-        text.includes("seguridad") ||
-        text.includes("cifrado")
-    ) {
+    adaptiveTooltip.innerText = message;
+
+    adaptiveTooltip.style.display = "block";
+}
+
+function hideTooltip() {
+
+    adaptiveTooltip.style.display = "none";
+}
+
+async function analyzeWithBackend(content,dwellTime) {
+
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:5000/analyze",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    content: content.value,
+                    content_type: content.type,
+                    dwell_time: dwellTime
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        return result;
+
+    } catch(error) {
+
+        console.error(error);
 
         return {
-            topic: "Seguridad Informática",
-            difficulty: "Media"
+            concept: "Error",
+            complexity: "Error",
+            needs_assistance: false,
+            explanation: "Error de conexión con el backend",
+            action: "none"
         };
     }
+}
 
-    if (
-        text.includes("inteligencia artificial") ||
-        text.includes("machine learning")
-    ) {
+async function processObservation() {
 
-        return {
-            topic: "Inteligencia Artificial",
-            difficulty: "Alta"
-        };
+    if (!currentObservedElement)
+        return;
+
+    const contentType =
+        classifyElement(currentObservedElement);
+
+    let dwellTime = 0;
+
+    if (observationStartTime) {
+
+        dwellTime =
+            (Date.now() - observationStartTime) / 1000;
     }
 
-    return {
-        topic: "Desconocido",
-        difficulty: "Desconocida"
-    };
+    gazeInfo.innerText =
+        `X: ${mouseX} | Y: ${mouseY}`;
+
+    currentElementBox.innerText =
+        `Elemento: ${currentObservedElement.tagName}`;
+
+    contentTypeBox.innerText =
+        `Tipo: ${contentType}`;
+
+    dwellTimeBox.innerText =
+        `Dwell Time: ${dwellTime.toFixed(1)} s`;
+
+    if (dwellTime >= 1.5 && !analysisTriggered) {
+
+        analysisTriggered = true;
+
+        const content =
+            extractContent(currentObservedElement);
+
+        if (content.type === "image") {
+
+            console.log(
+                "IMAGE URL:",
+                content.value
+            );
+        }
+        contentInfoBox.innerText =
+            `Contenido:\n${content.value}`;
+
+        const diagnosis =
+            await analyzeWithBackend(content,dwellTime);
+        console.log("RESPUESTA BACKEND:");
+        console.log(diagnosis);
+
+        console.log("ACTION:", diagnosis.action);
+        console.log("EXPLANATION:", diagnosis.explanation);
+        if (diagnosis.action === "tooltip") {
+
+            showTooltip(
+                diagnosis.explanation
+            );
+        }
+        
+        analysisResultBox.innerText =
+        `
+        Concepto:
+        ${diagnosis.concept}
+
+        Complejidad:
+        ${diagnosis.complexity}
+
+        Necesita ayuda:
+        ${diagnosis.needs_assistance}
+        `;
+    }
 }
 
 document.addEventListener("mousemove", (event) => {
 
-    // Actualizar coordenadas primero
     mouseX = event.clientX;
     mouseY = event.clientY;
 
-    // Obtener elemento actual
     const hoveredElement =
         document.elementFromPoint(mouseX, mouseY);
 
-    // Si cambió de elemento
     if (hoveredElement !== currentObservedElement) {
 
         currentObservedElement = hoveredElement;
 
         observationStartTime = Date.now();
+
         analysisTriggered = false;
 
+        hideTooltip();
     }
-
-    // Calcular tipo
-    const contentType =
-        classifyElement(hoveredElement);
-
-    // Calcular dwell
-    let dwellTime = 0;
-
-    if (observationStartTime) {
-        console.log(observationStartTime);
-        console.log(Date.now());
-        dwellTime =
-            (Date.now() - observationStartTime) / 1000;
-
-    }
-
-    // Actualizar paneles
-    gazeInfo.innerText =
-        `X: ${mouseX} | Y: ${mouseY}`;
-
-    currentElementBox.innerText =
-        `Elemento: ${hoveredElement.tagName}`;
-
-    contentTypeBox.innerText =
-        `Tipo: ${contentType}`;
-    console.log(dwellTimeBox);
-    console.log(contentTypeBox);
-    console.log(currentElementBox);
-    console.log(gazeInfo);
-    dwellTimeBox.innerText =
-        `Dwell Time: ${dwellTime.toFixed(1)} s`;
-
-    // Umbral de activación
-    if (dwellTime >= 1.5 && !analysisTriggered) {
-        analysisTriggered = true;
-        const content = extractContent(currentObservedElement);
-        const diagnosis = analyzeContent(content);
-
-        contentInfoBox.innerText =
-            `Contenido:\n${content}`;
-
-        analysisResultBox.innerText =
-            `
-            Tema: ${diagnosis.topic}
-
-            Dificultad:
-            ${diagnosis.difficulty}
-            `;
-    }
-
 });
+
+setInterval(() => {
+
+    processObservation();
+
+}, 100);

@@ -2,47 +2,125 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gaze Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaze Assistant - Test de Variedad Cognitiva</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <h1>Artículo de prueba</h1>
+    <nav id="main-nav">
+        <ul>
+            <li><a href="#receta" id="nav-receta">Gastronomía</a></li>
+            <li><a href="#ciencia" id="nav-ciencia">Ciencia y Fórmulas</a></li>
+            <li><a href="#finanzas" id="nav-finanzas">Finanzas y Gráficos</a></li>
+            <li><a href="#entretenimiento" id="nav-fun">Entretenimiento</a></li>
+        </ul>
+    </nav>
 
-    <p>
-        La criptografía moderna utiliza algoritmos matemáticos para proteger la información.
-    </p>
+    <main id="main-content">
 
-    <img src="https://via.placeholder.com/300" alt="Imagen de prueba">
+        <section id="receta">
+            <h1>Receta: Panqueques Americanos Perfectos</h1>
+            <p class="text-block">Un clásico del desayuno. Requiere precisión en los líquidos para mantener la esponjosidad.</p>
+            
+            <div class="recipe-box">
+                <h4>Ingredientes Clave:</h4>
+                <ul>
+                    <li id="ing-1">200g de harina de trigo</li>
+                    <li id="ing-2">2 huevos medianos</li>
+                    <li id="ing-3">250ml de leche entera</li>
+                    <li id="ing-4">50g de mantequilla derretida</li>
+                </ul>
+            </div>
+            
+            <img src="https://via.placeholder.com/350x200?text=Foto+Panqueques" alt="Fotografía de panqueques listos" id="img-receta">
+            <button id="btn-cocinar">Marcar como preparado</button>
+        </section>
 
-    <button>Leer más</button>
+        <hr>
 
+        <section id="ciencia">
+            <h2>Física Cuántica y Relatividad</h2>
+            <p class="text-block">
+                La famosa ecuación de Albert Einstein establece la equivalencia entre masa ($E = mc^2$) y energía, 
+                demostrando que el espacio y el tiempo están unificados en un solo tejido.
+            </p>
+            <img src="/backend/test_images/einstein.jpg">
+            <blockquote id="formula-destacada">
+                $$i\hbar\frac{\partial}{\partial t}\Psi(\mathbf{r},t) = \hat{H}\Psi(\mathbf{r},t)$$
+                <span class="caption">Ecuación de Schrödinger para una partícula cuántica.</span>
+            </blockquote>
+
+            <button id="btn-explicacion">Ver desglose de variables</button>
+        </section>
+
+        <hr>
+
+        <section id="finanzas">
+            <h2>Monitoreo de Acciones (Bolsa de Valores)</h2>
+            <p class="text-block">Resumen del comportamiento de los principales activos tecnológicos en el último trimestre.</p>
+            
+            <table border="1" id="tabla-acciones">
+                <thead>
+                    <tr>
+                        <th>Empresa</th>
+                        <th>Ticket</th>
+                        <th>Precio</th>
+                        <th>Tendencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="row-tech-1">
+                        <td>Apple Inc.</td>
+                        <td>AAPL</td>
+                        <td>$175.40</td>
+                        <td style="color: green;">+1.2%</td>
+                    </tr>
+                    <tr id="row-tech-2">
+                        <td>Tesla Motors</td>
+                        <td>TSLA</td>
+                        <td>$180.15</td>
+                        <td style="color: red;">-3.4%</td>
+                    </tr>
+                    <tr id="row-tech-3">
+                        <td>NVIDIA Corp.</td>
+                        <td>NVDA</td>
+                        <td>$875.00</td>
+                        <td style="color: green;">+8.7%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <hr>
+
+        <section id="entretenimiento">
+            <h2>El Rincón del Humor / Tira Cómica</h2>
+            <p class="text-block">¿Qué pasa cuando los programadores intentan interactuar con el mundo real?</p>
+            
+            <div class="comic-strip" style="display: flex; gap: 10px;">
+                <img src="https://via.placeholder.com/150x150?text=Viñeta+1" alt="Programador escribiendo código" id="meme-v1">
+                <img src="https://via.placeholder.com/150x150?text=Viñeta+2" alt="El código compila a la primera" id="meme-v2">
+                <img src="https://via.placeholder.com/150x150?text=Viñeta+3" alt="Se cae todo el servidor" id="meme-v3">
+            </div>
+            
+            <input type="text" id="input-comentario" placeholder="Deja un comentario gracioso aquí...">
+        </section>
+
+    </main>
+
+    <aside id="gaze-dashboard">
+        <h3>Gaze Metrics Dashboard</h3>
+        <div id="gaze-info">X: 0 | Y: 0</div>
+        <div id="current-element">Elemento: Ninguno</div>
+        <div id="content-type">Tipo: Ninguno</div>
+        <div id="dwell-time">Dwell Time: 0.0 s</div>
+        <div id="content-info">Contenido observado</div>
+        <div id="analysis-result">Diagnóstico pendiente...</div>
+        <div id="assistant-action">Acción pendiente...</div>
+        <div id="adaptive-tooltip">Asistencia Inteligente</div>
+    </aside>
     
-
-    <div id="gaze-info">
-        X: 0 | Y: 0
-    </div>
-
-    <div id="current-element">
-        Elemento: Ninguno
-    </div>
-
-    <div id="content-type">
-        Tipo: Ninguno
-    </div>
-    
-    <div id="dwell-time">
-        Dwell Time: 0.0 s
-    </div>
-
-    <div id="content-info">
-        Contenido observado
-    </div>
-
-    <div id="analysis-result">
-        Diagnóstico pendiente...
-    </div>
-
     <script src="js/gaze.js"></script>
 </body>
 </html>
