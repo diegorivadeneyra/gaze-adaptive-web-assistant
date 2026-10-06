@@ -1,0 +1,20 @@
+fecha,tema,variante,metrica,valor,n,nota
+2026-10-04,latencia_vision,qwen_fp16_transformers_GPU_sola,latencia_s_min,4.41,3,gráfica con pie de figura; RTX 3070 Ti 8 GB
+2026-10-04,latencia_vision,qwen_fp16_transformers_GPU_sola,latencia_s_max,5.06,3,
+2026-10-04,latencia_vision,qwen_fp16_transformers_con_phi3_en_VRAM,latencia_s_min,11.24,5,phi3 cargado a la vez en Ollama: no cabían ambos en 8 GB
+2026-10-04,latencia_vision,qwen_fp16_transformers_con_phi3_en_VRAM,latencia_s_max,16.08,5,
+2026-10-04,latencia_vision,qwen_q4_ollama_con_phi3_en_VRAM,latencia_s_min,2.6,4,ambos modelos al 100% en GPU
+2026-10-04,latencia_vision,qwen_q4_ollama_con_phi3_en_VRAM,latencia_s_max,3.3,4,
+2026-10-04,vram_qwen,fp16_transformers,GB,7.54,1,torch.cuda.memory_allocated; nvidia-smi 7.8 de 8.19 GB
+2026-10-04,vram_qwen,q4_ollama,GB,2.8,1,ollama ps (phi3 aparte: 2.6 GB)
+2026-10-04,arranque_en_frio_vision,antes_del_arreglo_del_timeout,latencia_s,37.6,1,terminó en error: el timeout de 25 s contaba la carga del modelo
+2026-10-04,arranque_en_frio_vision,despues_del_arreglo,latencia_s,5.5,1,ambos modelos descargados de la GPU antes de la petición
+2026-10-04,el_ultimo_gana,3_peticiones_seguidas_0.3s,peticiones_descartadas_de_3,2,2,descartadas en 0.4-2.1 s; solo la última se procesa
+2026-10-04,texto_mensaje_generico,prompt_analogia_limite_400_caracteres,fraccion_con_mensaje_generico,0.1667,6,JSON cortado por el tope de tokens
+2026-10-04,texto_mensaje_generico,prompt_analogia_limite_900_caracteres,fraccion_con_mensaje_generico,0.0,6,
+2026-10-04,formato_json_claves_deformadas,format_json_prompts_de_prueba,fraccion_vacias,0.5833,12,claves como 'explande'; NO se reprodujo en la suite estándar (0/18)
+2026-10-04,formato_json_claves_deformadas,esquema_estricto,fraccion_vacias,0.0,12,
+2026-10-04,longitud_phi3_vs_tope_pedido,pedir_40_palabras,palabras_prom,50,7,antes del recorte en código
+2026-10-04,longitud_phi3_vs_tope_pedido,pedir_40_palabras,palabras_max,65,7,
+2026-10-04,longitud_phi3_vs_tope_pedido,pedir_30_palabras,palabras_prom,62,7,pedir menos NO bajó la longitud
+2026-10-04,longitud_phi3_vs_tope_pedido,pedir_30_palabras,palabras_max,90,7,

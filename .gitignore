@@ -1,0 +1,26 @@
+# Python: bytecode que se regenera solo al ejecutar
+__pycache__/
+*.py[cod]
+
+# Visual Studio (tobii_bridge): estado del IDE, compilados e intermedios.
+# El .exe se regenera compilando gaze_server.sln (ver tobii_bridge/README.md).
+.vs/
+tobii_bridge/Debug/
+tobii_bridge/Release/
+tobii_bridge/gaze_server/
+*.vcxproj.user
+UpgradeLog*.htm
+*.obj
+*.pdb
+*.ilk
+
+# Ejemplos sueltos del SDK de Tobii: no forman parte del sistema
+tobii5/
+tobiiCpp/
+
+# Borradores del documento de tesis
+*.pdf
+
+# Editor / sistema
+.vscode/
+Thumbs.db

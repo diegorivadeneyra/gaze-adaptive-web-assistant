@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nivel Intermedio · Gaze Adaptive Web Assistant</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/page.css" />
+</head>
+<body data-level="medium">
+
+    <!-- ── Tooltip de asistencia ─────────────────────────── -->
+    <div id="adaptive-tooltip" role="tooltip" aria-live="polite"></div>
+
+    <!-- ── Layout principal ──────────────────────────────── -->
+    <div class="layout">
+
+        <!-- ── Panel lateral de debug ──────────────────── -->
+        <aside class="debug-panel" aria-label="Panel de monitoreo">
+            <div class="debug-header">
+                <span class="status-dot" id="status-dot"></span>
+                <h2>Monitor del sistema</h2>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Posición del cursor</span>
+                <span class="debug-value" id="gaze-info">X: — | Y: —</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Elemento observado</span>
+                <span class="debug-value" id="current-element">—</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Tipo de contenido</span>
+                <span class="debug-value" id="content-type">—</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Dwell Time</span>
+                <div class="dwell-bar-container">
+                    <div class="dwell-bar" id="dwell-bar"></div>
+                </div>
+                <span class="debug-value" id="dwell-time">0.0s</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Análisis IA</span>
+                <div class="analysis-card" id="analysis-result">
+                    <span class="placeholder">Sin análisis aún</span>
+                </div>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Estado del backend</span>
+                <span class="debug-value" id="backend-status">Esperando...</span>
+            </div>
+        </aside>
+
+        <!-- ── Página de contenido ──────────────────────── -->
+        <div class="page-wrapper">
+
+            <nav class="level-nav" aria-label="Nivel de dificultad">
+                <a class="level-link" href="facil.html">Fácil</a>
+                <a class="level-link is-active" href="intermedio.html">Intermedio</a>
+                <a class="level-link" href="avanzado.html">Avanzado</a>
+            </nav>
+
+            <header class="navbar">
+                <span class="nav-logo">EcoWiki</span>
+                <span class="hero-tag" style="margin:0;">Cambio climático</span>
+                <div class="nav-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="Buscar en EcoWiki..." />
+                    </div>
+                    <button class="btn-icon" id="glossary-toggle" type="button">📖 Glosario</button>
+                </div>
+            </header>
+
+            <div class="content-grid">
+                <main class="main-column">
+
+                    <dl class="glossary-panel" id="glossary-panel" hidden>
+                        <dt>Forzamiento radiativo</dt>
+                        <dd>Diferencia entre la energía solar que entra a la atmósfera y la que sale de vuelta al espacio.</dd>
+                        <dt>Anomalía de temperatura</dt>
+                        <dd>Diferencia entre la temperatura medida y un promedio histórico usado como referencia.</dd>
+                        <dt>Albedo</dt>
+                        <dd>Fracción de luz solar que una superficie refleja en lugar de absorber.</dd>
+                    </dl>
+
+                    <section class="page-header">
+                        <h1>Cambio climático: causas y evidencia observacional</h1>
+                        <p class="subtitle">Artículo de nivel intermedio · densidad media de información</p>
+                    </section>
+
+                    <div class="split-columns">
+                        <!-- Columna de texto y tabla -->
+                        <div style="display:flex; flex-direction:column; gap:20px;">
+                            <article class="content-section">
+                                <h2>Causas</h2>
+                                <p>
+                                    El cambio climático actual se atribuye principalmente al aumento de gases de efecto
+                                    invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la quema de
+                                    combustibles fósiles. Estos gases retienen calor en la atmósfera y aumentan el
+                                    forzamiento radiativo del planeta.
+                                </p>
+                                <h3>Evidencia observacional</h3>
+                                <p>
+                                    Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una
+                                    tendencia sostenida al alza en la temperatura superficial global desde mediados del
+                                    siglo XX, coincidiendo con el aumento acelerado de emisiones industriales.
+                                </p>
+                                <h3>Consecuencias regionales</h3>
+                                <p>
+                                    El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar,
+                                    mientras que algunas regiones experimentan sequías más frecuentes y otras, lluvias
+                                    más intensas.
+                                </p>
+                            </article>
+
+                            <article class="content-section">
+                                <h2>Temperatura promedio por década</h2>
+                                <table class="data-table">
+                                    <caption>Tabla 1. Temperatura promedio global por década (°C) y variación respecto a 1900. Fuente: registros combinados de estaciones terrestres y oceánicas.</caption>
+                                    <thead>
+                                        <tr><th>Década</th><th>Temp. promedio (°C)</th><th>Variación vs. 1900</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>1900–1910</td><td>13.7</td><td>+0.0 °C</td></tr>
+                                        <tr><td>1950–1960</td><td>13.9</td><td>+0.2 °C</td></tr>
+                                        <tr><td>1990–2000</td><td>14.3</td><td>+0.6 °C</td></tr>
+                                        <tr><td>2010–2020</td><td>14.9</td><td>+1.2 °C</td></tr>
+                                    </tbody>
+                                </table>
+                                <p class="footnote" style="margin-top:10px;">
+                                    Notas: los valores son promedios globales simplificados con fines ilustrativos para este artículo.
+                                </p>
+                            </article>
+                        </div>
+
+                        <!-- Columna de gráfica e imagen -->
+                        <div style="display:flex; flex-direction:column; gap:20px;">
+                            <div class="mini-chart" data-design-level="Medium">
+                                <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+                                    <text x="150" y="16" text-anchor="middle" font-size="11" font-weight="bold" style="fill:var(--text-primary)">Temperatura global: variación respecto a 1900</text>
+                                    <text x="8" y="34" font-size="9" style="fill:var(--text-primary)">°C</text>
+                                    <line x1="45" y1="118" x2="285" y2="118" style="stroke:var(--border); stroke-width:0.7" />
+                                    <line x1="45" y1="86" x2="285" y2="86" style="stroke:var(--border); stroke-width:0.7" />
+                                    <line x1="45" y1="54" x2="285" y2="54" style="stroke:var(--border); stroke-width:0.7" />
+                                    <line x1="45" y1="40" x2="45" y2="150" style="stroke:var(--text-secondary); stroke-width:1" />
+                                    <line x1="45" y1="150" x2="285" y2="150" style="stroke:var(--text-secondary); stroke-width:1" />
+                                    <text x="39" y="153" text-anchor="end" font-size="9" style="fill:var(--text-primary)">0.0</text>
+                                    <text x="39" y="121" text-anchor="end" font-size="9" style="fill:var(--text-primary)">0.4</text>
+                                    <text x="39" y="89" text-anchor="end" font-size="9" style="fill:var(--text-primary)">0.8</text>
+                                    <text x="39" y="57" text-anchor="end" font-size="9" style="fill:var(--text-primary)">1.2</text>
+                                    <polyline points="45,150 142.9,134 221.3,102 260.4,54" style="fill:none; stroke:var(--accent); stroke-width:2.5" />
+                                    <circle cx="45" cy="150" r="3.5" style="fill:var(--accent)" />
+                                    <circle cx="142.9" cy="134" r="3.5" style="fill:var(--accent)" />
+                                    <circle cx="221.3" cy="102" r="3.5" style="fill:var(--accent)" />
+                                    <circle cx="260.4" cy="54" r="3.5" style="fill:var(--accent)" />
+                                    <text x="52" y="142" font-size="9" font-weight="bold" style="fill:var(--text-primary)">+0.0</text>
+                                    <text x="142.9" y="126" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">+0.2</text>
+                                    <text x="221.3" y="94" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">+0.6</text>
+                                    <text x="260.4" y="46" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">+1.2</text>
+                                    <text x="45" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">1900</text>
+                                    <text x="142.9" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">1950</text>
+                                    <text x="221.3" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">1990</text>
+                                    <text x="260.4" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">2010</text>
+                                    <text x="165" y="186" text-anchor="middle" font-size="9" style="fill:var(--text-secondary)">Década (año de inicio)</text>
+                                </svg>
+                                <p class="chart-caption">Fig. 1. Variación de la temperatura promedio global por década respecto a 1900 (°C). Datos de la Tabla 1.</p>
+                            </div>
+
+                            <div class="note-box">
+                                ¿Sabías que? El año más caluroso registrado hasta ahora ha estado, casi siempre, entre los
+                                diez años más recientes.
+                            </div>
+
+                            <figure>
+                                <img
+                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Morteratsch-_und_Persgletscher.jpg/500px-Morteratsch-_und_Persgletscher.jpg"
+                                    alt="Glaciares Morteratsch y Pers en los Alpes suizos"
+                                />
+                                <figcaption>Glaciares Morteratsch y Pers, Alpes suizos.</figcaption>
+                            </figure>
+                            <p class="footnote">Notas de imagen: fotografía de archivo utilizada como referencia visual del retroceso glaciar.</p>
+                        </div>
+                    </div>
+                </main>
+
+                <aside class="side-column">
+                    <div class="widget">
+                        <h4>Ver también</h4>
+                        <ul class="trending-list">
+                            <li><span class="trend-num">01</span><a href="#">Efecto invernadero</a></li>
+                            <li><span class="trend-num">02</span><a href="#">Huella de carbono</a></li>
+                            <li><span class="trend-num">03</span><a href="#">Acuerdo de París</a></li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+
+            <footer class="page-footer">
+                <span>EcoWiki · Artículo de nivel intermedio</span>
+                <div class="footer-links">
+                    <a href="facil.html">Fácil</a>
+                    <a href="intermedio.html">Intermedio</a>
+                    <a href="avanzado.html">Avanzado</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="js/gaze.js"></script>
+    <script>
+        const glossaryToggle = document.getElementById("glossary-toggle");
+        const glossaryPanel  = document.getElementById("glossary-panel");
+        glossaryToggle?.addEventListener("click", () => {
+            glossaryPanel.hidden = !glossaryPanel.hidden;
+        });
+    </script>
+</body>
+</html>

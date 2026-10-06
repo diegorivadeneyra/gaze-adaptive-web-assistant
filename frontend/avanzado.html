@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nivel Avanzado · Gaze Adaptive Web Assistant</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/page.css" />
+</head>
+<body data-level="advanced">
+
+    <!-- ── Tooltip de asistencia ─────────────────────────── -->
+    <div id="adaptive-tooltip" role="tooltip" aria-live="polite"></div>
+
+    <!-- ── Layout principal ──────────────────────────────── -->
+    <div class="layout">
+
+        <!-- ── Panel lateral de debug ──────────────────── -->
+        <aside class="debug-panel" aria-label="Panel de monitoreo">
+            <div class="debug-header">
+                <span class="status-dot" id="status-dot"></span>
+                <h2>Monitor del sistema</h2>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Posición del cursor</span>
+                <span class="debug-value" id="gaze-info">X: — | Y: —</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Elemento observado</span>
+                <span class="debug-value" id="current-element">—</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Tipo de contenido</span>
+                <span class="debug-value" id="content-type">—</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Dwell Time</span>
+                <div class="dwell-bar-container">
+                    <div class="dwell-bar" id="dwell-bar"></div>
+                </div>
+                <span class="debug-value" id="dwell-time">0.0s</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Análisis IA</span>
+                <div class="analysis-card" id="analysis-result">
+                    <span class="placeholder">Sin análisis aún</span>
+                </div>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Estado del backend</span>
+                <span class="debug-value" id="backend-status">Esperando...</span>
+            </div>
+        </aside>
+
+        <!-- ── Página de contenido ──────────────────────── -->
+        <div class="page-wrapper">
+
+            <nav class="level-nav" aria-label="Nivel de dificultad">
+                <a class="level-link" href="facil.html">Fácil</a>
+                <a class="level-link" href="intermedio.html">Intermedio</a>
+                <a class="level-link is-active" href="avanzado.html">Avanzado</a>
+            </nav>
+
+            <header class="navbar">
+                <span class="nav-logo">J. Clim. Res.</span>
+                <span class="hero-tag" style="margin:0;">Journal of Climate Research</span>
+                <div class="nav-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="Buscar DOI, autor..." />
+                    </div>
+                    <a class="btn-icon" href="#referencias" style="text-decoration:none;">Referencias</a>
+                </div>
+            </header>
+
+            <div class="content-grid">
+                <main class="main-column">
+
+                    <section class="page-header">
+                        <h1>Forzamiento radiativo antropogénico y sensibilidad climática de equilibrio: un análisis de series temporales multivariable (1880–2024)</h1>
+                        <p class="subtitle">Sección de nivel avanzado · alta densidad informativa, estilo IEEE/PubMed</p>
+                    </section>
+
+                    <article class="content-section">
+                        <h2>Resumen</h2>
+                        <p>
+                            Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión
+                            multivariable aplicado a series temporales de temperatura superficial global y forzamiento
+                            radiativo neto (1880–2024, n = 145 años). El coeficiente asociado al forzamiento de CO₂
+                            equivalente resultó estadísticamente significativo (β = 2.31, p &lt; 0.001, IC 95% [1.98, 2.64]),
+                            consistente con estimaciones del AR6 del IPCC.
+                        </p>
+                        <h3>Metodología</h3>
+                        <p>
+                            Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para
+                            corregir la dependencia temporal de los residuos. La significancia de los coeficientes se
+                            evaluó mediante pruebas t de Student con corrección de Newey-West para heterocedasticidad y
+                            autocorrelación. La bondad de ajuste se reporta mediante R² ajustado y el criterio de
+                            información de Akaike (AIC).
+                        </p>
+                    </article>
+
+                    <div class="dense-row">
+                        <div class="mini-chart" data-design-level="High">
+                            <svg viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+                                <text x="180" y="16" text-anchor="middle" font-size="11" font-weight="bold" style="fill:var(--text-primary)">Emisiones de GEI por sector, 2023</text>
+                                <text x="52" y="25" font-size="9" style="fill:var(--text-primary)">Gt CO₂-eq</text>
+                                <line x1="50" y1="135" x2="340" y2="135" style="stroke:var(--border); stroke-width:0.7" />
+                                <line x1="50" y1="100" x2="340" y2="100" style="stroke:var(--border); stroke-width:0.7" />
+                                <line x1="50" y1="65" x2="340" y2="65" style="stroke:var(--border); stroke-width:0.7" />
+                                <line x1="50" y1="30" x2="340" y2="30" style="stroke:var(--border); stroke-width:0.7" />
+                                <line x1="50" y1="30" x2="50" y2="170" style="stroke:var(--text-secondary); stroke-width:1" />
+                                <line x1="50" y1="170" x2="340" y2="170" style="stroke:var(--text-secondary); stroke-width:1" />
+                                <text x="44" y="173" text-anchor="end" font-size="9" style="fill:var(--text-primary)">0</text>
+                                <text x="44" y="138" text-anchor="end" font-size="9" style="fill:var(--text-primary)">5</text>
+                                <text x="44" y="103" text-anchor="end" font-size="9" style="fill:var(--text-primary)">10</text>
+                                <text x="44" y="68" text-anchor="end" font-size="9" style="fill:var(--text-primary)">15</text>
+                                <text x="44" y="33" text-anchor="end" font-size="9" style="fill:var(--text-primary)">20</text>
+                                <rect x="62"  y="59.4"  width="40" height="110.6" style="fill:var(--danger)" />
+                                <rect x="119" y="112.6" width="40" height="57.4"  style="fill:var(--accent)" />
+                                <rect x="176" y="97.2"  width="40" height="72.8"  style="fill:var(--warning)" />
+                                <rect x="233" y="128.7" width="40" height="41.3"  style="fill:var(--success)" />
+                                <rect x="290" y="148.3" width="40" height="21.7"  style="fill:var(--text-secondary)" />
+                                <text x="82"  y="55.4"  text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">15.8</text>
+                                <text x="139" y="108.6" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">8.2</text>
+                                <text x="196" y="93.2"  text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">10.4</text>
+                                <text x="253" y="124.7" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">5.9</text>
+                                <text x="310" y="144.3" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">3.1</text>
+                                <text x="82"  y="186" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">Energía</text>
+                                <text x="139" y="186" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">Transporte</text>
+                                <text x="196" y="186" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">Industria</text>
+                                <text x="253" y="186" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">Agricultura</text>
+                                <text x="310" y="186" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">Otros</text>
+                            </svg>
+                            <p class="chart-caption">Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.</p>
+                        </div>
+
+                        <article class="content-section" style="margin-bottom:0;">
+                            <table class="data-table">
+                                <caption>Tabla 1. Coeficientes del modelo de regresión multivariable. β: coeficiente estimado; EE: error estándar; p: valor p; IC 95%: intervalo de confianza al 95%.</caption>
+                                <thead>
+                                    <tr><th>Variable</th><th>β</th><th>EE</th><th>p</th><th>IC 95%</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>CO₂-eq</td><td>2.31</td><td>0.17</td><td>&lt;0.001</td><td>[1.98, 2.64]</td></tr>
+                                    <tr><td>Aerosoles</td><td>-0.84</td><td>0.22</td><td>0.002</td><td>[-1.27, -0.41]</td></tr>
+                                    <tr><td>ENOS</td><td>0.19</td><td>0.09</td><td>0.041</td><td>[0.01, 0.37]</td></tr>
+                                    <tr><td>Actividad solar</td><td>0.06</td><td>0.05</td><td>0.238</td><td>[-0.04, 0.16]</td></tr>
+                                </tbody>
+                            </table>
+                        </article>
+                    </div>
+
+                    <div class="dense-row">
+                        <article class="content-section" style="margin-bottom:0;">
+                            <h2>Resultados y discusión</h2>
+                            <p>
+                                La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂,
+                                IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. El forzamiento por
+                                aerosoles antropogénicos presentó un efecto de enmascaramiento negativo estadísticamente
+                                significativo, mientras que la variabilidad interna asociada a El Niño-Oscilación del Sur
+                                (ENOS) explicó una fracción menor pero no despreciable de la varianza residual
+                                (R² parcial = 0.04).
+                            </p>
+                        </article>
+                        <div>
+                            <figure>
+                                <img
+                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/The_Blue_Marble%2C_AS17-148-22727.jpg/500px-The_Blue_Marble%2C_AS17-148-22727.jpg"
+                                    alt="Fotografía de la Tierra tomada durante la misión Apollo 17"
+                                />
+                                <figcaption>Fig. 2. Vista de disco completo de la Tierra (misión Apollo 17), usada como referencia del sistema climático global.</figcaption>
+                            </figure>
+                            <p class="footnote" style="margin-top:8px;">
+                                Notas de imagen: fotografía histórica citada con fines ilustrativos; no corresponde a datos satelitales del estudio.
+                            </p>
+                        </div>
+                    </div>
+
+                </main>
+
+                <aside class="side-column">
+                    <div class="widget" id="referencias">
+                        <h4>Referencias</h4>
+                        <ol class="footnote" style="padding-left:16px; display:flex; flex-direction:column; gap:8px;">
+                            <li>IPCC (2021). AR6 Climate Change: The Physical Science Basis.</li>
+                            <li>Hansen, J. et al. (2005). Earth's Energy Imbalance. <em>Science</em>.</li>
+                            <li>Sherwood, S. et al. (2020). An Assessment of Earth's Climate Sensitivity. <em>Rev. Geophys.</em></li>
+                            <li>NOAA NCEI (2024). Global Surface Temperature Anomalies Dataset.</li>
+                        </ol>
+                    </div>
+                </aside>
+            </div>
+
+            <footer class="page-footer">
+                <span>J. Clim. Res. · Sección de nivel avanzado</span>
+                <div class="footer-links">
+                    <a href="facil.html">Fácil</a>
+                    <a href="intermedio.html">Intermedio</a>
+                    <a href="avanzado.html">Avanzado</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="js/gaze.js"></script>
+</body>
+</html>

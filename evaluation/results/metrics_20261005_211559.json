@@ -1,0 +1,858 @@
+{
+ "fecha": "2026-10-05T21:15:59.594170",
+ "reps": 3,
+ "filas": [
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "responde_en_espanol",
+   "valor": 0.3333,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "json_valido",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "latencia_s_prom",
+   "valor": 2.8174,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "latencia_s_max",
+   "valor": 3.4003,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "nivel_Low",
+   "valor": 0.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "nivel_Medium",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "nivel_High",
+   "valor": 0.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "intermedio_nivel_final_es_Medium",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "intermedio_con_explicacion",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "intermedio_modelo_dijo",
+   "valor": "Medium/Medium/Medium",
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "avanzado_nivel_final_es_High",
+   "valor": 0.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "avanzado_con_explicacion",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "en_prompt_original_sin_pie",
+   "metrica": "avanzado_modelo_dijo",
+   "valor": "Medium/Medium/Medium",
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "responde_en_espanol",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "json_valido",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "latencia_s_prom",
+   "valor": 2.6125,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "latencia_s_max",
+   "valor": 2.68,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "nivel_Low",
+   "valor": 0.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "nivel_Medium",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "nivel_High",
+   "valor": 0.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "intermedio_nivel_final_es_Medium",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "intermedio_con_explicacion",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "intermedio_modelo_dijo",
+   "valor": "Medium/Medium/Medium",
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "avanzado_nivel_final_es_High",
+   "valor": 0.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "avanzado_con_explicacion",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_sin_pie",
+   "metrica": "avanzado_modelo_dijo",
+   "valor": "Medium/Medium/Medium",
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "responde_en_espanol",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "json_valido",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "latencia_s_prom",
+   "valor": 2.5968,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "latencia_s_max",
+   "valor": 2.728,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "nivel_Low",
+   "valor": 0.3333,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "nivel_Medium",
+   "valor": 0.6667,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "nivel_High",
+   "valor": 0.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "intermedio_nivel_final_es_Medium",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "intermedio_con_explicacion",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "intermedio_modelo_dijo",
+   "valor": "Medium/Medium/Medium",
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "avanzado_nivel_final_es_High",
+   "valor": 0.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "avanzado_con_explicacion",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_prompt_con_pie",
+   "metrica": "avanzado_modelo_dijo",
+   "valor": "Low/Low/Low",
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "responde_en_espanol",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "json_valido",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "latencia_s_prom",
+   "valor": 2.7759,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "latencia_s_max",
+   "valor": 3.0041,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "nivel_Low",
+   "valor": 0.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "nivel_Medium",
+   "valor": 0.6667,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "nivel_High",
+   "valor": 0.3333,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "intermedio_nivel_final_es_Medium",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "intermedio_con_explicacion",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "intermedio_modelo_dijo",
+   "valor": "Medium/Medium/Medium",
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "avanzado_nivel_final_es_High",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "avanzado_con_explicacion",
+   "valor": 1.0,
+   "n": 3,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 21:15",
+   "suite": "vision",
+   "variante": "es_con_pie_nivel_diseno_actual",
+   "metrica": "avanzado_modelo_dijo",
+   "valor": "Medium/Medium/Medium",
+   "n": 3,
+   "notas": ""
+  }
+ ],
+ "detalle": {
+  "vision": [
+   {
+    "variante": "en_prompt_original_sin_pie",
+    "runs": [
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": true,
+      "latencia": 2.49186110496521,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "This graph shows how the global average temperature has risen since the year 1900, with a significant increase in the last few decades, indicating a warming trend in the Earth's climate.",
+      "concepto": "Global temperature increase"
+     },
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": true,
+      "latencia": 2.664909839630127,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "This graph shows how the global average temperature has risen over time, with a significant increase in the last few decades. It's like watching a thermometer that's slowly warming up, but much faster in recent years.",
+      "concepto": "Global temperature increase"
+     },
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": true,
+      "latencia": 2.6239430904388428,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "This graph shows how the global average temperature has risen over time, with a significant increase in the last few decades. It's like watching a thermometer that's slowly warming up, but much faster in recent years.",
+      "concepto": "Global temperature increase"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 3.4002525806427,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "Este gráfico muestra las emisiones de gases de efecto invernadero por sector en 2023, con el sector de energía siendo el más alto, seguido por el transporte, la industria, la agricultura y otros sectores.",
+      "concepto": "Emissiones de gases de efecto invernadero"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.572028160095215,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "Este gráfico muestra las emisiones de gases de efecto invernadero por sector en 2023, con el sector de energía siendo el más alto, seguido por el transporte, la industria, la agricultura y otros sectores menos importantes.",
+      "concepto": "Emissiones de gases de efecto invernadero"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.7095725536346436,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "Este gráfico muestra las emisiones de gases de efecto invernadero por sector en 2023, con el sector de energía siendo el más alto, seguido por el transporte, la industria, la agricultura y otros sectores menos importantes.",
+      "concepto": "Emissiones de gases de efecto invernadero"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": true,
+      "latencia": 3.3240630626678467,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "The image compares two photographs of McCarty Glacier in Alaska, one taken in 2004 and the other in 1909. The 2004 photo shows the glacier's current state, while the 1909 photo shows its previous state, illustrating the significant retreat of the glacier over the years.",
+      "concepto": "Glacier retreat"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": true,
+      "latencia": 2.8039915561676025,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "The image compares two photographs of McCarty Glacier in Alaska, one taken in 2004 and the other in 1909. The 2004 photo shows the glacier's current state, while the 1909 photo shows its previous state, illustrating the significant retreat of the glacier over the years.",
+      "concepto": "Glacier retreat"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": true,
+      "latencia": 2.766381025314331,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "The image compares two photographs of McCarty Glacier in Alaska, one taken in 2004 and the other in 1909. The 2004 photo shows the glacier's current state, while the 1909 photo shows its previous state, illustrating the significant retreat of the glacier over the years.",
+      "concepto": "Glacier retreat"
+     }
+    ]
+   },
+   {
+    "variante": "es_prompt_sin_pie",
+    "runs": [
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.654884099960327,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La línea azul muestra la variación de la temperatura global respecto a 1900, aumentando significativamente desde 1900 hasta 2010.",
+      "concepto": "Variación térmica global"
+     },
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.673011541366577,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La línea azul muestra la variación de la temperatura global respecto a 1900, mostrando un aumento significativo desde 1900 hasta 2010.",
+      "concepto": "Variación térmica global"
+     },
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.6309947967529297,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La línea azul muestra la variación de la temperatura global respecto a 1900, mostrando un aumento significativo desde 1900 hasta 2010.",
+      "concepto": "Variación térmica global"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.583007335662842,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La energía es el sector con las mayores emisiones de GEI, seguido por el transporte y la industria.",
+      "concepto": "Energía como principal emisor de GEI"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.5478148460388184,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La energía es el sector con las mayores emisiones de GEI, seguido por el transporte y la industria.",
+      "concepto": "Energía como principal emisor de GEI"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.580315351486206,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La energía es el sector con las mayores emisiones de GEI, seguido por el transporte y la industria.",
+      "concepto": "Energía como principal emisor de GEI"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.6754844188690186,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "Comparación de dos imágenes de un glaciar en Alaska, una tomada en 2004 y otra en 1909, mostrando la disminución del glaciar con el tiempo.",
+      "concepto": "Comparación de imágenes históricas"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.6800014972686768,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "Comparación de dos imágenes de un glaciar en Alaska, una tomada en 2004 y otra en 1909, mostrando la disminución del glaciar con el tiempo.",
+      "concepto": "Comparación de imágenes históricas"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.4872896671295166,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "Comparación de dos imágenes de un glaciar en Alaska, una tomada en 2004 y otra en 1909, mostrando la disminución del glaciar con el tiempo.",
+      "concepto": "Comparación de imágenes históricas"
+     }
+    ]
+   },
+   {
+    "variante": "es_prompt_con_pie",
+    "runs": [
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.636075496673584,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La línea azul muestra la variación de la temperatura global promedio por década, respecto a 1900, en grados Celsius.",
+      "concepto": "Variación de temperatura global"
+     },
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.555964231491089,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La línea azul muestra la variación de la temperatura global promedio por década, respecto a 1900, en grados Celsius.",
+      "concepto": "Variación de temperatura global"
+     },
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.572206974029541,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La línea azul muestra la variación de la temperatura global promedio por década, respecto a 1900, en grados Celsius.",
+      "concepto": "Variación de temperatura global"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.7280380725860596,
+      "nivel": "Low",
+      "nivel_modelo": "Low",
+      "explicacion": "El gráfico muestra las emisiones de gases de efecto invernadero por sector en 2023, destacando la energía como el principal emisor.",
+      "concepto": "Energía, transporte, industria, agricultura, otros"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.5015923976898193,
+      "nivel": "Low",
+      "nivel_modelo": "Low",
+      "explicacion": "El gráfico muestra las emisiones de gases de efecto invernadero por sector en 2023, destacando la importancia de la energía en las emisiones totales.",
+      "concepto": "Energía, transporte, industria, agricultura, otros"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.4939522743225098,
+      "nivel": "Low",
+      "nivel_modelo": "Low",
+      "explicacion": "El gráfico muestra las emisiones de gases de efecto invernadero por sector en 2023, destacando la importancia de la energía en las emisiones totales.",
+      "concepto": "Energía, transporte, industria, agricultura, otros"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.6620545387268066,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "Comparación de dos imágenes del mismo lugar, mostrando la diferencia en el tamaño del glaciar entre 1909 y 2004.",
+      "concepto": "Comparación de imágenes"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.6202993392944336,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "Comparación de dos imágenes del mismo lugar, mostrando la diferencia en el tamaño del glaciar a lo largo del tiempo.",
+      "concepto": "Comparación de imágenes"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.6013474464416504,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "Comparación de dos imágenes del mismo lugar, mostrando la diferencia en el tamaño del glaciar a lo largo del tiempo.",
+      "concepto": "Comparación de imágenes"
+     }
+    ]
+   },
+   {
+    "variante": "es_con_pie_nivel_diseno_actual",
+    "runs": [
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 3.0040907859802246,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La línea azul muestra la variación de la temperatura global promedio por década, respecto a 1900, en grados Celsius. La línea muestra un aumento progresivo en la temperatura desde 1900 hasta 2010, con valores de +0.0°C en 1900, +0.2°C en 1950, +0.6°C en 1990, y +1.",
+      "concepto": "Variación de temperatura global"
+     },
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 3.000609874725342,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La línea azul muestra la variación de la temperatura global promedio por década, respecto a 1900, en grados Celsius. La línea muestra un aumento progresivo en la temperatura desde 1900 hasta 2010, con valores de +0.0°C en 1900, +0.2°C en 1950, +0.6°C en 1990, y +1.",
+      "concepto": "Variación de temperatura global"
+     },
+     {
+      "imagen": "gráfica intermedio",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.949439764022827,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La línea azul muestra la variación de la temperatura global promedio por década, respecto a 1900, en grados Celsius. La línea muestra un aumento progresivo en la temperatura desde 1900 hasta 2010, con valores de +0.0°C en 1900, +0.2°C en 1950, +0.6°C en 1990, y +1.",
+      "concepto": "Variación de temperatura global"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.6169886589050293,
+      "nivel": "High",
+      "nivel_modelo": "Medium",
+      "explicacion": "La energía es el sector con las mayores emisiones de GEI, seguido por el transporte y la industria.",
+      "concepto": "Energía como principal emisor de GEI"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.5728602409362793,
+      "nivel": "High",
+      "nivel_modelo": "Medium",
+      "explicacion": "La energía es el sector con las mayores emisiones de GEI, seguido por el transporte y la industria.",
+      "concepto": "Energía como principal emisor de GEI"
+     },
+     {
+      "imagen": "gráfica avanzado",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.6313157081604004,
+      "nivel": "High",
+      "nivel_modelo": "Medium",
+      "explicacion": "La energía es el sector con las mayores emisiones de GEI, seguido por el transporte y la industria.",
+      "concepto": "Energía como principal emisor de GEI"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.738065719604492,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La imagen muestra una comparación entre dos fotos del mismo lugar, el Glaciar McCarty en Alaska, tomadas en 2004 y 1909, mostrando la disminución del tamaño del glaciar a lo largo del tiempo.",
+      "concepto": "Comparación de imágenes históricas"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.7211036682128906,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La imagen muestra una comparación entre dos fotos del mismo lugar, el Glaciar McCarty en Alaska, tomadas en 2004 y 1909, mostrando la pérdida de tamaño del glaciar con el tiempo.",
+      "concepto": "Comparación de imágenes históricas"
+     },
+     {
+      "imagen": "foto glaciar",
+      "json_ok": true,
+      "ingles": false,
+      "latencia": 2.7487123012542725,
+      "nivel": "Medium",
+      "nivel_modelo": "Medium",
+      "explicacion": "La imagen muestra una comparación entre dos fotos del mismo lugar, el Glaciar McCarty en Alaska, tomadas en 2004 y 1909, mostrando la pérdida de tamaño del glaciar con el tiempo.",
+      "concepto": "Comparación de imágenes históricas"
+     }
+    ]
+   }
+  ]
+ }
+}

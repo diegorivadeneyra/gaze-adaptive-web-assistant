@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nivel Fácil · Gaze Adaptive Web Assistant</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/page.css" />
+</head>
+<body data-level="easy">
+
+    <!-- ── Tooltip de asistencia ─────────────────────────── -->
+    <div id="adaptive-tooltip" role="tooltip" aria-live="polite"></div>
+
+    <!-- ── Layout principal ──────────────────────────────── -->
+    <div class="layout">
+
+        <!-- ── Panel lateral de debug ──────────────────── -->
+        <aside class="debug-panel" aria-label="Panel de monitoreo">
+            <div class="debug-header">
+                <span class="status-dot" id="status-dot"></span>
+                <h2>Monitor del sistema</h2>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Posición del cursor</span>
+                <span class="debug-value" id="gaze-info">X: — | Y: —</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Elemento observado</span>
+                <span class="debug-value" id="current-element">—</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Tipo de contenido</span>
+                <span class="debug-value" id="content-type">—</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Dwell Time</span>
+                <div class="dwell-bar-container">
+                    <div class="dwell-bar" id="dwell-bar"></div>
+                </div>
+                <span class="debug-value" id="dwell-time">0.0s</span>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Análisis IA</span>
+                <div class="analysis-card" id="analysis-result">
+                    <span class="placeholder">Sin análisis aún</span>
+                </div>
+            </div>
+            <div class="debug-section">
+                <span class="debug-label">Estado del backend</span>
+                <span class="debug-value" id="backend-status">Esperando...</span>
+            </div>
+        </aside>
+
+        <!-- ── Página de contenido ──────────────────────── -->
+        <div class="page-wrapper">
+
+            <nav class="level-nav" aria-label="Nivel de dificultad">
+                <a class="level-link is-active" href="facil.html">Fácil</a>
+                <a class="level-link" href="intermedio.html">Intermedio</a>
+                <a class="level-link" href="avanzado.html">Avanzado</a>
+            </nav>
+
+            <header class="navbar">
+                <span class="nav-logo">🌍 EcoFácil</span>
+            </header>
+
+            <div class="content-grid">
+                <main class="main-column">
+
+                    <!-- Titular + texto + imagen grande -->
+                    <section class="hero-section">
+                        <div class="hero-tag">Divulgación científica</div>
+                        <h1 class="hero-title">El hielo del planeta se está derritiendo</h1>
+                        <p class="hero-lead">
+                            Cuando el planeta se calienta un poco más de lo normal, el hielo de los polos y de las montañas
+                            empieza a derretirse más rápido de lo que se forma. Esto pasa desde hace muchos años y cada
+                            vez se nota más.
+                        </p>
+                        <figure>
+                            <img
+                                class="hero-image"
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/McCarty_Glacier.jpg/500px-McCarty_Glacier.jpg"
+                                alt="Glaciar McCarty en Alaska, rodeado de montañas nevadas"
+                            />
+                            <figcaption>Glaciar McCarty, Alaska. Muchos glaciares como este han perdido gran parte de su tamaño.</figcaption>
+                        </figure>
+                    </section>
+
+                    <!-- Viñetas -->
+                    <article class="article-card">
+                        <div class="article-tag">Datos simples</div>
+                        <h2>¿Qué está pasando?</h2>
+                        <ul class="bullet-list">
+                            <li>El hielo del Ártico ocupa hoy menos espacio que hace 40 años.</li>
+                            <li>Los glaciares de montaña se están volviendo más pequeños en casi todo el mundo.</li>
+                            <li>El agua de los glaciares que se derrite llega al mar y lo hace subir poco a poco.</li>
+                            <li>Cuidar el planeta hoy ayuda a que quede más hielo en el futuro.</li>
+                        </ul>
+                    </article>
+
+                    <!-- Cuadro comparativo -->
+                    <article class="article-card">
+                        <div class="article-tag">Cuadro comparativo</div>
+                        <h2>Antes y ahora</h2>
+                        <div class="compare-grid">
+                            <div class="compare-card">
+                                <h4>Hace 40 años</h4>
+                                <p>El hielo del Ártico cubría un área mucho más grande, casi todo el año.</p>
+                            </div>
+                            <div class="compare-card">
+                                <h4>Hoy</h4>
+                                <p>Esa misma área de hielo es notablemente más pequeña, sobre todo en verano.</p>
+                            </div>
+                        </div>
+                        <div class="article-footer" style="margin-top: 18px;">
+                            <button class="btn-primary">Quiero ayudar</button>
+                            <button class="btn-outline">Ver más datos</button>
+                        </div>
+                    </article>
+
+                </main>
+
+                <aside class="side-column">
+                    <div class="widget widget--highlight">
+                        <h4>Dato curioso</h4>
+                        <p>Un solo glaciar puede tardar miles de años en formarse, pero solo unas décadas en desaparecer.</p>
+                    </div>
+                    <div class="widget">
+                        <h4>Recuerda</h4>
+                        <p>Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.</p>
+                    </div>
+                </aside>
+            </div>
+
+            <footer class="page-footer">
+                <span>EcoFácil · Contenido de divulgación</span>
+                <div class="footer-links">
+                    <a href="facil.html">Fácil</a>
+                    <a href="intermedio.html">Intermedio</a>
+                    <a href="avanzado.html">Avanzado</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="js/gaze.js"></script>
+</body>
+</html>

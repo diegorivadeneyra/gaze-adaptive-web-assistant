@@ -1,6 +1,5 @@
 flask
 flask-cors
-sentence-transformers
-sentencepiece
-torch
-transformers
+pillow
+requests
+websockets
