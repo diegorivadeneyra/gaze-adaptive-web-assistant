@@ -1,3 +1,6 @@
+import re
+import unicodedata
+
 import requests
 from analyzers.llm_utils import (
     OLLAMA_BASE_URL,
@@ -102,7 +105,30 @@ def _with_term(concept, explanation):
     return f"{head}: {body}"
 
 
-def build_prompt(language, truncated):
+def _context_block(language, page_context):
+    """Título de la página y sección, como contexto (no como tema a definir):
+    si no, el modelo tiende a definir el término del título en cada párrafo."""
+    page_context = page_context or {}
+    title, section = page_context.get("title"), page_context.get("section")
+    if not title and not section:
+        return ""
+    if language == "Spanish":
+        lines = ["Contexto, solo para entender el texto (NO lo expliques salvo que el término difícil del texto esté ahí):"]
+        if title:
+            lines.append(f"- Título de la página: {title}")
+        if section:
+            lines.append(f"- Sección: {section}")
+    else:
+        lines = ["Context, only to understand the text (do NOT explain it unless the hard term of the text is there):"]
+        if title:
+            lines.append(f"- Page title: {title}")
+        if section:
+            lines.append(f"- Section: {section}")
+    return "\n".join(lines) + "\n\n"
+
+
+def build_prompt(language, truncated, page_context=None):
+    context = _context_block(language, page_context)
     # La persona ya leyó el texto: la ayuda no debe recapitularlo (medido: la
     # versión anterior, que pedía "qué dice el texto con eso", copiaba ~11 %
     # de sus trigramas; esta ~3 %). "concept" pasa a ser el término técnico
@@ -123,7 +149,7 @@ Reglas:
 - complexity: High = términos técnicos o especializados; Medium = requiere conocimientos previos; Low = simple y claro.
 - explanation: explica ESE término: qué significa en palabras simples y, si ayuda, para qué sirve o por qué importa. NO repitas, NO resumas ni parafrasees lo que el texto ya dice. Puedes explicar conceptos generales, pero NO inventes datos, cifras, nombres ni fechas. NO uses analogías ni comparaciones. NO empieces con "Imagina".
 
-Texto: {truncated}"""
+{context}Texto: {truncated}"""
     else:
         return f"""You are a reading assistant. The person ALREADY READ this text (it is in English) and did not fully understand it, so do NOT repeat it to them.
 
@@ -139,7 +165,30 @@ Rules:
 - complexity: High = technical or specialized terms; Medium = requires prior knowledge; Low = simple and clear.
 - explanation: explain THAT term: what it means in plain words and, if useful, what it is for or why it matters. Do NOT repeat, summarize or paraphrase what the text already says. You may explain general concepts, but do NOT invent data, figures, names or dates. Do NOT use analogies or comparisons. Do NOT start with "Imagine".
 
-Text: {truncated}"""
+{context}Text: {truncated}"""
+
+
+def _normalize_words(value):
+    value = unicodedata.normalize("NFKD", value.lower())
+    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    return re.findall(r"[a-z0-9]+", value)
+
+
+def concept_in_text(concept, text):
+    """¿El término que el modelo eligió definir aparece en el texto?
+    Cada palabra de 4+ letras del término debe estar en el texto (sin
+    mayúsculas ni tildes, tolerando la terminación: "promedios" ~ "promedio").
+    Medido en la revisión del 2026-10-05: phi3 definió "acumulación de
+    energía" para una frase que no la contiene, un término inventado."""
+    text_words = _normalize_words(text)
+    joined = " " + " ".join(text_words)
+    for word in _normalize_words(concept):
+        if len(word) < 4:
+            continue
+        stem = word[:max(4, len(word) - 2)]
+        if f" {stem}" not in joined:
+            return False
+    return True
 
 
 def _readability_fields(readability):
@@ -163,7 +212,7 @@ def _fallback_result(language, readability):
     }
 
 
-def analyze_text(text, use_readability=True):
+def analyze_text(text, use_readability=True, page_context=None):
     if len(text.strip()) < 20:
         return {
             "concept": "Contenido breve",
@@ -193,7 +242,7 @@ def analyze_text(text, use_readability=True):
     truncated = text.strip()[:TEXT_CHAR_LIMIT]
     language = detect_language(truncated)
 
-    prompt = build_prompt(language, truncated)
+    prompt = build_prompt(language, truncated, page_context)
 
     try:
         response = requests.post(
@@ -256,6 +305,12 @@ def analyze_text(text, use_readability=True):
             or not _matches_language(normalized["explanation"], language)
         ):
             normalized.update(_local_language_fallback(language, normalized["complexity"]))
+        elif not concept_in_text(normalized["concept"], truncated):
+            # El término no está en el texto: la definición no ayuda a leerlo
+            # (y suele ser inventada). Se conserva el nivel, pero sin ayuda.
+            print(f"[AYUDA] Bloqueada: '{normalized['concept']}' no aparece en el texto.")
+            normalized["needs_assistance"] = False
+            normalized["help_blocked"] = "termino_fuera_del_texto"
         else:
             normalized["explanation"] = _with_term(normalized["concept"], normalized["explanation"])
         return normalized

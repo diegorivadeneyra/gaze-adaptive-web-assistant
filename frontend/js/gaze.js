@@ -46,14 +46,12 @@ let mouseY                  = 0;
 let lastValidGazeAt         = null;
 let pointerActive            = false;
 let gazePoints              = [];   // buffer de puntos para IDT
-let currentFixation         = null; // fijación activa actual
 let currentObservedElement  = null;
 let pendingElement          = null; // candidato a nuevo elemento (aún sin confirmar)
 let pendingElementSince     = null; // desde cuándo se viene viendo ese candidato
 let previousHighlighted     = null;
 let observationStartTime    = null;
 let analysisTriggered       = false;
-let isAnalyzing             = false;
 let hadFixationOnCurrentElement = false;
 // Cachea el resultado de /analyze por elemento del DOM: si vuelves a mirar
 // el mismo párrafo/imagen, se reutiliza en vez de volver a llamar al LLM —
@@ -65,7 +63,10 @@ const analysisCache = new WeakMap();
 let activeRequestController = null;
 
 // ─── Visibilidad del panel de debug (?debug=0 lo oculta) ──────
-if (new URLSearchParams(window.location.search).get("debug") === "0") {
+// En una sesión experimental se oculta si así se eligió al iniciarla
+// (los enlaces entre páginas no conservan el ?debug=0).
+if (new URLSearchParams(window.location.search).get("debug") === "0"
+    || ExperimentSession.session?.hideDebug) {
     document.querySelector(".debug-panel")?.classList.add("is-hidden");
     document.querySelector(".layout")?.classList.add("no-debug");
 }
@@ -148,6 +149,66 @@ function classifyElement(element) {
     return "Otro";
 }
 
+// ─── Identificador de elementos para el registro ─────────────
+// Ruta calculada desde <body> (p. ej. "div[0]>main[0]>article[1]>p[0]"):
+// funciona en cualquier página sin anotarla. Si cambia el contenido de la
+// página cambian las rutas; por eso page_enter registra un hash del texto.
+const elementIds = new WeakMap();
+
+function elementId(element) {
+    if (!element) return null;
+    let id = elementIds.get(element);
+    if (id) return id;
+    const parts = [];
+    for (let node = element; node && node !== document.body && node.nodeType === 1; node = node.parentElement) {
+        let index = 0;
+        for (let sibling = node.previousElementSibling; sibling; sibling = sibling.previousElementSibling) {
+            if (sibling.tagName === node.tagName) index++;
+        }
+        parts.unshift(`${node.tagName.toLowerCase()}[${index}]`);
+    }
+    id = parts.join(">");
+    elementIds.set(element, id);
+    return id;
+}
+
+function elementSnippet(element) {
+    const text = element.tagName === "IMG" ? element.alt : element.textContent;
+    return (text || "").replace(/\s+/g, " ").trim().slice(0, 80);
+}
+
+// Hash simple (FNV-1a) del texto de la página: identifica la versión del
+// contenido que vio cada participante.
+function textHash(text) {
+    let hash = 0x811c9dc5;
+    for (let i = 0; i < text.length; i++) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 0x01000193) >>> 0;
+    }
+    return hash.toString(16);
+}
+
+// Posición (en coordenadas del documento) de cada elemento analizable:
+// junto con la mirada cruda y el scroll permite recalcular offline qué se
+// miraba y cuánto tiempo, con otros umbrales.
+function pageLayout() {
+    const selector = "p,h1,h2,h3,h4,h5,h6,li,table,img,svg";
+    return [...document.querySelectorAll(selector)]
+        .filter(element => !element.closest(".debug-panel") && extractContent(element))
+        .map(element => {
+            const rect = element.getBoundingClientRect();
+            return {
+                el: elementId(element),
+                type: classifyElement(element),
+                x: Math.round(rect.left + window.scrollX),
+                y: Math.round(rect.top + window.scrollY),
+                w: Math.round(rect.width),
+                h: Math.round(rect.height),
+                text: elementSnippet(element)
+            };
+        });
+}
+
 // ─── Extracción de contenido ─────────────────────────────────
 // Texto de contexto de una imagen/gráfica (alt + pie de figura): le da al
 // modelo de visión el tema del documento y fija el idioma de la respuesta.
@@ -159,6 +220,44 @@ function getVisualContext(element) {
     const captionText = caption?.innerText?.trim();
     if (captionText) parts.push(captionText);
     return parts.join(" — ").slice(0, 300);
+}
+
+// Textos escritos dentro de una gráfica SVG (título, ejes, valores y
+// etiquetas), en el orden del documento. Se mandan al modelo de visión como
+// texto: leyendo solo la imagen a 512 px, Qwen confundía el orden de barras
+// parecidas (dijo transporte > industria con 8.2 vs 10.4). Funciona con
+// cualquier gráfica SVG; las imágenes (fotos, PNG) no tienen estos textos.
+function getChartText(svgElement) {
+    const seen = new Set();
+    return [...svgElement.querySelectorAll("text")]
+        .map(node => node.textContent.replace(/\s+/g, " ").trim())
+        .filter(text => text && !seen.has(text) && seen.add(text))
+        .join(" · ")
+        .slice(0, 600);
+}
+
+// ─── Contexto de la página para el modelo ────────────────────
+// Título del contenido (primer <h1>; si no hay, el <title> sin el nombre del
+// sitio, que suele ir tras "|", "·" o "-") y el subtítulo de la sección donde
+// está el elemento. Le da al modelo el tema antes de leer el párrafo (p. ej.
+// que "residuos" es estadístico, no ambiental). Funciona en cualquier página.
+function cleanDocumentTitle() {
+    return (document.title || "").split(/\s[|·–—-]\s/)[0].trim();
+}
+
+function getPageTitle() {
+    const h1 = [...document.querySelectorAll("h1")].find(h => !h.closest(".debug-panel"));
+    return (h1?.innerText || cleanDocumentTitle()).replace(/\s+/g, " ").trim().slice(0, 150);
+}
+
+function getSectionHeading(element) {
+    let last = null;
+    for (const heading of document.querySelectorAll("h2,h3,h4,h5,h6")) {
+        if (heading.closest(".debug-panel")) continue;
+        if (!(heading.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING)) break;
+        last = heading;
+    }
+    return (last?.innerText || "").replace(/\s+/g, " ").trim().slice(0, 150);
 }
 
 // Nivel diseñado de una figura (atributo data-design-level en ella o en su
@@ -184,8 +283,14 @@ function extractContent(element) {
 
     if (element.tagName.toLowerCase() === "svg") {
         return { type: "chart", value: element, context: getVisualContext(element),
-                 designLevel: getDesignLevel(element) };
+                 designLevel: getDesignLevel(element), chartText: getChartText(element) };
     }
+
+    // Títulos (h1–h6): sin ayuda propia. Son cortos, el modelo los juzgaba
+    // sin contexto (definió mal "evidencia observacional") y sus términos se
+    // repiten en el texto de abajo. Revisión del 2026-10-05: 6 de 26 ayudas
+    // eran sobre títulos.
+    if (/^H[1-6]$/.test(element.tagName)) return null;
 
     if (TEXT_TAGS.includes(element.tagName)) {
         const text = element.innerText?.trim();
@@ -282,7 +387,7 @@ async function resolveContentPayload(content) {
     const base64 = await svgToBase64Png(content.value);
     return base64
         ? { type: "image_base64", value: base64, context: content.context,
-            designLevel: content.designLevel }
+            designLevel: content.designLevel, chartText: content.chartText }
         : null;
 }
 
@@ -336,6 +441,7 @@ function hideTooltip() {
         clearTimeout(tooltipHideTimer);
         tooltipHideTimer = null;
     }
+    closeHelpLog("oculta");
     if (adaptiveTooltip)
         adaptiveTooltip.style.display = "none";
 }
@@ -429,7 +535,9 @@ async function analyzeWithBackend(content, dwellTime) {
                 content_type: content.type,
                 dwell_time:   dwellTime,
                 context:      content.context || "",
-                design_level: content.designLevel || ""
+                design_level: content.designLevel || "",
+                chart_text:   content.chartText || "",
+                section:      content.section || ""
             }),
             signal: requestController.signal
         });
@@ -468,20 +576,128 @@ let pendingHelp      = null;        // { element, diagnosis }
 let currentIsRevisit = false;
 const elementVisits  = new WeakMap();
 
+// ─── Modelo de lectura: ¿esta persona necesita la ayuda? ──────
+// Se crea con READING_POLICY (de /config). Solo aplica a texto corrido con
+// sílabas conocidas (llegan con el análisis); en tablas, gráficas e imágenes
+// sigue la regla de tiempo fijo. Si /config falla, todo usa tiempo fijo.
+let readingModel     = null;
+let readingPolicy    = null;
+let lastTickAt       = null;
+let visitHadSignal   = false;   // hubo señal en esta visita (no adapta el ritmo)
+// Fijaciones de la visita en curso (I-DT): cantidad, tiempo total y el punto
+// donde empezó la fijación actual (para saber cuándo empieza otra).
+let visitFix         = { count: 0, ms: 0, anchor: null };
+let lowSignalLogged  = false;   // ya se registró "se habría disparado" en Low
+
+// El ritmo aprendido sigue a la persona entre páginas (misma pestaña).
+const PACE_STORAGE_KEY = "gazeReadingPace";
+
+function loadStoredPace() {
+    try {
+        return parseFloat(sessionStorage.getItem(PACE_STORAGE_KEY));
+    } catch (error) {
+        return NaN;
+    }
+}
+
+function storePace(pace) {
+    try {
+        sessionStorage.setItem(PACE_STORAGE_KEY, String(pace));
+    } catch (error) { /* sin almacenamiento: el ritmo se reinicia por página */ }
+}
+
+function readingInfo(element) {
+    const diagnosis = element ? analysisCache.get(element) : null;
+    if (!readingModel || !diagnosis || !diagnosis.syllables) return null;
+    return { syllables: diagnosis.syllables, level: diagnosis.complexity };
+}
+
+function isTextElement(element) {
+    return Boolean(element) && extractContent(element)?.type === "text";
+}
+
+// Zona vertical de la mirada dentro del párrafo: "inicio" (primer tercio),
+// "medio" o "final" (último tercio). Un bloque de menos de ~3 líneas cuenta
+// siempre como "final" (no se distingue arriba de abajo con el Tobii).
+function gazeZone(element, point) {
+    const rect = element.getBoundingClientRect();
+    if (rect.height < readingPolicy.end_min_height_px) return "final";
+    if (point.y >= rect.top + rect.height * (1 - readingPolicy.end_region)) return "final";
+    if (point.y <= rect.top + rect.height * readingPolicy.start_region) return "inicio";
+    return "medio";
+}
+
+// Ayuda visible en este momento (para registrar cuánto duró y cuánto se miró).
+let helpCounter = 0;
+let helpState   = null;  // { id, el, shownAt, gazeInsideMs }
+
+function closeHelpLog(reason) {
+    if (!helpState) return;
+    ExperimentSession.log("help_hidden", {
+        help_id: helpState.id,
+        el: helpState.el,
+        reason,
+        visible_ms: Date.now() - helpState.shownAt,
+        gaze_inside_ms: helpState.gazeInsideMs
+    });
+    helpState = null;
+}
+
 function offerPendingHelp(dwellTime) {
     if (!pendingHelp || pendingHelp.element !== currentObservedElement) return;
     const { diagnosis } = pendingHelp;
-    const required = (currentIsRevisit
-        ? diagnosis.revisit_min_dwell_ms
-        : diagnosis.min_dwell_ms) ?? 0;
-    if (dwellTime < required) return;
 
-    showTooltip(diagnosis.explanation, diagnosis.mode, currentObservedElement);
+    // Texto corrido: decide la conducta (atascado o relectura).
+    // Tablas, gráficas, imágenes: tiempo fijo según el nivel.
+    let decision;
+    const info = readingInfo(currentObservedElement);
+    if (info) {
+        const sig = readingModel.signal(elementId(currentObservedElement), info);
+        if (!sig) return;
+        visitHadSignal = true;
+        decision = { rule: "conducta", signal: sig.type, ratio: Math.round(sig.ratio * 100) / 100,
+                     expected_ms: Math.round(sig.expected), acc_ms: Math.round(sig.accMs),
+                     pace_ms_per_syllable: Math.round(readingModel.pace) };
+    } else {
+        const required = (currentIsRevisit
+            ? diagnosis.revisit_min_dwell_ms
+            : diagnosis.min_dwell_ms) ?? 0;
+        if (dwellTime < required) return;
+        decision = { rule: "tiempo_fijo", signal: currentIsRevisit ? "relectura" : "tiempo" };
+    }
+
+    const helpEvent = {
+        ...decision,
+        // Único en la sesión: el contador se reinicia en cada página.
+        help_id: `${ExperimentSession.pageKey}-${++helpCounter}`,
+        el: elementId(currentObservedElement),
+        dwell_ms: dwellTime,
+        revisit: currentIsRevisit,
+        complexity: diagnosis.complexity,
+        mode: diagnosis.mode,
+        concept: diagnosis.concept,
+        explanation: diagnosis.explanation
+    };
     pendingHelp = null;
+
+    // Condición "sin ayuda" (sesión intra-sujeto): todo el sistema funciona
+    // igual, pero el tooltip no se muestra; se registra la ayuda que se
+    // habría mostrado, para comparar los mismos elementos entre condiciones.
+    if (!ExperimentSession.helpEnabled) {
+        ExperimentSession.log("help_suppressed", helpEvent);
+        return;
+    }
+
+    closeHelpLog("reemplazada");
+    showTooltip(diagnosis.explanation, diagnosis.mode, currentObservedElement);
+    ExperimentSession.log("help_shown", helpEvent);
+    helpState = { id: helpEvent.help_id, el: helpEvent.el, shownAt: Date.now(), gazeInsideMs: 0 };
 }
 
 // ─── Proceso principal ────────────────────────────────────────
 async function processObservation() {
+    // Pausado mientras el participante marca lo que le costó (marking.js).
+    if (window.markingMode) return;
     const idt = runIDT(gazePoints);
 
     if (gazeInfo)
@@ -514,6 +730,11 @@ async function processObservation() {
         ? currentObservedElement
         : getContentElement(rawElement);
 
+    // Tiempo con la mirada dentro del tooltip (resolución: un tick de 100 ms).
+    if (helpState && !trackingLost && isPointInsideTooltip(referencePoint)) {
+        helpState.gazeInsideMs += POLL_INTERVAL_MS;
+    }
+
     // Histéresis de cambio de elemento (solo en modo Tobii): el Tobii 5 no es
     // un tracker de precisión de laboratorio, tiene ruido esperado de varias
     // decenas de píxeles — "miro un punto y salta a otro lado y vuelve" es
@@ -545,13 +766,16 @@ async function processObservation() {
 
     // Si cambió de elemento → resetear dwell time
     if (fixatedElement !== currentObservedElement) {
+        logElementExit();
         activeRequestController?.abort();
         currentObservedElement      = fixatedElement;
         observationStartTime        = Date.now();
         analysisTriggered           = false;
-        isAnalyzing                 = false;
         hadFixationOnCurrentElement = false;  // ← línea nueva
         pendingHelp                 = null;
+        visitHadSignal              = false;
+        visitFix                    = { count: 0, ms: 0, anchor: null };
+        lowSignalLogged             = false;
 
         // Relectura: volver a un elemento ya mirado (regresión) es una señal
         // conocida de dificultad de lectura; adelanta la ayuda de nivel Medium.
@@ -559,6 +783,15 @@ async function processObservation() {
             const visits = (elementVisits.get(fixatedElement) || 0) + 1;
             elementVisits.set(fixatedElement, visits);
             currentIsRevisit = visits >= 2;
+            // primera / continua (salida corta) / relectura / reinicio
+            const reading = readingModel && isTextElement(fixatedElement)
+                ? readingModel.enter(elementId(fixatedElement), Date.now()) : null;
+            ExperimentSession.log("element_enter", {
+                el: elementId(fixatedElement),
+                el_type: classifyElement(fixatedElement),
+                visit: visits,
+                reading_event: reading?.event ?? null
+            });
         } else {
             currentIsRevisit = false;
         }
@@ -607,6 +840,53 @@ async function processObservation() {
         hadFixationOnCurrentElement = true;
     }
 
+    const now = Date.now();
+    const dt = lastTickAt === null ? 0 : Math.min(now - lastTickAt, POLL_INTERVAL_MS * 2.5);
+    lastTickAt = now;
+
+    // Métricas de fijaciones de la visita (se registran al salir): empieza
+    // una fijación nueva si antes no había o si la mirada se alejó más que la
+    // dispersión máxima del punto donde empezó la actual (criterio I-DT; si
+    // se compara con el tick anterior, un deslizamiento lento se contaría
+    // como una sola fijación larguísima).
+    if (idt.isFixation && !isReadingTooltip) {
+        const moved = visitFix.anchor
+            && Math.hypot(idt.centroid.x - visitFix.anchor.x, idt.centroid.y - visitFix.anchor.y) > IDT_DISPERSION_PX;
+        if (!visitFix.anchor || moved) {
+            visitFix.count++;
+            visitFix.anchor = idt.centroid;
+        }
+        visitFix.ms += dt;
+    } else {
+        visitFix.anchor = null;
+    }
+
+    // Modelo de lectura: suma el tiempo en el párrafo (no mientras lee el
+    // tooltip ni sin seguimiento) y marca en qué parte del párrafo está la mirada.
+    if (readingModel && isTextElement(currentObservedElement) && !trackingLost && !isReadingTooltip) {
+        const key = elementId(currentObservedElement);
+        const info = readingInfo(currentObservedElement);
+        readingModel.tick(key, dt, gazeZone(currentObservedElement, referencePoint), info, idt.isFixation);
+        // Nivel Low: no hay ayuda, pero se registra si la conducta la habría pedido.
+        if (info && info.level === "Low" && !lowSignalLogged) {
+            const sig = readingModel.signal(key, info);
+            if (sig) {
+                lowSignalLogged = true;
+                visitHadSignal = true;
+                ExperimentSession.log("help_would_trigger_low", {
+                    el: key, signal: sig.type, ratio: Math.round(sig.ratio * 100) / 100,
+                    expected_ms: Math.round(sig.expected), acc_ms: Math.round(sig.accMs)
+                });
+            }
+        }
+        // Panel de monitoreo: tiempo acumulado / esperado y ritmo actual.
+        if (dwellTimeBox && info) {
+            dwellTimeBox.innerText = `${(dwellTime / 1000).toFixed(1)}s · leído `
+                + `${(readingModel.accMs(key) / 1000).toFixed(1)}/${(readingModel.expectedMs(info) / 1000).toFixed(1)}s`
+                + ` · ritmo ${Math.round(readingModel.pace)} ms/síl`;
+        }
+    }
+
     // En modo mouse, exigir una fijación IDT evita que "pasar por encima"
     // de un elemento grande cuente como leerlo. Con mirada real esa
     // exigencia sobra: leer texto implica saltar de palabra en palabra
@@ -625,18 +905,26 @@ async function processObservation() {
         && !analysisTriggered) {
 
         analysisTriggered = true;
-        isAnalyzing       = true;
         setStatus("analyzing");
 
         const elementAtTrigger = currentObservedElement;
 
         try {
             let diagnosis = analysisCache.get(elementAtTrigger);
+            const cachedBefore = diagnosis;
 
             if (!diagnosis) {
                 const payload = await resolveContentPayload(content);
 
                 if (!payload || currentObservedElement !== elementAtTrigger) return;
+                // Contexto: solo el subtítulo de la sección, y solo para texto y
+                // tablas. Medido (evaluation/ab_contexto.py, 2026-10-06): con el
+                // título de la página el modelo elegía términos del título que no
+                // estaban en el párrafo (un párrafo High se quedaba sin ayuda), y
+                // en fotos y gráficas el contexto empeoraba la ayuda.
+                if (payload.type === "text" || payload.type === "table") {
+                    payload.section = getSectionHeading(elementAtTrigger);
+                }
 
                 diagnosis = await analyzeWithBackend(payload, dwellTime / 1000);
 
@@ -650,6 +938,20 @@ async function processObservation() {
 
             if (!diagnosis || currentObservedElement !== elementAtTrigger) return;
 
+            ExperimentSession.log("analysis", {
+                el: elementId(elementAtTrigger),
+                from_cache: Boolean(cachedBefore),
+                complexity: diagnosis.complexity,
+                difficulty_source: diagnosis.difficulty_source,
+                inflesz: diagnosis.inflesz ?? null,
+                llm_complexity: diagnosis.llm_complexity ?? null,
+                action: diagnosis.action,
+                help_blocked: diagnosis.help_blocked ?? null,
+                section: getSectionHeading(elementAtTrigger),
+                concept: diagnosis.concept,
+                explanation: diagnosis.explanation,
+                processing_time_s: cachedBefore ? 0 : diagnosis.processing_time ?? null
+            });
             updateAnalysisPanel(diagnosis);
 
             if (diagnosis.action === "tooltip" && diagnosis.explanation) {
@@ -660,7 +962,6 @@ async function processObservation() {
                 offerPendingHelp(Date.now() - observationStartTime);
             }
         } finally {
-            isAnalyzing = false;
             setStatus(
                 currentObservedElement === elementAtTrigger ? "active" : ""
             );
@@ -680,6 +981,7 @@ const CONFIG_URL = "http://127.0.0.1:5000/config";
 const GAZE_WS_URL = "ws://127.0.0.1:5600";
 
 function pushGazePoint(x, y, timestamp) {
+    ExperimentSession.logGaze(x, y, true);
     pointerActive = true;
     lastValidGazeAt = timestamp;
     mouseX = x;
@@ -722,6 +1024,10 @@ function connectTobiiSocket() {
         }
         if (data?.valid && typeof data.x === "number" && typeof data.y === "number") {
             pushGazePoint(data.x, data.y, Date.now());
+        } else {
+            // Muestra inválida (parpadeo o pérdida de seguimiento): se
+            // registra para medir la calidad del seguimiento por sesión.
+            ExperimentSession.logGaze(null, null, false);
         }
     };
 
@@ -767,6 +1073,10 @@ async function loadInputSourceConfig() {
             if (data.input_source === "tobii" || data.input_source === "mouse") {
                 inputSource = data.input_source;
             }
+            if (data.reading_policy && typeof createReadingModel === "function") {
+                readingPolicy = data.reading_policy;
+                readingModel = createReadingModel(readingPolicy, loadStoredPace());
+            }
         }
     } catch (error) {
         console.warn("[gaze] No se pudo leer /config; usando 'mouse' por defecto.");
@@ -775,8 +1085,95 @@ async function loadInputSourceConfig() {
 }
 
 // ─── Arranque ───────────────────────────────────────────────────
+// ─── Registro de la página (solo con sesión experimental) ─────
+const pageEnteredAt = Date.now();
+
+function logElementExit() {
+    if (!currentObservedElement || observationStartTime === null) return;
+    const key = elementId(currentObservedElement);
+    ExperimentSession.log("element_exit", {
+        el: key,
+        dwell_ms: Date.now() - observationStartTime,
+        // Fijaciones (I-DT) en la visita: con datos del Tobii se verá qué
+        // parte de la lectura detecta como fijación y si las fijaciones
+        // largas anticipan lo que la persona marca como difícil.
+        fixation_count: visitFix.count,
+        fixation_ms: Math.round(visitFix.ms),
+        mean_fixation_ms: visitFix.count ? Math.round(visitFix.ms / visitFix.count) : null
+    });
+    if (readingModel && isTextElement(currentObservedElement)) {
+        const info = readingInfo(currentObservedElement);
+        const { snapshot, paceUpdate } = readingModel.leave(key, Date.now(), info, visitHadSignal);
+        ExperimentSession.log("reading_state", {
+            el: key, level: info?.level ?? null, syllables: info?.syllables ?? null,
+            acc_ms: Math.round(snapshot.accMs),
+            expected_ms: snapshot.expected ? Math.round(snapshot.expected) : null,
+            read_complete: snapshot.readComplete, reached_end: snapshot.reachedEnd,
+            pace_ms_per_syllable: Math.round(snapshot.pace)
+        });
+        if (paceUpdate) {
+            storePace(paceUpdate.new);
+            ExperimentSession.log("pace_update", {
+                el: key, old: Math.round(paceUpdate.old), new: Math.round(paceUpdate.new),
+                observed: Math.round(paceUpdate.observed)
+            });
+        }
+    }
+}
+
+function logPageEnter() {
+    ExperimentSession.log("page_enter", {
+        condition: ExperimentSession.condition,
+        url: window.location.href,
+        input_source: inputSource,
+        viewport: { w: window.innerWidth, h: window.innerHeight },
+        screen: { w: window.screen.width, h: window.screen.height, dpr: window.devicePixelRatio },
+        page_hash: textHash(document.querySelector(".page-wrapper")?.innerText || ""),
+        page_title: getPageTitle(),
+        config: {
+            DWELL_THRESHOLD_MS, POLL_INTERVAL_MS, IDT_WINDOW_MS, IDT_DISPERSION_PX,
+            BLINK_GRACE_MS, ELEMENT_SWITCH_GRACE_MS, TOOLTIP_HOLD_MS
+        }
+    });
+    // El layout se toma con la página ya cargada (las imágenes cambian
+    // posiciones) y de nuevo si cambia el tamaño de la ventana.
+    const logLayout = () => ExperimentSession.log("layout", {
+        viewport: { w: window.innerWidth, h: window.innerHeight },
+        elements: pageLayout()
+    });
+    if (document.readyState === "complete") logLayout();
+    else window.addEventListener("load", logLayout, { once: true });
+    let resizeTimer = null;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(logLayout, 500);
+    });
+    window.addEventListener("pagehide", () => {
+        logElementExit();
+        closeHelpLog("salida_de_pagina");
+        ExperimentSession.log("page_exit", { duration_ms: Date.now() - pageEnteredAt });
+        ExperimentSession.flushOnExit();
+    });
+}
+
+// Indicador de sesión y condición en el panel de debug (si está visible).
+function renderSessionIndicator() {
+    const debugHeader = document.querySelector(".debug-header");
+    if (!debugHeader) return;
+    const indicator = document.createElement("div");
+    indicator.className = "debug-section";
+    const label = ExperimentSession.active
+        ? `${ExperimentSession.session.participant} · ${ExperimentSession.condition === "sin_ayuda" ? "sin ayuda" : "con ayuda"}`
+        : "Modo libre (sin registro)";
+    indicator.innerHTML = `<span class="debug-label">Sesión</span><span class="debug-value"></span>`;
+    indicator.querySelector(".debug-value").textContent = label;
+    debugHeader.insertAdjacentElement("afterend", indicator);
+}
+
 (async function init() {
     await loadInputSourceConfig();
+    renderSessionIndicator();
+    if (ExperimentSession.active) logPageEnter();
 
     if (inputSource === "tobii") {
         connectTobiiSocket();

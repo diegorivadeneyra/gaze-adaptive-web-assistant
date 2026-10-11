@@ -1,0 +1,320 @@
+{
+ "descripcion": "Párrafos de texto (≥ 8 palabras) de las 3 páginas, en orden de lectura, con nivel INFLESZ y sílabas (backend/analyzers/readability.py). Para tests/test_reading_model.js. Generado el 2026-10-11.",
+ "bloques": [
+  {
+   "page": "facil",
+   "el": "main[0]>section[0]>p[0]",
+   "level": "Low",
+   "inflesz": 83.5,
+   "words": 42,
+   "syllables": 69,
+   "text": "Cuando el planeta se calienta un poco más de lo normal, el h"
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[0]>ul[0]>li[0]",
+   "level": "Low",
+   "inflesz": 76.9,
+   "words": 11,
+   "syllables": 21,
+   "text": "El hielo del Ártico ocupa hoy menos espacio que hace 40 años"
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[0]>ul[0]>li[1]",
+   "level": "Low",
+   "inflesz": 77.1,
+   "words": 14,
+   "syllables": 26,
+   "text": "Los glaciares de montaña se están volviendo más pequeños en "
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[0]>ul[0]>li[2]",
+   "level": "Low",
+   "inflesz": 91.9,
+   "words": 18,
+   "syllables": 28,
+   "text": "El agua de los glaciares que se derrite llega al mar y lo ha"
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[0]>ul[0]>li[3]",
+   "level": "Low",
+   "inflesz": 88.4,
+   "words": 13,
+   "syllables": 22,
+   "text": "Cuidar el planeta hoy ayuda a que quede más hielo en el futu"
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[1]>div[1]>div[0]>p[0]",
+   "level": "Low",
+   "inflesz": 77.1,
+   "words": 14,
+   "syllables": 26,
+   "text": "El hielo del Ártico cubría un área mucho más grande, casi to"
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[1]>div[1]>div[1]>p[0]",
+   "level": "Low",
+   "inflesz": 59.7,
+   "words": 13,
+   "syllables": 28,
+   "text": "Esa misma área de hielo es notablemente más pequeña, sobre t"
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[2]>p[0]",
+   "level": "Low",
+   "inflesz": 84.9,
+   "words": 29,
+   "syllables": 50,
+   "text": "Cada septiembre, al final del verano, el hielo del Ártico ll"
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[2]>div[1]>p[0]",
+   "level": "Low",
+   "inflesz": 75.7,
+   "words": 13,
+   "syllables": 26,
+   "text": "El hielo del Ártico en septiembre, año por año. Los números "
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[3]>ul[0]>li[0]",
+   "level": "Low",
+   "inflesz": 72.2,
+   "words": 10,
+   "syllables": 20,
+   "text": "Apagar las luces y los aparatos que no estamos usando."
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[3]>ul[0]>li[1]",
+   "level": "Low",
+   "inflesz": 80.6,
+   "words": 12,
+   "syllables": 22,
+   "text": "Caminar o usar la bicicleta en lugar del auto cuando se pued"
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[3]>ul[0]>li[2]",
+   "level": "Low",
+   "inflesz": 72.2,
+   "words": 10,
+   "syllables": 20,
+   "text": "Usar la energía del sol, por ejemplo con paneles solares."
+  },
+  {
+   "page": "facil",
+   "el": "main[0]>article[3]>ul[0]>li[3]",
+   "level": "Low",
+   "inflesz": 80.6,
+   "words": 12,
+   "syllables": 22,
+   "text": "Comprar solo lo que necesitamos y reciclar lo que ya no usam"
+  },
+  {
+   "page": "facil",
+   "el": "aside[0]>div[0]>p[0]",
+   "level": "Low",
+   "inflesz": 62.3,
+   "words": 16,
+   "syllables": 33,
+   "text": "Un solo glaciar puede tardar miles de años en formarse, pero"
+  },
+  {
+   "page": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "level": "Medium",
+   "inflesz": 49.5,
+   "words": 12,
+   "syllables": 28,
+   "text": "Pequeñas acciones diarias, como ahorrar energía, suman cuand"
+  },
+  {
+   "page": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "level": "Medium",
+   "inflesz": 44.7,
+   "words": 44,
+   "syllables": 99,
+   "text": "El cambio climático actual se atribuye principalmente al aum"
+  },
+  {
+   "page": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "level": "High",
+   "inflesz": 9.6,
+   "words": 33,
+   "syllables": 87,
+   "text": "Los registros de estaciones meteorológicas, boyas oceánicas "
+  },
+  {
+   "page": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "level": "Medium",
+   "inflesz": 52.0,
+   "words": 28,
+   "syllables": 57,
+   "text": "El deshielo de glaciares y capas de hielo contribuye al aume"
+  },
+  {
+   "page": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[1]>p[0]",
+   "level": "High",
+   "inflesz": 30.9,
+   "words": 13,
+   "syllables": 34,
+   "text": "Notas: los valores son promedios globales simplificados con "
+  },
+  {
+   "page": "intermedio",
+   "el": "main[0]>div[0]>div[1]>div[0]>p[0]",
+   "level": "Low",
+   "inflesz": 80.8,
+   "words": 16,
+   "syllables": 31,
+   "text": "Fig. 1. Variación de la temperatura promedio global por déca"
+  },
+  {
+   "page": "intermedio",
+   "el": "main[0]>div[0]>div[1]>p[0]",
+   "level": "High",
+   "inflesz": 26.1,
+   "words": 13,
+   "syllables": 35,
+   "text": "Notas de imagen: fotografía de archivo utilizada como refere"
+  },
+  {
+   "page": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "level": "Medium",
+   "inflesz": 45.2,
+   "words": 39,
+   "syllables": 89,
+   "text": "El océano absorbe cerca de una cuarta parte del dióxido de c"
+  },
+  {
+   "page": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "level": "Medium",
+   "inflesz": 45.2,
+   "words": 38,
+   "syllables": 87,
+   "text": "La acidificación dificulta que corales, moluscos y algunos t"
+  },
+  {
+   "page": "intermedio",
+   "el": "main[0]>div[1]>div[1]>div[0]>p[0]",
+   "level": "Low",
+   "inflesz": 69.2,
+   "words": 17,
+   "syllables": 36,
+   "text": "Fig. 2. Concentración media anual de CO₂ en la atmósfera med"
+  },
+  {
+   "page": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "level": "High",
+   "inflesz": 18.0,
+   "words": 48,
+   "syllables": 127,
+   "text": "Se estima la sensibilidad climática de equilibrio (ECS) medi"
+  },
+  {
+   "page": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "level": "High",
+   "inflesz": 39.2,
+   "words": 57,
+   "syllables": 136,
+   "text": "Se empleó un modelo lineal generalizado con errores autocorr"
+  },
+  {
+   "page": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "level": "Medium",
+   "inflesz": 53.9,
+   "words": 13,
+   "syllables": 31,
+   "text": "Fig. 1. Contribución sectorial a emisiones de GEI equivalent"
+  },
+  {
+   "page": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "level": "High",
+   "inflesz": 26.1,
+   "words": 62,
+   "syllables": 149,
+   "text": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 "
+  },
+  {
+   "page": "avanzado",
+   "el": "main[0]>div[1]>div[0]>p[0]",
+   "level": "High",
+   "inflesz": 23.4,
+   "words": 16,
+   "syllables": 43,
+   "text": "Notas de imagen: fotografía histórica citada con fines ilust"
+  },
+  {
+   "page": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "level": "High",
+   "inflesz": 5.7,
+   "words": 77,
+   "syllables": 201,
+   "text": "El forzamiento radiativo efectivo (ERF) antropogénico total "
+  },
+  {
+   "page": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "level": "High",
+   "inflesz": 3.7,
+   "words": 46,
+   "syllables": 116,
+   "text": "Entre las limitaciones del enfoque destacan la colinealidad "
+  },
+  {
+   "page": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "level": "High",
+   "inflesz": 37.3,
+   "words": 22,
+   "syllables": 56,
+   "text": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagre"
+  },
+  {
+   "page": "avanzado",
+   "el": "aside[0]>div[0]>ol[0]>li[0]",
+   "level": "Low",
+   "inflesz": 93.8,
+   "words": 8,
+   "syllables": 14,
+   "text": "IPCC (2021). AR6 Climate Change: The Physical Science Basis."
+  },
+  {
+   "page": "avanzado",
+   "el": "aside[0]>div[0]>ol[0]>li[1]",
+   "level": "Low",
+   "inflesz": 86.9,
+   "words": 9,
+   "syllables": 17,
+   "text": "Hansen, J. et al. (2005). Earth's Energy Imbalance. Science."
+  },
+  {
+   "page": "avanzado",
+   "el": "aside[0]>div[0]>ol[0]>li[2]",
+   "level": "Low",
+   "inflesz": 84.4,
+   "words": 13,
+   "syllables": 25,
+   "text": "Sherwood, S. et al. (2020). An Assessment of Earth's Climate"
+  }
+ ]
+}

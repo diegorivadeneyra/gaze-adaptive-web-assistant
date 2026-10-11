@@ -27,6 +27,7 @@ MAX_IMAGE_SIDE = 512
 MAX_NEW_TOKENS = 120
 GENERATION_TIMEOUT_S = 25
 CONTEXT_MAX_CHARS = 300
+CHART_TEXT_MAX_CHARS = 600
 
 # Nivel diseñado de la figura (atributo data-design-level en el HTML). Si viene, el
 # nivel deja de ser juicio del modelo: con temperatura 0 Qwen es estable, pero
@@ -82,31 +83,62 @@ def _local_fallback(complexity):
     }
 
 
-def _build_prompt(context, language):
+def _page_line(language, page_context):
+    page_context = page_context or {}
+    parts = []
+    if page_context.get("title"):
+        parts.append(("Page title: " if language == "English" else "Título de la página: ") + page_context["title"])
+    if page_context.get("section"):
+        parts.append(("Section: " if language == "English" else "Sección: ") + page_context["section"])
+    return (". ".join(parts) + "\n") if parts else ""
+
+
+def _build_prompt(context, language, chart_text="", page_context=None):
+    page = _page_line(language, page_context)
     # El prompt va en el mismo idioma que se espera en la respuesta: con el
     # prompt en inglés, el modelo contestaba en inglés aunque la página fuera
     # en español. El pie de la figura da contexto del documento y fija el idioma.
+    # Con los textos de una gráfica (chart_text) se le dan los valores exactos
+    # y se le pide explicar qué mide (magnitud, unidad o referencia): antes
+    # describía la línea ("la línea azul muestra…") sin explicar, p. ej., qué
+    # es una variación "respecto a 1900". Las fotos usan el prompt de siempre.
     if language == "English":
         caption = f"Figure caption: {context}\n" if context else ""
+        texts = (f"Text written in the chart, in document order (title, axes, values, labels): {chart_text}\n"
+                 "Use these exact values instead of reading them from the image.\n") if chart_text else ""
+        explanation = (
+            "at most 25 words, in English, explaining what the chart measures (the quantity, unit or "
+            "reference) and its main pattern, without just describing it"
+        ) if chart_text else (
+            "at most 25 words, in English, explaining the hardest term, concept "
+            "or data pattern shown, without just describing the image"
+        )
         return (
             "You are an assistant that helps people understand visual content on a web page.\n"
-            f"{caption}"
+            f"{page}{caption}{texts}"
             "Reply with ONLY a one-line JSON, no markdown: "
             '{"concept": "3 to 5 words", "complexity": "Low, Medium or High", '
-            '"explanation": "at most 25 words, in English, explaining the hardest term, concept '
-            'or data pattern shown, without just describing the image"}. '
+            f'"explanation": "{explanation}"}}. '
             'Use only what is visible in the image and the caption; do not invent data. '
             'If complexity is Low, "explanation" must be an empty string.'
         )
 
     caption = f"Pie de la figura: {context}\n" if context else ""
+    texts = (f"Textos escritos en la gráfica, en el orden del documento (título, ejes, valores, etiquetas): {chart_text}\n"
+             "Usa estos valores exactos en lugar de leerlos de la imagen.\n") if chart_text else ""
+    explanation = (
+        "máximo 25 palabras, en español, que expliquen qué mide la gráfica (la magnitud, la unidad o la "
+        "referencia) y su patrón principal, sin limitarse a describirla"
+    ) if chart_text else (
+        "máximo 25 palabras, en español, que expliquen lo más difícil de la imagen "
+        "(un término, concepto o patrón de los datos) sin limitarse a describirla"
+    )
     return (
         "Eres un asistente que ayuda a entender contenido visual de una página web en español.\n"
-        f"{caption}"
+        f"{page}{caption}{texts}"
         "Responde SOLO con un JSON en una línea, sin markdown: "
         '{"concept": "3 a 5 palabras", "complexity": "Low, Medium o High", '
-        '"explanation": "máximo 25 palabras, en español, que expliquen lo más difícil de la imagen '
-        '(un término, concepto o patrón de los datos) sin limitarse a describirla"}. '
+        f'"explanation": "{explanation}"}}. '
         'Usa solo lo que se ve en la imagen y el pie de figura; no inventes datos. '
         'Si la complejidad es Low, "explanation" debe ser una cadena vacía.'
     )
@@ -165,7 +197,7 @@ def _clean_design_level(design_level):
     return design_level if design_level in VALID_DESIGN_LEVELS else None
 
 
-def analyze_image(image_url, context="", design_level=None):
+def analyze_image(image_url, context="", design_level=None, page_context=None):
     design_level = _clean_design_level(design_level)
     if design_level == "Low":
         return _design_low_result()
@@ -199,10 +231,10 @@ def analyze_image(image_url, context="", design_level=None):
             "explanation": ""
         }
 
-    return _analyze_pil_image(image, ticket, context, design_level)
+    return _analyze_pil_image(image, ticket, context, design_level, page_context=page_context)
 
 
-def analyze_image_data(base64_data, context="", design_level=None):
+def analyze_image_data(base64_data, context="", design_level=None, chart_text="", page_context=None):
     """Analiza una imagen generada en el cliente (gráficas/tablas renderizadas a PNG),
     recibida como base64 sin pasar por una descarga de red (sin riesgo de SSRF)."""
     design_level = _clean_design_level(design_level)
@@ -232,7 +264,7 @@ def analyze_image_data(base64_data, context="", design_level=None):
             "explanation": ""
         }
 
-    return _analyze_pil_image(image, ticket, context, design_level)
+    return _analyze_pil_image(image, ticket, context, design_level, chart_text, page_context)
 
 
 def _generate(prompt, image_b64, ticket):
@@ -271,8 +303,9 @@ def _generate(prompt, image_b64, ticket):
     return "".join(parts), "ok"
 
 
-def _analyze_pil_image(image, ticket, context="", design_level=None):
+def _analyze_pil_image(image, ticket, context="", design_level=None, chart_text="", page_context=None):
     context = (context or "").strip()[:CONTEXT_MAX_CHARS]
+    chart_text = (chart_text or "").strip()[:CHART_TEXT_MAX_CHARS]
     language = detect_language(context) if context else "Spanish"
 
     if max(image.size) > MAX_IMAGE_SIDE:
@@ -290,7 +323,7 @@ def _analyze_pil_image(image, ticket, context="", design_level=None):
 
         try:
             started = time.time()
-            model_output, status = _generate(_build_prompt(context, language), image_b64, ticket)
+            model_output, status = _generate(_build_prompt(context, language, chart_text, page_context), image_b64, ticket)
 
             if status == "stale":
                 print("[VISION] Generación cortada (llegó una petición más nueva).")

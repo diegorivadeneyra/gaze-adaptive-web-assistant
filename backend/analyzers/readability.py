@@ -65,6 +65,13 @@ def count_syllables(word):
     return max(syllables, 1)
 
 
+def count_text_syllables(text):
+    """Sílabas totales de un texto: base del tiempo de lectura esperado
+    (decision_engine.READING_POLICY). Se usan sílabas y no palabras porque
+    las palabras técnicas, más largas, tardan más aunque se entiendan."""
+    return sum(count_syllables(w) for w in WORD_RE.findall(text))
+
+
 def compute_readability(text):
     """Devuelve {"inflesz", "level", "words", "sentences", "label"} o None si
     el texto es demasiado corto para que la fórmula sea confiable."""

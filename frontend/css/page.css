@@ -1,24 +1,4 @@
 /* ─── Variables adicionales de página ───────────────────────── */
-.difficulty-selector {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 24px;
-    padding: 20px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius);
-}
-
-.difficulty-selector h1 {
-    margin: 8px 0 2px;
-    font-size: 1.5rem;
-}
-
-.difficulty-selector p {
-    color: var(--text-secondary);
-}
 
 .difficulty-buttons {
     display: flex;
@@ -41,10 +21,6 @@
     background: var(--accent);
     border-color: var(--accent);
     color: #fff;
-}
-
-.difficulty-text[hidden] {
-    display: none;
 }
 :root {
     --page-bg:      #13151f;
@@ -84,21 +60,6 @@
     flex-shrink: 0;
 }
 
-.nav-links {
-    display: flex;
-    gap: 24px;
-}
-
-.nav-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.88rem;
-    font-weight: 500;
-    transition: color var(--transition);
-}
-
-.nav-links a:hover { color: var(--text-primary); }
-
 .nav-actions {
     display: flex;
     gap: 10px;
@@ -119,12 +80,6 @@
 }
 .btn-primary:hover { opacity: 0.85; }
 
-.btn-primary.btn-lg {
-    padding: 12px 28px;
-    font-size: 0.95rem;
-    border-radius: var(--radius);
-}
-
 .btn-outline {
     background: transparent;
     color: var(--text-secondary);
@@ -141,27 +96,6 @@
     color: var(--text-primary);
 }
 
-.btn-outline-sm {
-    background: transparent;
-    color: var(--accent);
-    border: 1px solid var(--tag-blue);
-    padding: 5px 12px;
-    border-radius: var(--radius-sm);
-    font-size: 0.78rem;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.btn-ghost {
-    background: transparent;
-    color: var(--text-secondary);
-    border: none;
-    padding: 12px 20px;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-.btn-ghost:hover { color: var(--text-primary); }
-
 .btn-icon {
     background: var(--card-bg);
     color: var(--text-secondary);
@@ -169,17 +103,6 @@
     padding: 6px 14px;
     border-radius: var(--radius-sm);
     font-size: 0.82rem;
-    cursor: pointer;
-}
-
-.btn-tag {
-    background: var(--tag-blue);
-    color: var(--tag-blue-text);
-    border: none;
-    padding: 4px 12px;
-    border-radius: 99px;
-    font-size: 0.75rem;
-    font-weight: 600;
     cursor: pointer;
 }
 
@@ -213,17 +136,6 @@
     line-height: 1.75;
     margin-bottom: 18px;
 }
-
-.hero-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-}
-
-.hero-actions { display: flex; gap: 8px; }
 
 .hero-image {
     width: 100%;
@@ -291,121 +203,6 @@
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-}
-
-/* ─── Stats ──────────────────────────────────────────────────── */
-.stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-}
-
-.stat-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.stat-number {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--accent);
-    letter-spacing: -0.03em;
-    font-family: var(--font-mono);
-}
-
-.stat-label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-}
-
-/* ─── Galería ────────────────────────────────────────────────── */
-.gallery-section {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius);
-    padding: 24px;
-}
-
-.gallery-section h3 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--card-border);
-}
-
-.gallery-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 12px;
-}
-
-.gallery-item {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.gallery-item--large {
-    grid-column: 1 / -1;
-}
-
-.gallery-item img {
-    width: 100%;
-    object-fit: cover;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--card-border);
-    display: block;
-    transition: border-color var(--transition);
-    cursor: crosshair;
-}
-
-.gallery-item--large img { max-height: 240px; }
-.gallery-item:not(.gallery-item--large) img { max-height: 140px; }
-
-.gallery-item img:hover { border-color: var(--accent); }
-
-.gallery-item figcaption {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-}
-
-/* ─── CTA block ──────────────────────────────────────────────── */
-.cta-block {
-    background: linear-gradient(135deg, #1a1f3a, #1e2440);
-    border: 1px solid rgba(79,142,247,0.3);
-    border-radius: var(--radius);
-    padding: 32px;
-    text-align: center;
-}
-
-.cta-block h3 {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 10px;
-}
-
-.cta-block p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    line-height: 1.6;
-}
-
-.cta-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    align-items: center;
 }
 
 /* ─── Columna lateral ────────────────────────────────────────── */
@@ -501,27 +298,6 @@
 }
 .trending-list a:hover { color: var(--text-primary); }
 
-/* Quote block */
-.quote-block {
-    border-left: 3px solid var(--accent);
-    padding-left: 14px;
-    margin: 0;
-}
-
-.quote-block p {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.7;
-    font-style: italic;
-    margin-bottom: 8px;
-}
-
-.quote-block cite {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    font-style: normal;
-}
-
 /* ─── Selector de nivel (navegación entre páginas) ────────────── */
 .level-nav {
     display: flex;
@@ -544,6 +320,9 @@
 }
 
 .level-link:hover { color: var(--text-primary); }
+
+/* Vuelta al índice, separada a la derecha de los niveles */
+.level-home { margin-left: auto; }
 
 .level-link.is-active {
     background: var(--accent);
@@ -726,3 +505,37 @@
     transition: color var(--transition);
 }
 .footer-links a:hover { color: var(--text-secondary); }
+
+/* ─── Marcado de dificultad (sesión experimental, marking.js) ───── */
+.marking-start {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 900;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+.marking-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 950;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 24px;
+    background: var(--nav-bg);
+    border-bottom: 2px solid var(--warning);
+    color: var(--text-primary);
+}
+.marking-mode .mark-candidate {
+    outline: 2px dashed var(--card-border);
+    outline-offset: 3px;
+    cursor: pointer;
+}
+.marking-mode .mark-candidate:hover { outline-color: var(--accent); }
+.marking-mode .mark-candidate.is-marked {
+    outline: 3px solid var(--warning);
+    background: rgba(251, 191, 36, 0.12);
+}

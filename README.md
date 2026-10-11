@@ -26,9 +26,50 @@ Se elige en `backend/app.py` con `GAZE_INPUT_SOURCE` (`INPUT_SOURCE_MOUSE` o
 Con `?debug=0` en la URL se oculta el panel de monitoreo (para las sesiones con
 participantes, de modo que no sesgue su atención).
 
+## Sesiones con participantes (registro)
+
+1. Correr `python app.py` (uno solo) y abrir `http://127.0.0.1:5000/` (el índice).
+2. En **Sesión experimental**, escribir el código del participante (`P01`, nunca
+   el nombre). Se sugiere la condición de cada página según el número (ver
+   sección 8); se puede cambiar. "Ocultar panel de monitoreo" viene marcado.
+3. **Iniciar sesión** lleva a la página fácil. Al terminar, volver al índice y
+   pulsar **Finalizar sesión**.
+
+Sin sesión iniciada las páginas funcionan en **modo libre**: ayuda siempre activa
+y nada se registra (para desarrollo y demos).
+
+En la condición **sin ayuda** el sistema funciona igual (mirada, análisis, LLM),
+pero no muestra el tooltip: registra la ayuda que *habría* mostrado
+(`help_suppressed`), para comparar los mismos elementos entre condiciones.
+
+Cada sesión queda en `data/sessions/` (fuera de git: son datos de participantes):
+
+| Archivo | Contenido |
+|---|---|
+| `<sesion>_events.jsonl` | Un evento por línea: `session_start` (plan, modelos, política de ayuda, commit del código), `page_enter` (condición, pantalla, parámetros de mirada, hash del texto de la página), `layout` (posición de cada elemento), `element_enter`/`element_exit` (dwell, número de visita), `analysis` (nivel, fuente, INFLESZ, nivel del modelo, explicación, latencia), `help_shown`/`help_suppressed`, `help_hidden` (tiempo visible y tiempo con la mirada dentro), `page_exit`, `session_end` |
+| `<sesion>_gaze.csv` | Muestras crudas (`t_ms, x, y, scroll_x, scroll_y, valid, page`), incluidas las inválidas del Tobii (parpadeos), para recalcular dwell y umbrales sin repetir participantes |
+
+`python evaluation/analyze_sessions.py` arma `data/sessions/resumen/`:
+`visitas.csv` (una fila por visita a un elemento), `ayudas.csv` (cada ayuda con
+su texto y una columna `calificacion` para calificarla a mano) y `paginas.csv`
+(una fila por participante y página, la unidad de comparación de la sección 8).
+
+Detalles: los eventos se envían cada 2 s y al salir de la página
+(`sendBeacon`); si el backend no responde se reintenta sin perder el orden. Los
+elementos se identifican por su ruta en el DOM (sirve en cualquier página sin
+anotarla); si se edita el contenido de una página cambian las rutas, por eso se
+registra el hash del texto. Con mouse se registran solo los movimientos reales
+(pocas muestras si el cursor está quieto); con el Tobii, ~90 Hz.
+**Probado** con dos sesiones de mouse (con y sin ayuda): eventos, tablas y
+supresión de la ayuda funcionaron; con el Tobii aún no (está prestado).
+
 ---
 
 ## Criterios para la experimentación
+
+> **Referencia rápida de todas las reglas** (cuándo se analiza, cómo se decide el
+> nivel, cuándo se muestra la ayuda, cómo se mide si sirve y cómo se comparan
+> mejoras): [`REGLAS_DEL_SISTEMA.md`](REGLAS_DEL_SISTEMA.md).
 
 Este apartado documenta **cómo se fijó cada parámetro y umbral** que decide si
 el sistema ofrece ayuda y cómo se distingue el nivel de dificultad. Cada valor
@@ -123,6 +164,19 @@ ajustaron** para que estas cifras salieran mejor; son los estándar.
 
 ### 2. Política de ayuda: cuándo se ofrece
 
+**Desde el 2026-10-11, en texto corrido decide la conducta de la persona**:
+la ayuda (disponible si el párrafo es Medium o High) se muestra solo si la
+persona está **atascada** (≥ 1.5 × su tiempo de lectura esperado, a más
+tardar esperado + 15 s) o **relee** un párrafo que ya había leído, sea al
+volver tras salir o **sin salir** (regresión: fijaciones en su primer tercio
+que suman ≥ 1.5 s). "Lo leyó" = en el último tercio con ≥ 40 % del tiempo esperado. El tiempo esperado usa sílabas, un factor por
+nivel y un **ritmo que arranca en el promedio general y se adapta a la persona**
+mientras lee párrafos fáciles. Reglas, parámetros y su origen:
+[`REGLAS_DEL_SISTEMA.md`](REGLAS_DEL_SISTEMA.md) §4; código:
+`decision_engine.py` (`READING_POLICY`) y `frontend/js/reading_model.js`.
+La tabla de abajo (tiempo fijo por nivel) sigue aplicando a **tablas, gráficas
+e imágenes**, y a todo si `/config` no responde.
+
 Definida en un solo lugar, `backend/analyzers/decision_engine.py`
 (`HELP_POLICY`); el frontend recibe los umbrales en la respuesta de `/analyze`.
 
@@ -173,6 +227,34 @@ Definida en un solo lugar, `backend/analyzers/decision_engine.py`
     medida de seguridad, sin afirmar que `json` a secas falle siempre. Si aun así
     llega como lista o numerada, se une en un párrafo.
   - Imágenes y gráficas: ≤ 25 palabras, usando solo lo visible y el pie de figura.
+  - **Gráficas SVG:** además se le pasan al modelo los **textos escritos en la
+    gráfica** (título, ejes, valores y etiquetas, en orden), y se le pide explicar
+    qué mide (magnitud, unidad o referencia) y su patrón principal. Motivo
+    (revisión del 2026-10-05): leyendo solo la imagen dijo "transporte e
+    industria" en orden invertido (8.2 vs 10.4) y describía la línea sin
+    explicarla. Las fotos usan el prompt de siempre (no tienen textos).
+- **Contexto de sección** (2026-10-06): con cada análisis de **texto y tablas**
+  se envía el subtítulo de la sección donde está el elemento
+  (`getSectionHeading` en `gaze.js`), presentado al modelo "solo como contexto".
+  Se probaron tres variantes contra "sin contexto" (sección 7) y se eligió esta
+  con un criterio fijado **antes** de medir: más cambios que mejoran que cambios
+  que empeoran, y ningún párrafo High sin ayuda. El **título de la página** no
+  se envía: jalaba al modelo hacia términos del título que no estaban en el
+  párrafo (el párrafo "Limitaciones", High, quedaba sin ayuda en 2/2 corridas).
+  Fotos y gráficas tampoco reciben contexto: empeoraba su ayuda. El backend
+  sigue aceptando `page_title` (y `getPageTitle` se registra en `page_enter`).
+  Los `<title>` de las páginas se cambiaron a títulos neutros para no mostrar
+  "Nivel Avanzado".
+- **Dónde NO se ofrece ayuda** (revisión del 2026-10-05, ver
+  `evaluation/results/revision_ayudas_20261005.md`):
+  - **Títulos (h1–h6):** son cortos, el modelo los juzgaba sin contexto (definió
+    mal "evidencia observacional") y sus términos se repiten en el texto de
+    abajo. Eran 6 de 26 ayudas. Regla general de HTML, sirve en cualquier página.
+  - **Si el término definido no aparece en el texto** (`concept_in_text`, cada
+    palabra de 4+ letras, sin tildes y tolerando la terminación): la ayuda se
+    bloquea (`help_blocked`) aunque el nivel sea Medium/High. Evita términos
+    inventados ("acumulación de energía" para una frase sobre ahorrar energía).
+    Probado contra los 11 conceptos de la revisión: 11/11 bien clasificados.
   - Limitación conocida: phi3 a veces define mal un término técnico (en pruebas
     anteriores dijo que la sensibilidad climática es "la temperatura máxima que
     el clima puede alcanzar") y puede escribir con erratas. Es un límite del
@@ -219,11 +301,34 @@ de pastel" para una tabla de coeficientes); con ellos explica los valores reales
 Mismo tema (cambio climático) en los tres niveles, para no confundir dificultad
 con familiaridad del tema; cambian la estructura y la densidad:
 
-- **Fácil** (`facil.html`): divulgación; imagen grande, viñetas, cuadro comparativo.
+- **Fácil** (`facil.html`): divulgación; imagen grande, viñetas, cuadro comparativo,
+  gráfica de 3 barras (hielo del Ártico en septiembre), viñetas de acciones y foto
+  de paneles solares.
 - **Intermedio** (`intermedio.html`): estilo enciclopedia; texto, tabla de 3 columnas,
-  gráfica de líneas, glosario.
+  gráfica de líneas, glosario, sección "El océano y el carbono" (2 párrafos,
+  gráfica de CO₂ en Mauna Loa y foto de corales blanqueados).
 - **Avanzado** (`avanzado.html`): estilo artículo científico; resumen y metodología
-  densos, tabla de coeficientes, gráfica de barras con valores, referencias.
+  densos, tabla de coeficientes, gráfica de barras con valores, referencias,
+  sección "Retroalimentaciones y forzamiento efectivo" (2 párrafos, gráfica de ERF
+  por componente con valores negativos, foto de una charca de deshielo).
+
+**Contenido agregado el 2026-10-05 (medido con INFLESZ antes de dejarlo):** cada
+bloque nuevo cae en el nivel de su página. Fácil: 30 palabras → 84.9 y viñetas
+72–81 (*Low*). Intermedio: 45.2 y 45.2 (*Medium*); hubo que reescribir dos
+versiones, que daban 37.0 (*High*) y 57.0 (*Low*). Avanzado: 5.7 y 3.7 (*High*).
+Las gráficas nuevas llevan `data-design-level` (Low / Medium / High según la
+página). Los datos son aproximados y así lo dicen sus pies de figura: hielo
+ártico de septiembre (≈ NSIDC), CO₂ de Mauna Loa (≈ NOAA), ERF por componente
+(≈ IPCC AR6). *Conviene verificar las cifras contra las fuentes antes del
+experimento.* Fotos nuevas, todas de **dominio público** en Wikimedia Commons
+(se descartó una de paneles con licencia CC BY porque exige un crédito visible,
+que el sistema analizaría como texto): `Carver, Route 44 Solar Array` (paneles),
+`Coral Bleaching in Hawaii.jpg`, `Summer Arctic Melt Pond-SHEBA.JPG`.
+
+**Para no revelar el nivel:** se quitaron los subtítulos ("Artículo de nivel
+intermedio · densidad media…", "Sección de nivel avanzado…") y el nivel del pie
+de página. *Siguen revelándolo* la barra de navegación (Fácil / Intermedio /
+Avanzado) y el título de la pestaña ("Nivel Avanzado · …").
 
 ### 6. Pendiente y alcance de lo documentado
 
@@ -233,7 +338,8 @@ con familiaridad del tema; cambian la estructura y la densidad:
   *percibida*. Plan: puntuación 1–5 por bloque de cada participante y correlación
   (Spearman) con INFLESZ y con el nivel del modelo.
 - No implementado: tiempo de lectura esperado según la longitud del bloque,
-  persistencia/registro de datos de sesión, rutina de calibración.
+  rutina de calibración. (El registro de sesiones ya está; ver "Sesiones con
+  participantes" y la sección 8.)
 
 ### 7. Registro de mejoras medidas (antes → después)
 
@@ -270,6 +376,84 @@ reconstruida en el script, sobre el mismo contenido real de las páginas.
 | | Longitud de la explicación, palabras (intermedio / avanzado) | 19 / 23 | **19 / 24** | 3 |
 | | Latencia por análisis de imagen (3 imágenes) | 2.6 s | **2.6 s** | 9 |
 | | *Descartado:* prompt con "explicación obligatoria", longitud en intermedio | 19 | 46 (cortada por tokens) | 3 |
+| Sin ayuda en títulos + término en el texto + subtítulos quitados *(2026-10-05; revisión con el sistema real en el navegador, mismos elementos de antes, corrida 1)* | Ayudas que se mostrarían | 26 | **17** | — |
+| | Innecesarias (títulos, subtítulos, notas, referencias) | 10 | **4** (notas y 1 referencia) | — |
+| | Incorrectas | 3 | **0** | — |
+| | Correctas y útiles | 5 | **7** | — |
+| Textos de la gráfica SVG al modelo de visión *(2026-10-05, `run_metrics --suite vision`)* | Gráfica de avanzado: la explicación menciona la unidad (CO₂ equivalente) | 0/3 | **3/3** | 3 |
+| | Gráfica de intermedio: explica el patrón (no solo "la línea azul muestra…") | 0/3 | **3/3** (*juicio del revisor*) | 3 |
+| | Gráfica de avanzado: orden de sectores invertido, en el navegador | 2/2 | **0/2** (ya no enumera el orden) | 2 |
+| | ⚠ Nuevo error: dice "toneladas" cuando la unidad es *giga*toneladas | 0/3 | 3/3 | 3 |
+| | Latencia por imagen | 2.6 s | **2.6 s** | 9 |
+| Contexto de página al modelo: título (`h1`) + sección *(2026-10-06, `python evaluation/ab_contexto.py --reps 2`; 51 elementos, cada uno sin y con contexto seguidos)* | Ayudas que se mostrarían (corrida 1 / 2) | 26 / 26 | 25 / 24 | 51 |
+| | Ayudas bloqueadas por término fuera del texto | 1 / 1 | **4 / 5** | 51 |
+| | Ayudas cuyo término está en el título de la página | 0 / 1 | **3 / 4** | — |
+| | Términos repetidos en la misma página | 1 / 1 | 1 / 1 | — |
+| | Latencia (llamadas al modelo) | 2.85 s | 2.83 s | — |
+| | *Juicio del revisor, cambios que se repiten en ambas corridas:* fotos de intermedio que reciben ayuda descriptiva | 0 | ⚠ 2 | 2 |
+| | …párrafo de Limitaciones (High) que se queda sin ayuda (eligió el término del título, bloqueado) | no | ⚠ sí | 2 |
+| | …Metodología: definición imprecisa de "modelo lineal generalizado" en vez de la correcta de "errores autocorrelacionados" | no | ⚠ sí | 2 |
+| | …fácil, "Recuerda": aparece una ayuda trivial ("acción diaria") | no | ⚠ sí | 2 |
+| | …Resumen de avanzado: define el término central (forzamiento radiativo neto / **ECS**) en vez de repetir "regresión multivariable" | no | ✓ sí | 2 |
+| | …Retroalimentaciones: sin contexto define "amplificación ártica" con el albedo invertido (corrida 2); con contexto define ERF correctamente | ✗ | ✓ | 2 |
+
+| Contexto, 3 variantes solo en texto y tablas *(2026-10-06, `ab_contexto.py --reps 2 --solo-texto --variantes sin seccion_texto titulo_seccion_texto`; 40 elementos)* | Ayudas (corrida 1 / 2): sin / solo sección / título + sección | 19 / 19 | **18 / 18** · 17 / 15 | 40 |
+| | Bloqueadas por término fuera del texto | 1 / 1 | **2 / 2** · 4 / 5 | 40 |
+| | Términos repetidos en la misma página | 1 / 1 | **0 / 0** · 0 / 0 | — |
+| | *Juicio del revisor, cambios frente a "sin" (2 corridas):* mejoran / empeoran | — | **8 / 2** · — | — |
+| | …párrafo High que se queda sin ayuda (Limitaciones) | no | **no** · ⚠ sí (2/2) | 2 |
+| | Latencia | 2.75 s | 2.74 s · 2.76 s | — |
+| Ayuda por conducta en texto (atascado / relectura, ritmo adaptativo) *(2026-10-11, `node tests/test_reading_model.js`: 35 párrafos reales × 6 perfiles de lector **simulados** × 20 semillas; escenario base / exigente)* | Ayuda innecesaria a quien entiende (rápido, promedio, lento) | 100 % (regla anterior) | **0 % / 0 %** | 20 × 3 |
+| | Cobertura a quien se traba (rápido, promedio, lento) | 100 % | **94–100 % / 97–98 %** | 20 × 3 |
+| | Demora desde que empieza el párrafo hasta la ayuda | ~3 s | ⚠ **21–36 s / 23–39 s** | — |
+| | Misma regla con ritmo promedio fijo (sin adaptar): lector rápido que se traba, cobertura | — | 34 % / 49 % | 20 |
+| | …lector lento que entiende, ayuda innecesaria | — | 7 % / ⚠ 72 % | 20 |
+| | *Descartado:* atascado a más tardar en esperado + 8 s: demora | — | −1 a −2 s; +8–15 % de ayudas innecesarias (exigente) | — |
+| Relectura **dentro** del párrafo + tope de atascado de 15 s *(2026-10-11; el usuario notó que la ayuda solo salía al salir y volver; `node tests/test_reading_model.js`, quien se traba alterna quedarse / releer volviendo / releer dentro; base / exigente)* | Cobertura a quien se traba | v1: 63–76 % / 88–96 % | **83–100 % / 91–98 %** | 20 × 3 |
+| | Ayuda innecesaria a quien entiende (incluye "revisa un dato 1 s") | 0 % | **0 % / 0–1 %** | 20 × 4 |
+| | Demora | 20–34 s / 22–39 s | 19–32 s / 21–36 s | — |
+| | Umbral de relectura en el párrafo: 0.4 s → 1.5 s, ayuda innecesaria a quien revisa | 38 % | **0 %** (cobertura 95 → 90 %, +1.3 s) | 20 |
+| | Tope de atascado +15 / +10 / +8 / +5 s: espera de quien solo se queda / ayuda innecesaria a lento (exigente) | — | 27 / 26 / 25 / 23 s · 1 / 10 / 15 / 24 % → **se dejó +15 s** | 20 |
+| | Navegador real: lee "Causas" 13 s y vuelve al inicio sin salir | sin ayuda (antes había que salir y volver) | **ayuda a los 1.5 s** | 1 |
+| | Navegador real: vuelve 1 s arriba a revisar un dato | — | **sin ayuda** | 1 |
+| "Leído" al 40 % (antes 70 %) + relectura en el párrafo medida con fijaciones *(2026-10-11; el usuario sintió ~2.5 lecturas antes de la ayuda)* | Lector rápido sin ritmo adaptado: lecturas hasta la ayuda (simulación) | 1.39 | **1.18** | 20 |
+| | …cobertura | 79 % | **86 %** | 20 |
+| | Ayuda innecesaria a quien entiende (base / exigente) | 0 % / 0–12 % | **0 % / 0–12 %** (sin cambio) | 20 × 5 |
+| | *Descartado:* bajar además los factores (1.15/1.3) / el umbral de atascado (1.3×): ayuda innecesaria en el exigente | — | 21–45 % / 53–75 % | 20 × 5 |
+| | Navegador real: lector rápido, lee "Causas" una vez y vuelve al inicio | ~2.2 lecturas (calculado) | **1.17 lecturas** | 1 |
+| | Métricas de fijación por visita registradas (cantidad, tiempo, media) | no | **sí** (`visitas.csv`) | 1 |
+| Prueba de punta a punta en el navegador (mouse, reloj controlado, backend y registro reales) | Ritmo adaptado leyendo rápido 5 párrafos fáciles | 140 ms/sílaba | **91** | 1 |
+| | "Recuerda" (Medium, esperado 3.3 s) con lector trabado: ayuda a los… | 2.0 s (regla anterior) | **4.9 s** (1.5 × esperado) | 1 |
+| | "Causas" (Medium) leído con fluidez en 11 s: ¿ayuda? | sí, a los 2 s | **no** | 1 |
+| | …al volver tras 7 s fuera (relectura): ayuda a los… | 0.5 s | **0.6 s** | 1 |
+| | Marcado → acierto / cobertura calculados en `paginas.csv` | — | funciona | 1 |
+
+Lectura de la ayuda por conducta: en la simulación deja de dar ayuda a quien no
+la necesita (antes 100 %) manteniendo casi toda la cobertura, y el ritmo
+adaptativo es lo que la sostiene con lectores rápidos y lentos. **Costo:** la
+ayuda llega más tarde (hay que esperar al menos el tiempo de lectura de la
+persona para saber que se trabó). **Límite:** los lectores son simulados y se
+traban de forma clara; con personas, el piloto (marcado → acierto y cobertura)
+dirá cuánto de esto se sostiene. Hallazgo de la prueba en el navegador: el
+tooltip de un párrafo puede tapar el inicio del siguiente y, mientras está
+visible, la mirada ahí cuenta como "leyendo el tooltip".
+
+Con "solo sección" mejoran (en ambas corridas): el Resumen define el término
+central (forzamiento radiativo neto) en vez de repetir "regresión multivariable";
+"Retroalimentaciones" deja de definir la amplificación ártica con el albedo al
+revés; la nota al pie y la definición repetida de "acidificación" quedan
+bloqueadas. Empeora: en fácil aparece una ayuda trivial ("acción diaria") en
+"Recuerda" (frase en el borde de Medium, INFLESZ 49.5). **Se adoptó "solo
+sección, solo texto".**
+
+Lectura de la primera medición del contexto (título + sección en todo): **resultado mixto**. El contexto acerca al
+modelo a los términos centrales del artículo (bueno en el Resumen de avanzado),
+pero también lo **jala hacia los términos del título** aunque no estén en el
+párrafo (el bloqueo `concept_in_text` los frena, y por eso esos párrafos se quedan
+sin ayuda), vuelve "elegibles" fotos que antes eran Low y hace más descriptivas
+las explicaciones de las gráficas. Una corrida anterior el mismo día
+(`contexto_20261006_183946_INVALIDA_gpu_ocupada.json`) **no es válida**: otro
+programa usaba la GPU y el modelo de visión excedía el tiempo límite.
 
 Notas de lectura: (1) en las filas de texto, "antes" para la copia y la longitud
 es la versión "dos partes" (la inmediatamente anterior); la versión de analogía
@@ -302,6 +486,73 @@ en `mediciones_historicas.csv`):
 Ideas de gráficas: barras agrupadas antes/después por mejora; latencia de visión
 por configuración (fp16 sola, fp16 con phi3, Q4); proporción de respuestas en
 español y de "Imagina" por versión de prompt.
+
+### 8. Plan de evaluación: ¿el sistema ayuda?
+
+Estado de cada punto: **definido** (decidido e implementado), **propuesto**
+(criterio razonable, a confirmar con la asesora) o **pendiente** (falta crearlo).
+
+**Diseño (definido): intra-sujeto.** Cada participante lee las tres páginas; cada
+página va *con* o *sin ayuda*. La condición se **contrabalancea** entre
+participantes con los 6 patrones de 1 o 2 páginas con ayuda (el índice sugiere
+el patrón según el número del participante: P01 → 1, P07 → 1 otra vez). Con
+participantes en **múltiplos de 6**, cada página queda con ayuda en la mitad de
+ellos, así que la diferencia de dificultad entre páginas no se confunde con la
+condición. En "sin ayuda" el sistema analiza igual y registra la ayuda que habría
+dado (comparación sobre los mismos elementos).
+
+**Orden de las páginas (propuesto):** fijo, fácil → intermedio → avanzado.
+Amenaza: las tres tratan el mismo tema, así que lo aprendido en una ayuda en la
+siguiente (y el cansancio recae en avanzado). Como la condición sí se
+contrabalancea, ese efecto se reparte entre ambas condiciones, pero no
+desaparece. Alternativa: rotar el orden, con el costo de que leer avanzado
+primero puede desanimar.
+
+**Qué se mide y de dónde sale:**
+
+| Pregunta | Medida | Fuente | Estado |
+|---|---|---|---|
+| **¿Se entiende mejor con ayuda?** (pregunta principal) | Puntaje en una prueba de comprensión por página | Cuestionario tras cada página | **Pendiente** (crear 4–6 preguntas por página, sobre todo de los bloques Medium/High) |
+| ¿Se percibe más fácil? | Dificultad percibida 1–5 por página (y por bloque, para la validez del nivel) | Cuestionario | **Pendiente** |
+| ¿Cambia la lectura? | Relecturas en elementos elegibles para ayuda; dwell medio en elegibles; tiempo en la página | `paginas.csv`, `visitas.csv` | **Definido** (ya se registra) |
+| **¿La ayuda llega a quien la necesita?** | Al terminar cada página el participante marca lo que le costó (`marking.js`): **acierto** = de los elementos con ayuda, % marcados; **cobertura** = de los marcados, % con ayuda. En "sin ayuda" cuenta la ayuda suprimida | `paginas.csv` | **Definido** (2026-10-11) |
+| ¿Se usa la ayuda? | % de ayudas *leídas* (≥ 500 ms con la mirada dentro del tooltip), tiempo visible | `ayudas.csv` | **Definido**; el umbral de 500 ms es criterio inicial. Solo tiene sentido con el Tobii (con mouse hay que mover el cursor al tooltip) |
+| ¿La ayuda es correcta? | Calificación de cada ayuda mostrada: correcta / imprecisa / incorrecta; acuerdo entre dos calificadores (kappa de Cohen) | Columna `calificacion` de `ayudas.csv` | **Propuesto** |
+| ¿Molesta o sirve? | Utilidad e intrusividad percibidas (Likert 1–5) | Cuestionario final | **Pendiente** |
+| ¿El nivel del sistema coincide con la dificultad percibida? | Correlación de Spearman entre dificultad percibida por bloque e INFLESZ / nivel del sistema | Cuestionario + `visitas.csv` | **Propuesto** (ya estaba en la sección 6) |
+
+**Importante:** el registro solo dice *cómo* se leyó. Para afirmar que el sistema
+**ayuda** hace falta la prueba de comprensión; sin ella, una ayuda podría cambiar
+la lectura (por ejemplo, menos relecturas) sin mejorar la comprensión.
+
+**Cómo se compara (propuesto):**
+- **Unidad de análisis:** participante × página (`paginas.csv`).
+- **Análisis principal:** modelo lineal mixto
+  `medida ~ condición + página + (1 | participante)`. *Condición* es el efecto
+  que interesa; *página* absorbe que avanzado es más difícil que fácil; el
+  efecto aleatorio absorbe que cada persona lee distinto. Para la dificultad
+  percibida (ordinal 1–5), la versión ordinal del modelo.
+- **Comprobación simple:** por participante, diferencia "con ayuda − sin ayuda"
+  de la medida estandarizada por página (z dentro de cada página, para que fácil
+  y avanzado sean comparables) y prueba de rangos con signo de Wilcoxon.
+- **Sobre los mismos elementos:** relecturas y dwell en cada elemento elegible,
+  con ayuda (`mostrada`) frente a sin ayuda (`suprimida`), entre participantes.
+- Reportar **tamaños de efecto con intervalos de confianza**, no solo valores p.
+- **Muestra:** con 6–12 participantes la potencia estadística es baja; los
+  resultados se presentan como **estudio exploratorio**. Si un efecto no sale
+  significativo, no prueba que el sistema no ayude.
+
+**Usos adicionales de la mirada cruda (definido que se guarda; análisis propuesto):**
+- *Sensibilidad de umbrales:* recalcular con `gaze.csv` + `layout` cuántas ayudas
+  se habrían disparado con dwell de 1000 / 2000 / 3000 ms para Medium, y
+  justificar (o ajustar) el 2000 ms con datos reales.
+- *Calidad del seguimiento:* % de muestras inválidas por sesión
+  (`muestras_invalidas_pct`); definir antes un criterio de exclusión (por ejemplo,
+  > 30 % inválidas) para no decidirlo a la vista de los resultados.
+
+**Falta decidir con la asesora:** número de participantes (múltiplo de 6), orden
+de las páginas, tiempo por página (libre o fijo), contenido de la prueba de
+comprensión y de los cuestionarios, y el criterio de exclusión.
 
 ### Referencias
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nivel Intermedio · Gaze Adaptive Web Assistant</title>
+    <title>Cambio climático: causas y evidencia observacional · EcoWiki</title>
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/page.css" />
 </head>
@@ -59,6 +59,7 @@
                 <a class="level-link" href="facil.html">Fácil</a>
                 <a class="level-link is-active" href="intermedio.html">Intermedio</a>
                 <a class="level-link" href="avanzado.html">Avanzado</a>
+                <a class="level-link level-home" href="index.html">← Inicio</a>
             </nav>
 
             <header class="navbar">
@@ -86,7 +87,6 @@
 
                     <section class="page-header">
                         <h1>Cambio climático: causas y evidencia observacional</h1>
-                        <p class="subtitle">Artículo de nivel intermedio · densidad media de información</p>
                     </section>
 
                     <div class="split-columns">
@@ -182,6 +182,66 @@
                             <p class="footnote">Notas de imagen: fotografía de archivo utilizada como referencia visual del retroceso glaciar.</p>
                         </div>
                     </div>
+
+                    <!-- Océano y carbono: texto + gráfica + foto -->
+                    <div class="split-columns" style="margin-top:20px;">
+                        <div style="display:flex; flex-direction:column; gap:20px;">
+                            <article class="content-section">
+                                <h2>El océano y el carbono</h2>
+                                <p>
+                                    El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades
+                                    humanas. Al disolverse en el agua, ese gas forma ácido carbónico y reduce el pH del mar,
+                                    un proceso conocido como acidificación oceánica.
+                                </p>
+                                <p>
+                                    La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus
+                                    esqueletos y conchas. Además, cuando el agua se calienta en exceso, los corales expulsan
+                                    las microalgas que les proporcionan color y alimento, y terminan blanqueándose.
+                                </p>
+                            </article>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:20px;">
+                            <div class="mini-chart" data-design-level="Medium">
+                                <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+                                    <text x="150" y="16" text-anchor="middle" font-size="11" font-weight="bold" style="fill:var(--text-primary)">CO₂ en la atmósfera (Mauna Loa)</text>
+                                    <text x="8" y="32" font-size="9" style="fill:var(--text-primary)">ppm</text>
+                                    <line x1="45" y1="113.3" x2="285" y2="113.3" style="stroke:var(--border); stroke-width:0.7" />
+                                    <line x1="45" y1="76.7" x2="285" y2="76.7" style="stroke:var(--border); stroke-width:0.7" />
+                                    <line x1="45" y1="40" x2="285" y2="40" style="stroke:var(--border); stroke-width:0.7" />
+                                    <line x1="45" y1="40" x2="45" y2="150" style="stroke:var(--text-secondary); stroke-width:1" />
+                                    <line x1="45" y1="150" x2="285" y2="150" style="stroke:var(--text-secondary); stroke-width:1" />
+                                    <text x="39" y="153" text-anchor="end" font-size="9" style="fill:var(--text-primary)">300</text>
+                                    <text x="39" y="116" text-anchor="end" font-size="9" style="fill:var(--text-primary)">340</text>
+                                    <text x="39" y="80" text-anchor="end" font-size="9" style="fill:var(--text-primary)">380</text>
+                                    <text x="39" y="43" text-anchor="end" font-size="9" style="fill:var(--text-primary)">420</text>
+                                    <polyline points="60,134.4 125,114.3 190,85.8 255,45.5" style="fill:none; stroke:var(--danger); stroke-width:2.5" />
+                                    <circle cx="60" cy="134.4" r="3.5" style="fill:var(--danger)" />
+                                    <circle cx="125" cy="114.3" r="3.5" style="fill:var(--danger)" />
+                                    <circle cx="190" cy="85.8" r="3.5" style="fill:var(--danger)" />
+                                    <circle cx="255" cy="45.5" r="3.5" style="fill:var(--danger)" />
+                                    <text x="60" y="126" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">317</text>
+                                    <text x="125" y="106" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">339</text>
+                                    <text x="190" y="77" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">370</text>
+                                    <text x="255" y="37" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">414</text>
+                                    <text x="60" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">1960</text>
+                                    <text x="125" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">1980</text>
+                                    <text x="190" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">2000</text>
+                                    <text x="255" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">2020</text>
+                                    <text x="165" y="186" text-anchor="middle" font-size="9" style="fill:var(--text-secondary)">Año</text>
+                                </svg>
+                                <p class="chart-caption">Fig. 2. Concentración media anual de CO₂ en la atmósfera medida en Mauna Loa, Hawái (ppm). Valores redondeados.</p>
+                            </div>
+
+                            <figure>
+                                <img
+                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Coral_Bleaching_in_Hawaii.jpg/500px-Coral_Bleaching_in_Hawaii.jpg"
+                                    alt="Arrecife de coral blanqueado en Hawái"
+                                />
+                                <figcaption>Corales blanqueados en Hawái tras un periodo de agua anormalmente cálida.</figcaption>
+                            </figure>
+                        </div>
+                    </div>
                 </main>
 
                 <aside class="side-column">
@@ -197,7 +257,7 @@
             </div>
 
             <footer class="page-footer">
-                <span>EcoWiki · Artículo de nivel intermedio</span>
+                <span>EcoWiki · Cambio climático</span>
                 <div class="footer-links">
                     <a href="facil.html">Fácil</a>
                     <a href="intermedio.html">Intermedio</a>
@@ -207,7 +267,10 @@
         </div>
     </div>
 
+    <script src="js/session.js"></script>
+    <script src="js/reading_model.js"></script>
     <script src="js/gaze.js"></script>
+    <script src="js/marking.js"></script>
     <script>
         const glossaryToggle = document.getElementById("glossary-toggle");
         const glossaryPanel  = document.getElementById("glossary-panel");

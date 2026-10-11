@@ -194,3 +194,181 @@ fecha,suite,variante,metrica,valor,n,notas
 2026-10-05 21:18,vision,es_con_pie_nivel_diseno_actual,avanzado_con_explicacion,1.0,3,
 2026-10-05 21:18,vision,es_con_pie_nivel_diseno_actual,avanzado_palabras_prom,24.0,3,
 2026-10-05 21:18,vision,es_con_pie_nivel_diseno_actual,avanzado_modelo_dijo,Low/Low/Low,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,responde_en_espanol,0.3333,9,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,json_valido,1.0,9,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,latencia_s_prom,2.8381,9,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,latencia_s_max,3.2766,9,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,nivel_Low,0.0,9,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,nivel_Medium,1.0,9,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,nivel_High,0.0,9,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,intermedio_nivel_final_es_Medium,1.0,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,intermedio_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,intermedio_palabras_prom,30.3333,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,intermedio_menciona_la_medida,1.0,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,intermedio_modelo_dijo,Medium/Medium/Medium,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,avanzado_nivel_final_es_High,0.0,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,avanzado_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,avanzado_palabras_prom,35.3333,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,avanzado_menciona_la_medida,0.0,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,avanzado_orden_incorrecto,1.0,3,
+2026-10-05 23:25,vision,en_prompt_original_sin_pie,avanzado_modelo_dijo,Medium/Medium/Medium,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,responde_en_espanol,1.0,9,
+2026-10-05 23:25,vision,es_prompt_sin_pie,json_valido,1.0,9,
+2026-10-05 23:25,vision,es_prompt_sin_pie,latencia_s_prom,2.636,9,
+2026-10-05 23:25,vision,es_prompt_sin_pie,latencia_s_max,2.7302,9,
+2026-10-05 23:25,vision,es_prompt_sin_pie,nivel_Low,0.0,9,
+2026-10-05 23:25,vision,es_prompt_sin_pie,nivel_Medium,1.0,9,
+2026-10-05 23:25,vision,es_prompt_sin_pie,nivel_High,0.0,9,
+2026-10-05 23:25,vision,es_prompt_sin_pie,intermedio_nivel_final_es_Medium,1.0,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,intermedio_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,intermedio_palabras_prom,19.0,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,intermedio_menciona_la_medida,1.0,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,intermedio_modelo_dijo,Medium/Medium/Medium,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,avanzado_nivel_final_es_High,0.0,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,avanzado_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,avanzado_palabras_prom,18.0,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,avanzado_menciona_la_medida,0.0,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,avanzado_orden_incorrecto,1.0,3,
+2026-10-05 23:25,vision,es_prompt_sin_pie,avanzado_modelo_dijo,Medium/Medium/Medium,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,responde_en_espanol,1.0,9,
+2026-10-05 23:25,vision,es_prompt_con_pie,json_valido,1.0,9,
+2026-10-05 23:25,vision,es_prompt_con_pie,latencia_s_prom,2.6414,9,
+2026-10-05 23:25,vision,es_prompt_con_pie,latencia_s_max,2.7317,9,
+2026-10-05 23:25,vision,es_prompt_con_pie,nivel_Low,0.3333,9,
+2026-10-05 23:25,vision,es_prompt_con_pie,nivel_Medium,0.6667,9,
+2026-10-05 23:25,vision,es_prompt_con_pie,nivel_High,0.0,9,
+2026-10-05 23:25,vision,es_prompt_con_pie,intermedio_nivel_final_es_Medium,1.0,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,intermedio_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,intermedio_palabras_prom,21.6667,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,intermedio_menciona_la_medida,1.0,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,intermedio_modelo_dijo,Medium/Medium/Medium,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,avanzado_nivel_final_es_High,0.0,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,avanzado_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,avanzado_palabras_prom,23.0,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,avanzado_menciona_la_medida,0.0,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,avanzado_orden_incorrecto,0.0,3,
+2026-10-05 23:25,vision,es_prompt_con_pie,avanzado_modelo_dijo,Low/Low/Low,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,responde_en_espanol,1.0,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,json_valido,1.0,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,latencia_s_prom,2.5757,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,latencia_s_max,2.7351,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,nivel_Low,0.0,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,nivel_Medium,0.6667,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,nivel_High,0.3333,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,intermedio_nivel_final_es_Medium,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,intermedio_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,intermedio_palabras_prom,19.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,intermedio_menciona_la_medida,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,intermedio_modelo_dijo,Medium/Medium/Medium,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,avanzado_nivel_final_es_High,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,avanzado_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,avanzado_palabras_prom,24.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,avanzado_menciona_la_medida,0.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,avanzado_orden_incorrecto,0.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno,avanzado_modelo_dijo,Low/Low/Low,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,responde_en_espanol,1.0,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,json_valido,1.0,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,latencia_s_prom,2.6186,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,latencia_s_max,2.7027,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,nivel_Low,0.0,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,nivel_Medium,0.6667,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,nivel_High,0.3333,9,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,intermedio_nivel_final_es_Medium,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,intermedio_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,intermedio_palabras_prom,22.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,intermedio_menciona_la_medida,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,intermedio_modelo_dijo,Low/Medium/Medium,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,avanzado_nivel_final_es_High,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,avanzado_con_explicacion,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,avanzado_palabras_prom,22.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,avanzado_menciona_la_medida,1.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,avanzado_orden_incorrecto,0.0,3,
+2026-10-05 23:25,vision,es_con_pie_nivel_diseno_textos_actual,avanzado_modelo_dijo,Low/Low/Low,3,
+2026-10-05 23:30,readability,min_15_palabras/facil,bloques,15,15,
+2026-10-05 23:30,readability,min_15_palabras/facil,resueltos_por_legibilidad,0.2667,15,
+2026-10-05 23:30,readability,min_15_palabras/facil,proporcion_Low_sin_llamar_al_modelo,0.2667,15,
+2026-10-05 23:30,readability,min_15_palabras/intermedio,bloques,9,9,
+2026-10-05 23:30,readability,min_15_palabras/intermedio,resueltos_por_legibilidad,0.7778,9,
+2026-10-05 23:30,readability,min_15_palabras/intermedio,proporcion_Low_sin_llamar_al_modelo,0.2222,9,
+2026-10-05 23:30,readability,min_15_palabras/avanzado,bloques,11,11,
+2026-10-05 23:30,readability,min_15_palabras/avanzado,resueltos_por_legibilidad,0.6364,11,
+2026-10-05 23:30,readability,min_15_palabras/avanzado,proporcion_Low_sin_llamar_al_modelo,0.0,11,
+2026-10-05 23:30,readability,min_8_palabras/facil,bloques,15,15,
+2026-10-05 23:30,readability,min_8_palabras/facil,resueltos_por_legibilidad,1.0,15,
+2026-10-05 23:30,readability,min_8_palabras/facil,proporcion_Low_sin_llamar_al_modelo,0.9333,15,
+2026-10-05 23:30,readability,min_8_palabras/intermedio,bloques,9,9,
+2026-10-05 23:30,readability,min_8_palabras/intermedio,resueltos_por_legibilidad,1.0,9,
+2026-10-05 23:30,readability,min_8_palabras/intermedio,proporcion_Low_sin_llamar_al_modelo,0.2222,9,
+2026-10-05 23:30,readability,min_8_palabras/avanzado,bloques,11,11,
+2026-10-05 23:30,readability,min_8_palabras/avanzado,resueltos_por_legibilidad,1.0,11,
+2026-10-05 23:30,readability,min_8_palabras/avanzado,proporcion_Low_sin_llamar_al_modelo,0.2727,11,
+2026-10-06 18:39,contexto_pagina,sin_contexto,ayudas_corrida1,30,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,sin_contexto,bloqueadas_corrida1,1,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,sin_contexto,repetidas_corrida1,7,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,sin_contexto,termino_del_titulo_corrida1,0,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,sin_contexto,latencia_s_corrida1,21.15,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,sin_contexto,ayudas_corrida2,26,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,sin_contexto,bloqueadas_corrida2,1,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,sin_contexto,repetidas_corrida2,2,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,sin_contexto,termino_del_titulo_corrida2,1,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,sin_contexto,latencia_s_corrida2,4.95,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,ayudas_corrida1,25,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,bloqueadas_corrida1,5,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,repetidas_corrida1,7,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,termino_del_titulo_corrida1,2,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,latencia_s_corrida1,19.28,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,ayudas_corrida2,26,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,bloqueadas_corrida2,4,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,repetidas_corrida2,2,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,termino_del_titulo_corrida2,4,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:39,contexto_pagina,con_contexto,latencia_s_corrida2,5.17,51,INVALIDA: GPU ocupada por otro programa (timeouts de vision)
+2026-10-06 18:46,contexto_pagina,sin_contexto,ayudas_corrida1,26,51,
+2026-10-06 18:46,contexto_pagina,sin_contexto,bloqueadas_corrida1,1,51,
+2026-10-06 18:46,contexto_pagina,sin_contexto,repetidas_corrida1,1,51,
+2026-10-06 18:46,contexto_pagina,sin_contexto,termino_del_titulo_corrida1,0,51,
+2026-10-06 18:46,contexto_pagina,sin_contexto,latencia_s_corrida1,2.85,51,
+2026-10-06 18:46,contexto_pagina,sin_contexto,ayudas_corrida2,26,51,
+2026-10-06 18:46,contexto_pagina,sin_contexto,bloqueadas_corrida2,1,51,
+2026-10-06 18:46,contexto_pagina,sin_contexto,repetidas_corrida2,1,51,
+2026-10-06 18:46,contexto_pagina,sin_contexto,termino_del_titulo_corrida2,1,51,
+2026-10-06 18:46,contexto_pagina,sin_contexto,latencia_s_corrida2,2.82,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,ayudas_corrida1,25,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,bloqueadas_corrida1,4,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,repetidas_corrida1,1,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,termino_del_titulo_corrida1,3,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,latencia_s_corrida1,2.83,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,ayudas_corrida2,24,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,bloqueadas_corrida2,5,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,repetidas_corrida2,1,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,termino_del_titulo_corrida2,4,51,
+2026-10-06 18:46,contexto_pagina,con_contexto,latencia_s_corrida2,2.82,51,
+2026-10-06 18:58,contexto_pagina,sin_contexto,ayudas_corrida1,19,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,sin_contexto,bloqueadas_corrida1,1,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,sin_contexto,repetidas_corrida1,1,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,sin_contexto,termino_del_titulo_corrida1,0,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,sin_contexto,latencia_s_corrida1,2.74,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,sin_contexto,ayudas_corrida2,19,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,sin_contexto,bloqueadas_corrida2,1,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,sin_contexto,repetidas_corrida2,1,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,sin_contexto,termino_del_titulo_corrida2,0,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,sin_contexto,latencia_s_corrida2,2.77,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,ayudas_corrida1,18,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,bloqueadas_corrida1,2,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,repetidas_corrida1,0,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,termino_del_titulo_corrida1,1,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,latencia_s_corrida1,2.75,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,ayudas_corrida2,18,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,bloqueadas_corrida2,2,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,repetidas_corrida2,0,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,termino_del_titulo_corrida2,1,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,seccion_texto,latencia_s_corrida2,2.73,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,ayudas_corrida1,17,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,bloqueadas_corrida1,4,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,repetidas_corrida1,0,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,termino_del_titulo_corrida1,1,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,latencia_s_corrida1,2.76,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,ayudas_corrida2,15,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,bloqueadas_corrida2,5,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,repetidas_corrida2,0,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,termino_del_titulo_corrida2,2,40,solo texto y tablas
+2026-10-06 18:58,contexto_pagina,titulo_seccion_texto,latencia_s_corrida2,2.75,40,solo texto y tablas

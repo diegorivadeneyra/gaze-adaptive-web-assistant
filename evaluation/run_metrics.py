@@ -317,14 +317,46 @@ def run_vision(prompt, image):
 DESIGN_LEVELS = {"gráfica intermedio": "Medium", "gráfica avanzado": "High"}
 
 
+def chart_text(page):
+    """Textos de la primera gráfica SVG de la página, igual que getChartText()
+    en gaze.js: en orden del documento, sin repetidos, unidos con " · "."""
+    import html as _html
+    source = (FRONTEND / f"{page}.html").read_text(encoding="utf-8")
+    svg = re.search(r'<div class="mini-chart"[^>]*>\s*<svg.*?</svg>', source, re.S).group(0)
+    seen, texts = set(), []
+    for raw in re.findall(r"<text[^>]*>(.*?)</text>", svg, re.S):
+        t = re.sub(r"\s+", " ", _html.unescape(re.sub(r"<[^>]+>", "", raw))).strip()
+        if t and t not in seen:
+            seen.add(t)
+            texts.append(t)
+    return " · ".join(texts)[:600]
+
+
+CHART_TEXTS = {"gráfica intermedio": chart_text("intermedio"), "gráfica avanzado": chart_text("avanzado")}
+# ¿La explicación menciona la medida de la gráfica (su referencia o unidad)?
+# Es un indicador grueso: mencionarla no garantiza explicarla bien.
+MEASURE_RE = {"gráfica intermedio": re.compile(r"1900|referencia|respecto", re.I),
+              "gráfica avanzado": re.compile(r"co₂|co2|equivalente|gt\b", re.I)}
+
+
+def wrong_order(explanation):
+    """Gráfica de avanzado: industria (10.4) > transporte (8.2). Error si las
+    nombra en el orden contrario."""
+    low = explanation.lower()
+    return "transporte" in low and "industria" in low and low.index("transporte") < low.index("industria")
+
+
 def suite_vision(reps):
     images = vision_images()
     # El tercer elemento indica si se aplica el nivel diseñado (data-design-level),
     # como hace el backend: prompt con explicación obligatoria y nivel fijado.
-    variants = [("en_prompt_original_sin_pie", lambda ctx: V_EN_ORIGINAL, False),
-                ("es_prompt_sin_pie", lambda ctx: IA._build_prompt("", "Spanish"), False),
-                ("es_prompt_con_pie", lambda ctx: IA._build_prompt(ctx, "Spanish"), False),
-                ("es_con_pie_nivel_diseno_actual", lambda ctx: IA._build_prompt(ctx, "Spanish"), True)]
+    variants = [("en_prompt_original_sin_pie", lambda ctx, name: V_EN_ORIGINAL, False),
+                ("es_prompt_sin_pie", lambda ctx, name: IA._build_prompt("", "Spanish"), False),
+                ("es_prompt_con_pie", lambda ctx, name: IA._build_prompt(ctx, "Spanish"), False),
+                ("es_con_pie_nivel_diseno", lambda ctx, name: IA._build_prompt(ctx, "Spanish"), True),
+                # Actual: además, los textos de la gráfica SVG (las fotos no tienen).
+                ("es_con_pie_nivel_diseno_textos_actual",
+                 lambda ctx, name: IA._build_prompt(ctx, "Spanish", CHART_TEXTS.get(name, "")), True)]
     run_vision(IA._build_prompt("", "Spanish"), images[0][1])  # calentamiento (carga del modelo)
     detail = []
     for variant, make, use_design in variants:
@@ -332,7 +364,7 @@ def suite_vision(reps):
         for name, img, ctx in images:
             design = DESIGN_LEVELS.get(name) if use_design else None
             for _ in range(reps):
-                raw, lat = run_vision(make(ctx), img)
+                raw, lat = run_vision(make(ctx, name), img)
                 parsed = extract_json(raw) or extract_partial_analysis(raw)
                 n = normalize_analysis(parsed, "") if parsed else {"concept": "", "explanation": "", "complexity": "?"}
                 english = IA._is_english(n["explanation"]) or IA._is_english(n["concept"])
@@ -358,6 +390,11 @@ def suite_vision(reps):
             add("vision", variant, f"{tag}_nivel_final_es_{designed}", sum(r["nivel"] == designed for r in cr) / len(cr), len(cr))
             add("vision", variant, f"{tag}_con_explicacion", sum(bool(r["explicacion"]) for r in cr) / len(cr), len(cr))
             add("vision", variant, f"{tag}_palabras_prom", sum(len(r["explicacion"].split()) for r in cr) / len(cr), len(cr))
+            add("vision", variant, f"{tag}_menciona_la_medida",
+                sum(bool(MEASURE_RE[chart].search(r["explicacion"])) for r in cr) / len(cr), len(cr))
+            if chart == "gráfica avanzado":
+                add("vision", variant, "avanzado_orden_incorrecto",
+                    sum(wrong_order(r["explicacion"]) for r in cr) / len(cr), len(cr))
             add("vision", variant, f"{tag}_modelo_dijo", "/".join(r["nivel_modelo"] for r in cr), len(cr))
         print(f"  visión [{variant}] n={n} español {1 - sum(r['ingles'] for r in runs)/n:.0%} | JSON ok {sum(r['json_ok'] for r in runs)/n:.0%} | "
               f"{sum(r['latencia'] for r in runs)/n:.1f}s prom | niveles "

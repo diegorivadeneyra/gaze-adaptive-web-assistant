@@ -18,6 +18,9 @@ UpgradeLog*.htm
 tobii5/
 tobiiCpp/
 
+# Datos de participantes (registro de sesiones): no se suben al repositorio
+data/
+
 # Borradores del documento de tesis
 *.pdf
 

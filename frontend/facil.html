@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nivel Fácil · Gaze Adaptive Web Assistant</title>
+    <title>El hielo del planeta se está derritiendo · EcoFácil</title>
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/page.css" />
 </head>
@@ -59,6 +59,7 @@
                 <a class="level-link is-active" href="facil.html">Fácil</a>
                 <a class="level-link" href="intermedio.html">Intermedio</a>
                 <a class="level-link" href="avanzado.html">Avanzado</a>
+                <a class="level-link level-home" href="index.html">← Inicio</a>
             </nav>
 
             <header class="navbar">
@@ -119,6 +120,58 @@
                         </div>
                     </article>
 
+                    <!-- Hielo del Ártico: texto + gráfica sencilla -->
+                    <article class="article-card">
+                        <div class="article-tag">En números</div>
+                        <h2>El hielo del Ártico en verano</h2>
+                        <p>
+                            Cada septiembre, al final del verano, el hielo del Ártico llega a su tamaño más pequeño
+                            del año. Hoy ese hielo ocupa más o menos la mitad que en 1980.
+                        </p>
+                        <div class="mini-chart" data-design-level="Low">
+                            <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+                                <text x="150" y="16" text-anchor="middle" font-size="11" font-weight="bold" style="fill:var(--text-primary)">Hielo del Ártico en septiembre</text>
+                                <text x="8" y="28" font-size="9" style="fill:var(--text-primary)">millones de km²</text>
+                                <line x1="45" y1="90" x2="285" y2="90" style="stroke:var(--border); stroke-width:0.7" />
+                                <line x1="45" y1="30" x2="285" y2="30" style="stroke:var(--border); stroke-width:0.7" />
+                                <line x1="45" y1="30" x2="45" y2="150" style="stroke:var(--text-secondary); stroke-width:1" />
+                                <line x1="45" y1="150" x2="285" y2="150" style="stroke:var(--text-secondary); stroke-width:1" />
+                                <text x="39" y="153" text-anchor="end" font-size="9" style="fill:var(--text-primary)">0</text>
+                                <text x="39" y="93" text-anchor="end" font-size="9" style="fill:var(--text-primary)">4</text>
+                                <text x="39" y="33" text-anchor="end" font-size="9" style="fill:var(--text-primary)">8</text>
+                                <rect x="70"  y="34.5" width="50" height="115.5" style="fill:var(--accent)" />
+                                <rect x="140" y="55.5" width="50" height="94.5"  style="fill:var(--accent)" />
+                                <rect x="210" y="91.5" width="50" height="58.5"  style="fill:var(--warning)" />
+                                <text x="95"  y="30" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">7.7</text>
+                                <text x="165" y="51" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">6.3</text>
+                                <text x="235" y="87" text-anchor="middle" font-size="9" font-weight="bold" style="fill:var(--text-primary)">3.9</text>
+                                <text x="95"  y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">1980</text>
+                                <text x="165" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">2000</text>
+                                <text x="235" y="166" text-anchor="middle" font-size="9" style="fill:var(--text-primary)">2020</text>
+                            </svg>
+                            <p class="chart-caption">El hielo del Ártico en septiembre, año por año. Los números son aproximados.</p>
+                        </div>
+                    </article>
+
+                    <!-- Qué podemos hacer: viñetas + foto -->
+                    <article class="article-card">
+                        <div class="article-tag">Ideas para casa</div>
+                        <h2>¿Qué podemos hacer?</h2>
+                        <ul class="bullet-list">
+                            <li>Apagar las luces y los aparatos que no estamos usando.</li>
+                            <li>Caminar o usar la bicicleta en lugar del auto cuando se pueda.</li>
+                            <li>Usar la energía del sol, por ejemplo con paneles solares.</li>
+                            <li>Comprar solo lo que necesitamos y reciclar lo que ya no usamos.</li>
+                        </ul>
+                        <figure>
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Carver%2C_Route_44_Solar_Array%2C_October_5%2C_2012_%288056764163%29.jpg/500px-Carver%2C_Route_44_Solar_Array%2C_October_5%2C_2012_%288056764163%29.jpg"
+                                alt="Campo con muchos paneles solares bajo el cielo azul"
+                            />
+                            <figcaption>Paneles solares en un campo. Con la luz del sol producen electricidad limpia.</figcaption>
+                        </figure>
+                    </article>
+
                 </main>
 
                 <aside class="side-column">
@@ -144,6 +197,9 @@
         </div>
     </div>
 
+    <script src="js/session.js"></script>
+    <script src="js/reading_model.js"></script>
     <script src="js/gaze.js"></script>
+    <script src="js/marking.js"></script>
 </body>
 </html>

@@ -1,22 +1,27 @@
-"""Política de ayuda: dado el nivel de dificultad de un elemento, decide si se
-ofrece ayuda y cuánto tiempo de atención sostenida (dwell) se exige antes de
-mostrarla. Es la ÚNICA fuente de estos umbrales: el frontend los recibe en la
-respuesta de /analyze y solo los obedece.
+"""Política de ayuda: es la ÚNICA fuente de los umbrales que deciden cuándo
+se muestra la ayuda. El frontend los recibe (en /analyze y en /config) y solo
+los obedece. Las reglas completas, explicadas, están en REGLAS_DEL_SISTEMA.md.
 
-  Low     -> sin ayuda.
-  Medium  -> ayuda REACTIVA: aparece tras 2 s de atención sostenida en el
-             elemento. Filtra el "hojeo" (pasar la vista rápido por varios
-             bloques) sin hacer esperar a quien sí está leyendo.
-  High    -> ayuda PROACTIVA: aparece desde el umbral base de 0.5 s (el
-             mismo que dispara el análisis), porque el contenido es muy denso
-             y esperar solo lo haría llegar tarde.
+Dos decisiones separadas:
+  1. ¿Hay ayuda disponible? La decide el CONTENIDO: nivel Low no tiene ayuda;
+     Medium y High sí (HELP_POLICY).
+  2. ¿Esta persona la necesita ahora? La decide su CONDUCTA de lectura
+     (READING_POLICY), en texto corrido:
+       - "atascado": lleva en el párrafo 1.5 veces el tiempo que le tomaría
+         leerlo (sílabas × su ritmo × factor del nivel), y a más tardar ese
+         tiempo + 15 s;
+       - "relectura": vuelve al párrafo después de haberlo leído (≥ 70 % del
+         tiempo esperado y la mirada llegó al final del párrafo);
+       - "relectura en el párrafo": ya lo leyó y, sin salir, vuelve a su
+         primer tercio.
+     El ritmo arranca en el promedio general y se adapta a la persona mientras
+     lee párrafos fáciles (sin medición previa).
 
-  Relectura -> si el usuario vuelve a un elemento que ya había mirado
-               (regresión, señal conocida de dificultad de lectura), la ayuda
-               de nivel Medium se ofrece desde 0.5 s en vez de 2 s.
+En tablas, gráficas e imágenes ("palabras" no tiene sentido ahí) se mantiene
+la regla anterior por tiempo fijo: Medium tras 2 s, High tras 0.5 s y 0.5 s si
+es una relectura.
 
-Los valores de dwell son criterios de diseño iniciales, a calibrar con los
-datos de las pruebas piloto (ver README, "Criterios para la experimentación").
+Todos los valores son criterios INICIALES, a calibrar con la prueba piloto.
 """
 
 BASE_DWELL_MS = 500
@@ -25,6 +30,56 @@ HELP_POLICY = {
     "Medium": {"mode": "brief",   "min_dwell_ms": 2000},
 }
 REVISIT_MIN_DWELL_MS = BASE_DWELL_MS
+
+READING_POLICY = {
+    # Ritmo promedio de partida. Lectura silenciosa en español ≈ 220 palabras
+    # por minuto (≈ 275 ms/palabra; Brysbaert, 2019, a verificar) y ~2 sílabas
+    # por palabra (medido en las páginas: 1.85 fácil, 2.31 intermedio, 2.48
+    # avanzado) -> ≈ 140 ms por sílaba.
+    "base_ms_per_syllable": 140,
+    # Cuánto más lento se lee, aunque se entienda, según el nivel del texto.
+    # Ojo: las sílabas ya alargan el tiempo de los textos difíciles (palabras
+    # más largas); el factor se suma a eso. A calibrar con el piloto.
+    "level_factor": {"Low": 1.0, "Medium": 1.3, "High": 1.6},
+    # Atascado: tiempo acumulado >= 1.5 × tiempo esperado, y a más tardar
+    # esperado + 15 s. Sin ese tope, en los párrafos largos de avanzado había
+    # que quedarse 43–68 s (lo notó el usuario al probarlo, 2026-10-11).
+    "stuck_ratio": 1.5,
+    "stuck_max_extra_ms": 15000,
+    # Relectura en el párrafo: tras leerlo, la mirada vuelve a su primer
+    # tercio y se queda ahí al menos 1.5 s. Con 0.4 s, quien solo vuelve un
+    # momento a revisar un dato recibía ayuda (38 % en la simulación); con
+    # 1.5 s, 0 %, a cambio de cobertura 95 → 90 % y +1.3 s de demora. Supone
+    # que releer una oración toma más que mirar un dato: a calibrar en el piloto.
+    "start_region": 1 / 3,
+    "reread_start_min_ms": 1500,
+    # Solo cuenta el tiempo con FIJACIÓN en el primer tercio (regresión, el
+    # indicador clásico de dificultad). Si el piloto muestra que el Tobii
+    # detecta pocas fijaciones al leer, poner False (cuenta cualquier mirada).
+    "reread_requires_fixation": True,
+    # "Lo leyó": la mirada está en el último tercio cuando ya acumuló >= 40 %
+    # del tiempo esperado. Con 70 %, un lector rápido cuyo ritmo aún no se
+    # adaptó necesitaba ~2 lecturas para que contara (lo notó el usuario);
+    # 40 % no agregó ayudas innecesarias en la simulación. Bajar también los
+    # factores o el umbral de atascado sí las agregaba (hasta 45–75 %).
+    "read_fraction": 0.4,
+    # Final del párrafo = su último tercio (vertical). Bloques de menos de
+    # ~3 líneas cuentan como "llegó al final" de inmediato.
+    "end_region": 1 / 3,
+    "end_min_height_px": 60,
+    # Salir menos de 5 s no corta la lectura (ruido del Tobii, mirar una
+    # gráfica que el texto menciona); salir más, sí.
+    "revisit_gap_ms": 5000,
+    # Ritmo adaptativo: se actualiza con párrafos Low leídos hasta el final,
+    # sin señales, cuyo tiempo observado esté entre 0.4 y 2 veces el
+    # esperado (fuera de eso es hojeo o distracción). Media móvil con peso
+    # 0.3, acotada entre 0.6 y 1.8 veces el ritmo base.
+    "pace_alpha": 0.3,
+    "pace_min_fraction": 0.4,
+    "pace_max_fraction": 2.0,
+    "pace_min_syllables": 20,
+    "pace_bounds": [0.6, 1.8],
+}
 
 
 def decide_action(complexity, needs_assistance):

@@ -6,10 +6,26 @@
     <title>Gaze Adaptive Web Assistant</title>
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/page.css" />
+    <style>
+        .session-card { max-width: 560px; margin-top: 20px; text-align: left; }
+        .session-card h3 { margin-bottom: 6px; }
+        .session-card .hint { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 14px; }
+        .session-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 10px 0; }
+        .session-row label { color: var(--text-primary); font-weight: 600; }
+        .session-row input[type="text"], .session-row select {
+            background: var(--bg-section); color: var(--text-primary);
+            border: 1px solid var(--card-border); border-radius: var(--radius-sm);
+            padding: 7px 10px; font: inherit; min-width: 170px;
+        }
+        .session-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+        .session-status { margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary); }
+        .session-status.is-error { color: var(--danger); }
+        .session-active { color: var(--success); font-weight: 600; }
+    </style>
 </head>
 <body>
-    <div class="page-wrapper" style="display:flex; align-items:center; justify-content:center; padding:48px;">
-        <div class="article-card" style="max-width:520px; text-align:center;">
+    <div class="page-wrapper" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 16px;">
+        <div class="article-card" style="max-width:560px; text-align:center;">
             <div class="article-tag">Gaze Adaptive Web Assistant</div>
             <h2 style="margin-bottom:16px;">Elige el nivel de contenido</h2>
             <p style="margin-bottom:24px;">
@@ -22,6 +38,160 @@
                 <a class="difficulty-button" href="avanzado.html">Avanzado</a>
             </div>
         </div>
+
+        <!-- Panel del investigador: sesión experimental (intra-sujeto) -->
+        <div class="article-card session-card">
+            <h3>Sesión experimental</h3>
+            <p class="hint">
+                Para el investigador. Sin sesión, las páginas funcionan en modo libre: ayuda activa y
+                nada se registra. Con sesión, cada página usa la condición asignada y todo queda en
+                <code>data/sessions/</code>.
+            </p>
+
+            <div id="session-form">
+                <div class="session-row">
+                    <label for="participant">Código del participante</label>
+                    <input type="text" id="participant" placeholder="P01" maxlength="20" autocomplete="off" />
+                </div>
+                <div class="session-row">
+                    <label for="cond-facil">Fácil</label>
+                    <select id="cond-facil"><option value="ayuda">Con ayuda</option><option value="sin_ayuda">Sin ayuda</option></select>
+                </div>
+                <div class="session-row">
+                    <label for="cond-intermedio">Intermedio</label>
+                    <select id="cond-intermedio"><option value="ayuda">Con ayuda</option><option value="sin_ayuda">Sin ayuda</option></select>
+                </div>
+                <div class="session-row">
+                    <label for="cond-avanzado">Avanzado</label>
+                    <select id="cond-avanzado"><option value="ayuda">Con ayuda</option><option value="sin_ayuda">Sin ayuda</option></select>
+                </div>
+                <div class="session-row">
+                    <label for="hide-debug">Ocultar panel de monitoreo</label>
+                    <input type="checkbox" id="hide-debug" checked />
+                </div>
+                <div class="session-actions">
+                    <button class="btn-primary" id="start-session" type="button">Iniciar sesión</button>
+                </div>
+            </div>
+
+            <div id="session-active" hidden>
+                <p>Sesión activa: <span class="session-active" id="session-label"></span></p>
+                <div class="session-actions">
+                    <a class="btn-primary" href="facil.html" style="text-decoration:none;">Ir a Fácil</a>
+                    <button class="btn-outline" id="end-session" type="button">Finalizar sesión</button>
+                </div>
+            </div>
+
+            <p class="session-status" id="session-status" role="status"></p>
+        </div>
     </div>
+
+    <script src="js/session.js"></script>
+    <script>
+        // Contrabalanceo de la condición por página (diseño intra-sujeto):
+        // los 6 patrones con 1 o 2 páginas con ayuda. Con participantes en
+        // múltiplos de 6, cada página queda "con ayuda" en la mitad de ellos.
+        const PAGES = ["facil", "intermedio", "avanzado"];
+        const PATTERNS = [
+            ["ayuda", "sin_ayuda", "sin_ayuda"],
+            ["sin_ayuda", "ayuda", "sin_ayuda"],
+            ["sin_ayuda", "sin_ayuda", "ayuda"],
+            ["sin_ayuda", "ayuda", "ayuda"],
+            ["ayuda", "sin_ayuda", "ayuda"],
+            ["ayuda", "ayuda", "sin_ayuda"]
+        ];
+
+        const participantInput = document.getElementById("participant");
+        const statusBox = document.getElementById("session-status");
+
+        // Cada participante empieza con el ritmo de lectura promedio: se borra
+        // el ritmo aprendido en la pestaña (gaze.js lo guarda entre páginas).
+        function resetLearnedPace() {
+            try { sessionStorage.removeItem("gazeReadingPace"); } catch (error) { /* nada que borrar */ }
+        }
+
+        function setStatus(message, isError = false) {
+            statusBox.textContent = message;
+            statusBox.classList.toggle("is-error", isError);
+        }
+
+        // Sugiere el patrón según el número del código (P01 → patrón 1, P07 → 1 de nuevo).
+        participantInput.addEventListener("input", () => {
+            const number = parseInt(participantInput.value.replace(/\D/g, ""), 10);
+            if (!number) return;
+            const pattern = PATTERNS[(number - 1) % PATTERNS.length];
+            PAGES.forEach((page, i) => { document.getElementById(`cond-${page}`).value = pattern[i]; });
+            setStatus(`Patrón sugerido ${((number - 1) % PATTERNS.length) + 1} de 6 (puedes cambiarlo).`);
+        });
+
+        function renderSessionState() {
+            const session = ExperimentSession.session;
+            document.getElementById("session-form").hidden = Boolean(session);
+            document.getElementById("session-active").hidden = !session;
+            if (session) {
+                const plan = PAGES.map(p => `${p}: ${session.plan[p] === "ayuda" ? "con ayuda" : "sin ayuda"}`).join(" · ");
+                document.getElementById("session-label").textContent = `${session.id} (${plan})`;
+            }
+        }
+
+        document.getElementById("start-session").addEventListener("click", async () => {
+            const participant = participantInput.value.trim();
+            if (!/^[A-Za-z0-9_-]{1,20}$/.test(participant)) {
+                setStatus("Escribe un código válido (p. ej. P01): letras, números, - o _.", true);
+                return;
+            }
+            const plan = Object.fromEntries(PAGES.map(p => [p, document.getElementById(`cond-${p}`).value]));
+            try {
+                const response = await fetch(`${SESSION_BACKEND}/session/start`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        participant,
+                        plan,
+                        client: {
+                            user_agent: navigator.userAgent,
+                            screen: { w: screen.width, h: screen.height, dpr: devicePixelRatio }
+                        }
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+                const saved = ExperimentSession.save({
+                    id: data.session_id,
+                    participant,
+                    plan,
+                    hideDebug: document.getElementById("hide-debug").checked,
+                    startedAt: Date.now()
+                });
+                if (!saved) throw new Error("El navegador no permite guardar la sesión (sessionStorage).");
+                resetLearnedPace();
+                window.location.href = "facil.html";
+            } catch (error) {
+                setStatus(`No se pudo iniciar la sesión: ${error.message}. ¿Está corriendo python app.py?`, true);
+            }
+        });
+
+        document.getElementById("end-session").addEventListener("click", async () => {
+            const session = ExperimentSession.session;
+            try {
+                await fetch(`${SESSION_BACKEND}/log`, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify({
+                        session_id: session.id,
+                        events: [{ type: "session_end", t: Date.now(), page: "index",
+                                   duration_ms: Date.now() - session.startedAt }]
+                    })
+                });
+            } catch (error) {
+                console.warn("[sesión] No se pudo registrar el fin de sesión.", error);
+            }
+            ExperimentSession.clear();
+            resetLearnedPace();
+            window.location.reload();
+        });
+
+        renderSessionState();
+    </script>
 </body>
 </html>

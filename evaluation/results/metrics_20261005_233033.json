@@ -1,0 +1,169 @@
+{
+ "fecha": "2026-10-05T23:30:33.581295",
+ "reps": 2,
+ "filas": [
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_15_palabras/facil",
+   "metrica": "bloques",
+   "valor": 15,
+   "n": 15,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_15_palabras/facil",
+   "metrica": "resueltos_por_legibilidad",
+   "valor": 0.2667,
+   "n": 15,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_15_palabras/facil",
+   "metrica": "proporcion_Low_sin_llamar_al_modelo",
+   "valor": 0.2667,
+   "n": 15,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_15_palabras/intermedio",
+   "metrica": "bloques",
+   "valor": 9,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_15_palabras/intermedio",
+   "metrica": "resueltos_por_legibilidad",
+   "valor": 0.7778,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_15_palabras/intermedio",
+   "metrica": "proporcion_Low_sin_llamar_al_modelo",
+   "valor": 0.2222,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_15_palabras/avanzado",
+   "metrica": "bloques",
+   "valor": 11,
+   "n": 11,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_15_palabras/avanzado",
+   "metrica": "resueltos_por_legibilidad",
+   "valor": 0.6364,
+   "n": 11,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_15_palabras/avanzado",
+   "metrica": "proporcion_Low_sin_llamar_al_modelo",
+   "valor": 0.0,
+   "n": 11,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_8_palabras/facil",
+   "metrica": "bloques",
+   "valor": 15,
+   "n": 15,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_8_palabras/facil",
+   "metrica": "resueltos_por_legibilidad",
+   "valor": 1.0,
+   "n": 15,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_8_palabras/facil",
+   "metrica": "proporcion_Low_sin_llamar_al_modelo",
+   "valor": 0.9333,
+   "n": 15,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_8_palabras/intermedio",
+   "metrica": "bloques",
+   "valor": 9,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_8_palabras/intermedio",
+   "metrica": "resueltos_por_legibilidad",
+   "valor": 1.0,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_8_palabras/intermedio",
+   "metrica": "proporcion_Low_sin_llamar_al_modelo",
+   "valor": 0.2222,
+   "n": 9,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_8_palabras/avanzado",
+   "metrica": "bloques",
+   "valor": 11,
+   "n": 11,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_8_palabras/avanzado",
+   "metrica": "resueltos_por_legibilidad",
+   "valor": 1.0,
+   "n": 11,
+   "notas": ""
+  },
+  {
+   "fecha": "2026-10-05 23:30",
+   "suite": "readability",
+   "variante": "min_8_palabras/avanzado",
+   "metrica": "proporcion_Low_sin_llamar_al_modelo",
+   "valor": 0.2727,
+   "n": 11,
+   "notas": ""
+  }
+ ],
+ "detalle": {}
+}

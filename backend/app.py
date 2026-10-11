@@ -7,6 +7,9 @@ from analyzers.text_analyzer import analyze_text
 from analyzers.decision_engine import decide_action
 from analyzers.image_analyzer import analyze_image, analyze_image_data
 from analyzers.llm_utils import TEXT_MODEL, VISION_MODEL, ensure_ollama_models
+from analyzers.decision_engine import HELP_POLICY, READING_POLICY, REVISIT_MIN_DWELL_MS
+from analyzers.readability import count_text_syllables
+import session_log
 import asyncio
 import base64
 import io
@@ -121,7 +124,9 @@ def _run_websocket_server():
 
 @app.route("/config", methods=["GET"])
 def get_config():
-    return jsonify({"input_source": _INPUT_SOURCE_NAMES[GAZE_INPUT_SOURCE]})
+    # La regla de lectura (READING_POLICY) también vive solo en el backend.
+    return jsonify({"input_source": _INPUT_SOURCE_NAMES[GAZE_INPUT_SOURCE],
+                    "reading_policy": READING_POLICY})
 
 
 @app.route("/gaze-latest", methods=["POST"])
@@ -138,6 +143,45 @@ def home():
     return send_file(FRONTEND_DIR / "index.html")
 
 
+# ── Registro de sesiones (ver backend/session_log.py) ──────────────
+MAX_LOG_BODY_BYTES = 5_000_000
+
+
+@app.route("/session/start", methods=["POST"])
+def session_start():
+    data = request.get_json(silent=True) or {}
+    try:
+        participant, plan = session_log.validate_start(data)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    server_info = {
+        "input_source": _INPUT_SOURCE_NAMES[GAZE_INPUT_SOURCE],
+        "text_model": TEXT_MODEL,
+        "vision_model": VISION_MODEL,
+        "help_policy": HELP_POLICY,
+        "revisit_min_dwell_ms": REVISIT_MIN_DWELL_MS,
+        "reading_policy": READING_POLICY,
+        "gaze_offset_y": GAZE_OFFSET_Y,
+    }
+    session_id = session_log.start_session(participant, plan, data.get("client"), server_info)
+    print(f"[SESION] Iniciada {session_id} · plan {plan}")
+    return jsonify({"session_id": session_id})
+
+
+@app.route("/log", methods=["POST"])
+def log_events():
+    # Llega como text/plain (también desde navigator.sendBeacon al salir de
+    # la página): así el navegador no hace la petición previa de CORS.
+    raw = request.get_data(cache=False, as_text=True)
+    if len(raw) > MAX_LOG_BODY_BYTES:
+        return jsonify({"error": "Lote demasiado grande"}), 413
+    try:
+        n_events, n_gaze = session_log.append(json.loads(raw))
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    return jsonify({"ok": True, "events": n_events, "gaze": n_gaze})
+
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
@@ -152,6 +196,15 @@ def analyze():
         context = data.get("context", "")
         # Nivel diseñado de la figura (data-level); el analizador lo valida.
         design_level = data.get("design_level")
+        # Textos escritos en una gráfica SVG (valores, ejes, etiquetas).
+        chart_text = data.get("chart_text", "")
+        chart_text = chart_text.strip()[:600] if isinstance(chart_text, str) else ""
+        # Contexto de la página: título del contenido y sección del elemento.
+        page_context = {
+            key: value.strip()[:150]
+            for key, value in (("title", data.get("page_title")), ("section", data.get("section")))
+            if isinstance(value, str) and value.strip()
+        }
 
         if not isinstance(content, str):
             return jsonify({"error": "Content must be a string"}), 400
@@ -186,15 +239,15 @@ def analyze():
         start_time = time.time()
 
         if content_type == "text":
-            analysis = analyze_text(content)
+            analysis = analyze_text(content, page_context=page_context)
         elif content_type == "table":
             # La legibilidad (INFLESZ) mide texto corrido; en una tabla el
             # nivel lo juzga el modelo.
-            analysis = analyze_text(content, use_readability=False)
+            analysis = analyze_text(content, use_readability=False, page_context=page_context)
         elif content_type == "image":
-            analysis = analyze_image(content, context, design_level)
+            analysis = analyze_image(content, context, design_level, page_context)
         elif content_type == "image_base64":
-            analysis = analyze_image_data(content, context, design_level)
+            analysis = analyze_image_data(content, context, design_level, chart_text, page_context)
         processing_time = round(time.time() - start_time, 2)
 
         # Llegó una petición más nueva mientras esta esperaba/generaba: el
@@ -233,6 +286,9 @@ def analyze():
             "llm_complexity": analysis.get("llm_complexity"),
             "inflesz": analysis.get("inflesz"),
             "inflesz_label": analysis.get("inflesz_label"),
+            "help_blocked": analysis.get("help_blocked"),
+            # Solo texto corrido: base del tiempo de lectura esperado.
+            "syllables": count_text_syllables(content) if content_type == "text" else None,
             "processing_time": processing_time
         })
 
