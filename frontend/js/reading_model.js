@@ -14,6 +14,10 @@
 //     primer tercio del párrafo con FIJACIONES que suman >= reread_start_min_ms
 //     (una regresión). Si reread_requires_fixation es false, cuenta cualquier
 //     mirada ahí (por si el Tobii detecta pocas fijaciones al leer).
+// Segundo nivel de ayuda: tras la primera ayuda, rearm() reinicia las señales.
+// La relectura en el párrafo exige volver a llegar al final y regresar al
+// inicio; "atascado" se mide desde la ayuda (level2_extra_fraction × esperado
+// más); la relectura al volver funciona igual.
 // "Lo leyó" = la mirada está en el último tercio cuando ya acumuló
 // >= read_fraction del tiempo esperado (llegar al final hojeando no cuenta).
 // La posición de la mirada dentro del párrafo llega como zona vertical:
@@ -41,7 +45,8 @@
             if (!st) {
                 st = { accMs: 0, reachedEnd: false, readComplete: false,
                        lastLeftAt: null, revisitPending: false, paceUsed: false,
-                       startRunMs: 0, internalReread: false };
+                       startRunMs: 0, internalReread: false,
+                       helpAcc: null, needsEndAgain: false };
                 states.set(key, st);
             }
             return st;
@@ -77,7 +82,10 @@
         function tick(key, dtMs, zone, info, onFixation = true) {
             const st = stateOf(key);
             st.accMs += dtMs;
-            if (zone === "final") st.reachedEnd = true;
+            if (zone === "final") {
+                st.reachedEnd = true;
+                st.needsEndAgain = false;
+            }
             const expected = expectedMs(info);
             if (expected && !st.readComplete && zone === "final"
                 && st.accMs >= p.read_fraction * expected) {
@@ -85,7 +93,7 @@
             }
             // Ya lo leyó y vuelve al inicio sin salir: suma el tiempo fijado
             // ahí (un salto breve o sin fijación puede ser ruido del Tobii).
-            if (st.readComplete && zone === "inicio") {
+            if (st.readComplete && !st.needsEndAgain && zone === "inicio") {
                 if (onFixation || !p.reread_requires_fixation) st.startRunMs += dtMs;
                 if (st.startRunMs >= p.reread_start_min_ms) st.internalReread = true;
             } else {
@@ -103,9 +111,11 @@
             // Umbral de "atascado": stuck_ratio × esperado; si se define
             // stuck_max_extra_ms, a más tardar esperado + ese margen (en
             // párrafos largos 1.5× puede ser casi un minuto).
-            const threshold = p.stuck_max_extra_ms
-                ? Math.min(p.stuck_ratio * expected, expected + p.stuck_max_extra_ms)
-                : p.stuck_ratio * expected;
+            const threshold = st.helpAcc !== null
+                ? st.helpAcc + p.level2_extra_fraction * expected
+                : p.stuck_max_extra_ms
+                    ? Math.min(p.stuck_ratio * expected, expected + p.stuck_max_extra_ms)
+                    : p.stuck_ratio * expected;
             if (st.revisitPending) return { type: "relectura", ratio, expected, accMs: st.accMs };
             if (st.internalReread) return { type: "relectura_en_el_parrafo", ratio, expected, accMs: st.accMs };
             if (st.accMs >= threshold) return { type: "atascado", ratio, expected, accMs: st.accMs };
@@ -138,8 +148,19 @@
             return { snapshot, paceUpdate };
         }
 
+        // Tras mostrar (o suprimir) la primera ayuda: las señales siguientes
+        // piden el segundo nivel.
+        function rearm(key) {
+            const st = stateOf(key);
+            st.helpAcc = st.accMs;
+            st.needsEndAgain = true;
+            st.internalReread = false;
+            st.startRunMs = 0;
+            st.revisitPending = false;
+        }
+
         return {
-            enter, tick, signal, leave, expectedMs,
+            enter, tick, signal, leave, expectedMs, rearm,
             get pace() { return pace; },
             isReadComplete: key => stateOf(key).readComplete,
             accMs: key => stateOf(key).accMs

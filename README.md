@@ -4,6 +4,9 @@ Sistema de asistencia web adaptativa basada en la atención visual del usuario.
 
 ## Instalación (otra computadora)
 
+> **Guía paso a paso para las pruebas con participantes** (instalación, cada sesión,
+> resultados y problemas frecuentes): [`GUIA_PRUEBAS.md`](GUIA_PRUEBAS.md).
+
 1. Instalar **Ollama** (el instalador, no es un paquete pip): https://ollama.com/download
 2. Instalar las dependencias de Python:
    ```bash
@@ -18,6 +21,21 @@ Sistema de asistencia web adaptativa basada en la atención visual del usuario.
    (`phi3` para texto y `qwen2.5vl:3b` para imágenes y gráficas, ~5.5 GB en total).
    Los modelos corren localmente: sin API key ni límites de uso.
 4. Abrir `http://127.0.0.1:5000/` en el navegador.
+
+**Con el Tobii 5 (laptop de las pruebas):**
+- Instalar el software del Tobii (**Tobii Experience**) y calibrar a cada persona ahí.
+- El puente `tobii_bridge/bin/gaze_server.exe` **ya viene compilado** en el
+  repositorio (versión Release, no necesita Visual Studio) y `app.py` lo abre
+  solo en otra ventana. Solo hay que recompilarlo si cambia `gaze_server.cpp`.
+- En `backend/app.py`: `GAZE_INPUT_SOURCE = INPUT_SOURCE_TOBII`.
+- Navegador en la pantalla del Tobii, con zoom al 100 %; la comprobación de 5
+  puntos al inicio de cada sesión ajusta lo demás (resolución, escala de Windows).
+- Primera vez: correr `python app.py` con internet para que Ollama descargue los
+  modelos (~5.5 GB); después funciona sin internet.
+
+No se suben a git (ver `.gitignore`): `data/` (sesiones y respuestas de
+participantes), `respaldos/` (diseño anterior, solo en la PC original) y
+material de referencia suelto.
 
 ## Fuente de coordenadas (mouse / Tobii 5)
 
@@ -38,9 +56,70 @@ participantes, de modo que no sesgue su atención).
 Sin sesión iniciada las páginas funcionan en **modo libre**: ayuda siempre activa
 y nada se registra (para desarrollo y demos).
 
-En la condición **sin ayuda** el sistema funciona igual (mirada, análisis, LLM),
-pero no muestra el tooltip: registra la ayuda que *habría* mostrado
-(`help_suppressed`), para comparar los mismos elementos entre condiciones.
+**Diseño final (2026-10-20, acordado con la asesora): se comparan DOS métodos,
+ayuda automática y ayuda a pedido** ("sin ayuda" ya no se usa en las pruebas;
+el código lo sigue aceptando). El **orden de las páginas es aleatorio** para
+cada participante. Métodos: la página **fácil siempre "a pedido"** (casi no tiene
+párrafos difíciles: con la ayuda automática nunca aparecería ayuda); **intermedia y
+avanzada al azar, una con cada método**, así cada persona prueba los dos. `index.html` sortea y permite volver a sortear o ajustar; el orden se
+guarda en la sesión (`order`), la navegación lo sigue (`marking.js`) y
+`paginas.csv` tiene la columna `posicion` (1, 2 o 3). Probado en el navegador.
+
+**Pantallas para el participante (2026-10-20):** al pulsar "Iniciar sesión", el
+investigador ve una **pantalla de bienvenida** que tapa los parámetros (las mismas
+instrucciones para todos, sin mencionar niveles ni métodos); el participante pulsa
+**Iniciar** y va a la primera página sorteada. Al terminar la última página, una
+**pantalla de cierre** pide responder las hojas «SUS» y «Post-experimento» (con un
+botón pequeño para que el investigador vea la sesión y la finalice).
+**Tooltip:** al apartar la mirada se mantiene 2.5 s (`TOOLTIP_HOLD_MS`) en todas las
+condiciones y con mouse o Tobii (antes, en "automática" con mouse se ocultaba al
+instante); si la mirada vuelve en ese lapso al mismo elemento (párrafo, tabla o
+gráfica), sigue visible. Probado con reloj controlado.
+
+**Pausa entre páginas (2026-10-20):** al pulsar "Terminé esta página" se cierra
+el tiempo de lectura (`reading_end`) y una pantalla de pausa **tapa el texto**
+para responder el cuestionario de esa página (la comprensión se responde sin ver
+el texto) y descansar; indica qué hoja del Excel responder. Durante la pausa **no
+se registra nada** (ni la mirada; medido: 0 muestras), solo su inicio y fin. Con
+"Listo" vuelve a la página para marcar lo que costó y luego pasa a la siguiente.
+`paginas.csv`: `duracion_ms` = solo la lectura; `pausa_ms` = la pausa. Las hojas
+del Excel tienen nombres neutros por tema ("Lectura - El hielo del planeta"…):
+"Página fácil" revelaba el nivel.
+
+Condiciones que existen en el sistema (desde el 2026-10-17):
+
+| Condición (valor en el plan) | Qué ve la persona |
+|---|---|
+| **Sin ayuda** (`sin_ayuda`) | Nada. El sistema funciona igual y registra la ayuda que *habría* mostrado (`help_suppressed`) |
+| **Automática** (`ayuda`) | La ayuda aparece sola cuando la conducta de lectura lo indica |
+| **A pedido** (`a_pedido`) | Apenas el análisis dice que hay ayuda, aparece un botón **💡 Ver ayuda** en el lugar del tooltip; al hacer clic se muestra la ayuda, y **📘 Más detalle** da la explicación ampliada. La regla automática corre en silencio (`help_suppressed`), para comparar lo que la persona pide con lo que el sistema detecta |
+
+Eventos nuevos: `help_offered` (botón mostrado) y `help_requested` (clic). En
+`paginas.csv`: `botones_ofrecidos`, `ayudas_pedidas`, `elementos_pedidos` y
+`pedidos_que_la_regla_detecto` (validación del detector); en `ayudas.csv`, la
+columna `pedida`. Probado en el navegador con una sesión de prueba (borrada).
+
+**Cuestionarios (Excel, 2026-10-20 según el protocolo CIEI-UTEC):** cada
+participante responde una copia de `evaluation/cuestionarios_participante.xlsx`
+(se regenera con `python evaluation/crear_cuestionarios_excel.py`): por página,
+comprensión + **NASA-TLX del Anexo 3** (6 dimensiones, 15 comparaciones por pares
+y definiciones); al final, **SUS** y el **post-experimento del Anexo 4** adaptado
+a 2 métodos (Método 1 = automática, Método 2 = a pedido). Una hoja oculta `_mapa`
+dice qué celda tiene cada respuesta. El archivo que se guarda como `data/respuestas/P01.xlsx` (el código igual
+al de la sesión; `data/` está fuera de git). `python evaluation/puntuar_cuestionarios.py`
+lee todos, corrige con las respuestas marcadas ✓ en `prueba_comprension.md` y
+genera en `data/sessions/resumen/`: `respuestas_detalle.csv` (por pregunta, con
+su bloque), `cuestionarios_paginas.csv` (comprensión total/literal/inferencial y
+NASA-TLX bruto y **ponderado** por página, con los pesos), `sus.csv`,
+`post_experimento.csv`, `post_metodos.csv` (una fila por método) y `avisos.txt`
+(respuestas vacías, empates en el orden de métodos, archivos de versiones
+anteriores). Probado con Excel de prueba: NASA ponderado calculado a mano 34.0 =
+34.0 del script.
+
+**Antes de cada sesión:** arrancar `python app.py` y esperar el mensaje
+`[WARMUP] Modelos listos.` (~20 s). Medido el 2026-10-17: sin ese
+precalentamiento, la primera ayuda salía con el mensaje genérico mientras phi3
+cargaba (el precalentamiento de texto no llegaba a phi3; corregido).
 
 Cada sesión queda en `data/sessions/` (fuera de git: son datos de participantes):
 
@@ -70,6 +149,8 @@ supresión de la ayuda funcionaron; con el Tobii aún no (está prestado).
 > **Referencia rápida de todas las reglas** (cuándo se analiza, cómo se decide el
 > nivel, cuándo se muestra la ayuda, cómo se mide si sirve y cómo se comparan
 > mejoras): [`REGLAS_DEL_SISTEMA.md`](REGLAS_DEL_SISTEMA.md).
+> **Resumen por componente con sus pruebas** (dwell time, I-DT, modelos,
+> latencias, qué está probado y qué no): [`RESUMEN_DEL_SISTEMA.md`](RESUMEN_DEL_SISTEMA.md).
 
 Este apartado documenta **cómo se fijó cada parámetro y umbral** que decide si
 el sistema ofrece ayuda y cómo se distingue el nivel de dificultad. Cada valor
@@ -215,6 +296,17 @@ Definida en un solo lugar, `backend/analyzers/decision_engine.py`
   - *Por qué `concept` es el término:* al hacer que el modelo elija primero un
     término concreto (antes elegía el tema general, p. ej. "cambio climático"
     en vez de "forzamiento radiativo"), la definición apunta a lo realmente difícil.
+  - **Elección del término** (2026-10-11, `TERM_SELECTION = "silabas"` en
+    `text_analyzer.py`): en texto corrido, el modelo propone hasta **3
+    términos** con su definición y el **código elige**: descarta los que no
+    están en el párrafo, los **símbolos o fórmulas** sueltos ("CO₂", "pH") y
+    los **ya explicados en la misma página** (el navegador envía la lista en
+    `defined_terms`), y se queda con el de la **palabra con más sílabas**
+    (misma idea que INFLESZ: más sílabas por palabra = más difícil). La ayuda
+    ampliada usa la misma función (`choose_terms`). Medido contra la versión
+    anterior y contra "candidatos en el orden del modelo" (sección 7 y
+    `evaluation/results/revision_terminos_20261011.md`). Tablas y texto en
+    inglés siguen con un solo término.
   - *Longitud:* se piden ≤ 35 palabras, pero phi3 **no respeta los topes**
     (medido: pedirle 30 dio explicaciones más largas que pedirle 40). El límite
     real se aplica en código: máx. 55 palabras, recortando en el último fin de
@@ -255,11 +347,49 @@ Definida en un solo lugar, `backend/analyzers/decision_engine.py`
     bloquea (`help_blocked`) aunque el nivel sea Medium/High. Evita términos
     inventados ("acumulación de energía" para una frase sobre ahorrar energía).
     Probado contra los 11 conceptos de la revisión: 11/11 bien clasificados.
+  - **Notas al pie y referencias** (2026-10-11): todo lo que esté dentro de
+    `.footnote`, `footer`, `cite`, `small` o roles de nota/bibliografía
+    (`NO_HELP_SELECTOR` en `gaze.js`) no se analiza ni recibe ayuda. Eran 4 de
+    las 17 ayudas innecesarias de la revisión del 2026-10-05. Regla de HTML
+    general, no de estas páginas.
+  - **Fotos** (2026-10-11): las 6 fotos llevan `data-design-level="Low"` (nivel
+    con que se diseñó el estímulo, igual que las gráficas): son ilustrativas,
+    no contienen datos que haya que entender. Con contexto, el modelo daba
+    ayudas descriptivas a fotos de intermedio (2/2 corridas, sección 7).
   - Limitación conocida: phi3 a veces define mal un término técnico (en pruebas
     anteriores dijo que la sensibilidad climática es "la temperatura máxima que
     el clima puede alcanzar") y puede escribir con erratas. Es un límite del
     tamaño del modelo, no del prompt; uno mayor no cabe junto a Qwen en 8 GB de
     VRAM.
+- **Segundo nivel: ayuda ampliada** (2026-10-11): si después de la primera
+  ayuda la persona **se vuelve a trabar** en el mismo párrafo, se muestra
+  (con 📘) una explicación más completa: 2–3 términos del párrafo con una
+  definición breve (sin repetir el del primer nivel; cada uno pasa por
+  `concept_in_text`) y "En pocas palabras:" la idea del párrafo en palabras
+  simples. Aquí **sí se reformula** el texto, a diferencia del primer nivel:
+  la persona ya mostró que no lo entendió ni con la definición. Se pide en
+  segundo plano (`POST /expand`, `backend/analyzers/expanded_help.py`) en
+  cuanto se muestra la primera ayuda, así que aparece al instante.
+  "Volverse a trabar" usa las mismas señales que el primer nivel, rearmadas
+  (`reading_model.rearm()`): atascado = **1.0 × esperado más** desde la
+  primera ayuda (`level2_extra_fraction`, *inicial*); relectura dentro del
+  párrafo = llegar otra vez al último tercio y volver al primero; relectura al
+  volver = igual que antes. Medición y revisión a mano:
+  `evaluation/results/revision_ayuda_ampliada_20261011.md` (sección 7).
+- **Ubicación del tooltip** (2026-10-11): `computeTooltipPlacement` en
+  `gaze.js` prueba, en orden, a la derecha, a la izquierda, debajo y arriba
+  del elemento, y elige la primera que no tape texto, tablas, imágenes ni
+  controles (un roce < 600 px² no cuenta); si todas tapan, la que menos.
+  Antes el tooltip podía tapar el inicio del párrafo siguiente, y mirar ahí
+  contaba como "leyendo el tooltip".
+- **La ayuda reaparece tras una salida corta** (2026-10-11): si la persona ya
+  tenía una ayuda en un párrafo, sale **menos de 5 s** y vuelve, la misma ayuda
+  vuelve a aparecer (`reshowHelpOnReturn` en `gaze.js`). Es coherente con la
+  regla de que una salida corta es la misma lectura (el tiempo sigue sumando).
+  Antes quedaba sin tooltip hasta trabarse otra vez durante todo su tiempo
+  esperado. Si sale **más de 5 s** y vuelve, eso es relectura y aparece el
+  segundo nivel. Se registra `help_reshown` con el mismo `help_id`
+  (`ayudas.csv`: columna `reapariciones`; los tiempos visibles se suman).
 
 ### 3. Captura de la mirada
 
@@ -270,9 +400,20 @@ Definida en un solo lugar, `backend/analyzers/decision_engine.py`
 | Entrega de muestras | push por WebSocket | El Tobii entrega ~90 Hz; el polling de 100 ms descartaba ~90 % de las muestras |
 | Fijación IDT obligatoria | solo con mouse | Con mirada real basta quedarse 500 ms en el mismo elemento: leer produce dispersión alta aunque sí se esté leyendo |
 | `ELEMENT_SWITCH_GRACE_MS` | 300 ms | Un cambio de elemento se confirma solo si dura; absorbe el ruido del sensor. *Diseño.* |
+| `GAZE_SMOOTH_MS` / `EDGE_MARGIN_PX` (solo Tobii, 2026-10-20) | **100 ms** / 40 px | El punto del Tobii temblaba en los bordes del párrafo y el sistema creía que la persona se había ido. Se usa la **mediana de los últimos 150 ms** (no cada punto suelto) y un **margen de 40 px** alrededor del elemento actual (si el punto cae en espacio en blanco cerca del borde, sigue contando; si entra en otro elemento, cambia). Simulación (`node tests/test_estabilidad_mirada.js`, ruido σ 25 px, 34 Hz): salidas falsas **28.5 → 0.1 por minuto**; cambio real al párrafo vecino detectado a los 0.4 s (antes saltaba en falso 1.3 s antes). *Inicial*: confirmar con el Tobii real. **Ajuste con la sesión piloto real (P00, reproducida con distintos valores):** demora al cambiar de elemento 0.34 s (sin suavizar) · 0.41 s (150 ms) · **0.36 s (100 ms)**; rebotes por minuto 2.6 · 1.0 · **1.3** → se eligió 100 ms. El contorno que sigue la mirada ya no tiene animación (sumaba 0.2 s de retraso visual) y no se muestra en sesión. |
 | `BLINK_GRACE_MS` | 450 ms | Un parpadeo normal dura ~100–400 ms. *Diseño.* |
-| `TOOLTIP_HOLD_MS` | 2500 ms | El tooltip sigue visible tras desviar la mirada, para poder terminar de leerlo. Ajustado por comentarios en pruebas piloto. |
-| `GAZE_OFFSET_Y` | −40 px | Corrección manual **provisional**: el punto detectado quedaba más abajo de lo real. Pendiente una rutina de calibración. |
+| `TOOLTIP_HOLD_MS` | **4000 ms** (antes 2500) | El tooltip sigue visible tras desviar la mirada. **Piloto P01 (2026-10-20, Tobii):** 6 de 15 tooltips se ocultaban a los ~3 s con 0–0.7 s de mirada registrada dentro: el tooltip no tenía margen (con ~41 px de error la mirada caía justo afuera) y, si la mirada pasaba por otro elemento camino al tooltip, leerlo no detenía la cuenta. Arreglado: margen de 40 px también en el tooltip (Tobii), **mientras se mira el tooltip no se oculta**, y 4 s de permanencia al apartar la vista. `help_hidden` registra ahora `tooltip_rect`. Probado en el navegador (reloj controlado). |
+| Mirada → página | **Automático** (2026-10-20) | Antes: píxeles de pantalla usados tal cual + `GAZE_OFFSET_Y` −40 px manual (el punto caía más abajo por las barras del navegador). Ahora el servidor envía la mirada como proporción de pantalla (0–1) y `frontend/js/gaze_mapping.js` la convierte según el equipo (resolución, escala de Windows, posición de la ventana y barras del navegador; con o sin F11). Lo que quede lo corrige la **comprobación de 5 puntos** al inicio de cada sesión (`calibracion.html`): una recta por eje, guardada por persona, y el error medido (`gaze_check`) para el criterio de exclusión (aceptable ≤ 60 px). Pruebas: `node tests/test_gaze_mapping.js` (PC con y sin F11, laptop al 125 %, ventana movida) y punta a punta con un Tobii simulado. **Falta probar con el Tobii real.** |
+
+**Para probar sin código:** `GAZE_SOURCE=tobii python app.py` arranca en modo Tobii sin cambiar `GAZE_INPUT_SOURCE`.
+
+**Puente automático (2026-10-20):** en modo Tobii, `app.py` abre `gaze_server.exe`
+en otra ventana (antes había que abrirlo a mano), cierra puentes viejos de una
+ejecución anterior y lo vuelve a abrir si se cae o se desconecta (acepta una sola
+conexión). Además, la conexión ya no se corta si el Tobii deja de enviar unos
+segundos (antes había un límite de 5 s al recibir). Probado con el Tobii real:
+~34 muestras por segundo, todas válidas; al reiniciar `app.py` el puente se
+renueva y los datos siguen llegando.
 
 Trade-off explícito: más tolerancia al ruido y a parpadeos significa reaccionar
 más lento a un cambio real de atención. El mapeo a píxeles asume navegador en
@@ -283,6 +424,7 @@ pantalla completa real (F11) en el monitor principal.
 | Uso | Modelo (Ollama, local) | Parámetros | Origen del valor |
 |---|---|---|---|
 | Texto y tablas | `phi3` (MIT) | temperatura 0.1, ≤ 200 tokens, entrada ≤ 900 caracteres | 400 → 900 caracteres no cambió la velocidad medida (3.2 s vs 3.1 s) y evita cortar lo técnico al final de párrafos de ~450 caracteres |
+| Ayuda ampliada (segundo nivel) | `phi3` | temperatura 0.1, ≤ 320 tokens, máx. 3 términos en el esquema (`maxItems`), mismo `num_ctx` (1024) que el nivel 1 | Medido: si `num_ctx` cambia entre peticiones, Ollama **recarga phi3 (~6 s)**; con 1536 la ampliada tardaba 8.9 s, con 1024 compartido 3.5 s. Peor caso: 735 tokens. Sin `maxItems` se cortaba el JSON (3/26 vacías) |
 | Imágenes y gráficas | `qwen2.5vl:3b`, Q4_K_M (Apache 2.0) | temperatura 0, ≤ 120 tokens, imagen ≤ 512 px | Probar 720 px no mejoró la lectura de datos |
 
 **Por qué Ollama (medido, RTX 3070 Ti de 8 GB):** Qwen en fp16 con Transformers
@@ -297,6 +439,19 @@ columnas el modelo daba explicaciones genéricas (p. ej. una analogía de "recet
 de pastel" para una tabla de coeficientes); con ellos explica los valores reales.
 
 ### 5. Diseño de los estímulos (las tres páginas)
+
+**Aspecto visual (2026-10-17):** cada página tiene un tema claro propio que
+imita un tipo de sitio real: **fácil** = revista de divulgación (EcoFácil,
+verde), **intermedio** = enciclopedia en línea (EcoWiki, estilo wiki) y
+**avanzado** = revista científica (J. Clim. Res., estilo artículo académico).
+Solo cambia el CSS (`frontend/css/temas.css`): el texto y la estructura HTML
+son los mismos, porque el sistema identifica cada bloque por su posición.
+En sesión se oculta la barra "Fácil / Intermedio / Avanzado", que revelaba el
+nivel al participante. **Verificado:** las 18 preguntas de comprensión siguen
+encontrando su bloque; el tooltip tapa contenido en 0/44 elementos (antes 3/44);
+las 4 gráficas se siguen analizando bien con fondo claro (2.7–3.0 s).
+Respaldo del diseño anterior y capturas: `respaldos/diseno_antes_2026-10-17/`
+(solo local, no está en git; para volver atrás, ver su `LEEME.md`).
 
 Mismo tema (cambio climático) en los tres niveles, para no confundir dificultad
 con familiaridad del tema; cambian la estructura y la densidad:
@@ -427,6 +582,34 @@ reconstruida en el script, sobre el mismo contenido real de las páginas.
 | | "Causas" (Medium) leído con fluidez en 11 s: ¿ayuda? | sí, a los 2 s | **no** | 1 |
 | | …al volver tras 7 s fuera (relectura): ayuda a los… | 0.5 s | **0.6 s** | 1 |
 | | Marcado → acierto / cobertura calculados en `paginas.csv` | — | funciona | 1 |
+| Tooltip ubicado sin tapar contenido (`computeTooltipPlacement`: derecha, izquierda, debajo, arriba) *(2026-10-11)* | Elementos de las páginas cuyo tooltip tapa contenido | 45/51 | **16/51** | 51 |
+| | Con el tooltip del nivel 2 (288 px de alto vs. 136 px), solo elementos que pueden recibir ayuda (ventana 1280×800) | — | **3/44** (los mismos 3 que con el nivel 1) | 44 |
+| Fotos con nivel diseñado Low + notas al pie y referencias sin ayuda (`NO_HELP_SELECTOR`) *(2026-10-11)* | Fotos que pueden recibir ayuda | 6 (el modelo decidía) | **0** (por diseño) | 6 |
+| | Notas al pie entre los párrafos Medium/High que pedían ayuda ampliada | 3/16 | **0** (no se analizan) | 16 |
+| Segundo nivel: ayuda ampliada (`/expand`) *(2026-10-11, `python evaluation/medir_ayuda_ampliada.py --reps 2`; 13 párrafos con ayuda × 2; detalle en `evaluation/results/revision_ayuda_ampliada_20261011.md`)* | Respuestas válidas: antes / después de `maxItems: 3` en el esquema | 23/26 (3 vacías: JSON cortado por tokens) | **26/26** | 26 |
+| | Latencia de la ampliada: `num_ctx` 1536 / 1024 compartido con el nivel 1 | 8.89 s (phi3 se recargaba ~6 s en cada cambio) | **3.47 s** (nivel 1 alternando: 2.95 s) | 26 |
+| | Con 2 o más términos / solo la frase simple | 19 / 4 | **23 / 3** | 26 |
+| | Repite el término del primer nivel | 0 | 0 | 26 |
+| | Palabras por explicación (promedio) | 60.3 | 61.2 | 26 |
+| | *Juicio del revisor:* correcta / imprecisa / incorrecta | — | **17 / 3 / 6** (avanzado: 7 / 2 / ⚠ 5 de 14) | 26 |
+| | Error 500 en `/expand` con "CO₂" (el `print` fallaba si la consola no es UTF-8) | 1 de 13 párrafos | **0** | 32 |
+| | Navegador real, "Causas" (esperado 18.0 s), sigue trabado tras la 1.ª ayuda (27.1 s): nivel 2 a los… | — | **40.7 s** acumulados (calculado 40.6), al instante y sin tapar el párrafo | 1 |
+| | Navegador real, "El océano absorbe…": relee dentro → 1.ª ayuda; lo relee completo a ritmo normal → nivel 2 | — | ⚠ **sale durante la segunda lectura** (0.75 × esperado < 1 lectura en Medium) | 1 |
+| Ayuda que reaparece tras una salida corta *(2026-10-11, navegador real, reloj controlado)* | Mouse: sale 2 s a otro párrafo y vuelve | sin tooltip | **reaparece** la misma ayuda (`help_reshown`, mismo `help_id`) | 1 |
+| | Sale 7 s y vuelve (relectura) | — | **segundo nivel** a los 0.1 s; la primera no reaparece | 1 |
+| | Tobii: sale 1 s (menos que los 2.5 s de espera) / 3 s y vuelve | — | sigue visible sin registro nuevo / reaparece (`help_reshown`) | 1 |
+| | `level2_extra_fraction` 0.75 → **1.0**: relectura completa a ritmo normal tras la 1.ª ayuda (prueba `node tests/test_reading_model.js`) | nivel 2 a los 16.3 s de 16.8 s | **sin nivel 2** | 1 |
+| Elección del término: 3 candidatos + filtros (símbolos, ya explicados en la página) + el de más sílabas *(2026-10-11, `python evaluation/ab_terminos.py --reps 2`; 13 párrafos en orden × 2; criterio fijado antes; detalle en `evaluation/results/revision_terminos_20261011.md`)* | Párrafos con ayuda | 24/26 | **26/26** | 26 |
+| | Términos repetidos en la misma página | 4 | **0** | 26 |
+| | *Juicio:* término relevante (el más difícil o central) | 14/22 | **16/22** | 22 |
+| | *Juicio:* definiciones incorrectas / imprecisas | 0 / 2 | **0** / 3 | 26 |
+| | Latencia del primer nivel | 2.82 s | 3.61 s | 26 |
+| | *Descartado:* candidatos en el orden del modelo (sin sílabas): incorrectas | 0 | ⚠ 2 | 26 |
+| | Resumen de avanzado: define la sensibilidad climática de equilibrio (término central) | 0/2 | **2/2** | 2 |
+| | ⚠ Forzamiento radiativo efectivo: elige un término secundario ("amplificadores térmicos") | 0/2 | 2/2 | 2 |
+| | Segundo nivel con la misma elección: incorrectas en **avanzado** | 5/14 | **2/14** | 14 |
+| | …correctas / imprecisas / incorrectas (total) | 17 / 3 / 6 | ⚠ 13 / 9 / 4 | 26 |
+| | …con 2 o más términos | 23 | ⚠ 12 (se descartan los ya explicados) | 26 |
 
 Lectura de la ayuda por conducta: en la simulación deja de dar ayuda a quien no
 la necesita (antes 100 %) manteniendo casi toda la cobertura, y el ritmo
@@ -436,7 +619,32 @@ persona para saber que se trabó). **Límite:** los lectores son simulados y se
 traban de forma clara; con personas, el piloto (marcado → acierto y cobertura)
 dirá cuánto de esto se sostiene. Hallazgo de la prueba en el navegador: el
 tooltip de un párrafo puede tapar el inicio del siguiente y, mientras está
-visible, la mirada ahí cuenta como "leyendo el tooltip".
+visible, la mirada ahí cuenta como "leyendo el tooltip" (resuelto el
+2026-10-11 con la ubicación del tooltip: 45/51 → 16/51 elementos tapados).
+
+Lectura de la ayuda ampliada: al medirla aparecieron tres fallas que no se
+veían con el código solo (error 500 por un carácter, JSON cortado, recarga del
+modelo) y se arreglaron. Queda bien en fácil e intermedio, pero **en avanzado
+5 de 14 explicaciones tienen un error** (sensibilidad climática definida en
+círculo, "CO₂: un gas que quema y quema"), y se repiten en ambas corridas: es
+el límite conocido de phi3 con términos muy técnicos. **Decidido
+(2026-10-11):** `level2_extra_fraction` de 0.75 a **1.0**: con 0.75, en
+párrafos Medium una sola relectura completa a ritmo normal tras la primera
+ayuda ya daba el nivel 2. **Costo:** quien de verdad sigue trabado lo recibe
+0.25 × esperado más tarde (~4–5 s en un párrafo Medium típico). El segundo
+nivel **se mantiene en avanzado**: por nivel de dificultad, sus explicaciones
+incorrectas no son más frecuentes en High que en Medium (2/14 vs. 2/12); lo
+que tiene más son explicaciones vagas (6/14 vs. 3/12).
+
+Lectura de la elección del término: en el primer nivel mejora sin costo en
+corrección (más términos centrales, ninguno repetido, ningún párrafo sin
+ayuda; +0.8 s que no se notan porque la ayuda llega ≥ 20 s después del
+análisis). En el segundo nivel arregla los errores que venían **del término**
+(avanzado 5 → 2 incorrectas: desaparecen "CO₂ quema y quema" y la
+sensibilidad climática en círculo), pero la calidad general **no mejora**
+(correctas 17 → 13, imprecisas 3 → 9; corridas distintas, comparación
+indicativa): lo que queda son definiciones y resúmenes imprecisos de phi3,
+un límite del modelo que la elección del término no resuelve.
 
 Con "solo sección" mejoran (en ambas corridas): el Resumen define el término
 central (forzamiento radiativo neto) en vez de repetir "regresión multivariable";
@@ -492,13 +700,14 @@ español y de "Imagina" por versión de prompt.
 Estado de cada punto: **definido** (decidido e implementado), **propuesto**
 (criterio razonable, a confirmar con la asesora) o **pendiente** (falta crearlo).
 
-**Diseño (definido): intra-sujeto.** Cada participante lee las tres páginas; cada
-página va *con* o *sin ayuda*. La condición se **contrabalancea** entre
-participantes con los 6 patrones de 1 o 2 páginas con ayuda (el índice sugiere
-el patrón según el número del participante: P01 → 1, P07 → 1 otra vez). Con
-participantes en **múltiplos de 6**, cada página queda con ayuda en la mitad de
-ellos, así que la diferencia de dificultad entre páginas no se confunde con la
-condición. En "sin ayuda" el sistema analiza igual y registra la ayuda que habría
+**Diseño (definido): intra-sujeto, 3 condiciones.** Cada participante lee las
+tres páginas **una vez**, cada una con una condición distinta: sin ayuda,
+automática o a pedido. Los 6 órdenes posibles se **contrabalancean** entre
+participantes (el índice sugiere el patrón según el número: P01 → 1, P07 → 1
+otra vez). Con participantes en **múltiplos de 6**, cada página tiene cada
+condición el mismo número de veces, así que la dificultad de la página no se
+confunde con la condición. Nota: la página fácil casi no tiene ayuda (1
+párrafo Medium), así que su condición casi no se nota. En "sin ayuda" el sistema analiza igual y registra la ayuda que habría
 dado (comparación sobre los mismos elementos).
 
 **Orden de las páginas (propuesto):** fijo, fácil → intermedio → avanzado.
@@ -512,7 +721,7 @@ primero puede desanimar.
 
 | Pregunta | Medida | Fuente | Estado |
 |---|---|---|---|
-| **¿Se entiende mejor con ayuda?** (pregunta principal) | Puntaje en una prueba de comprensión por página | Cuestionario tras cada página | **Pendiente** (crear 4–6 preguntas por página, sobre todo de los bloques Medium/High) |
+| **¿Se entiende mejor con ayuda?** (pregunta principal) | Puntaje en una prueba de comprensión por página (6 preguntas: 3 literales y 3 inferenciales, ligadas a su bloque) | Cuestionario tras cada página, antes del marcado | **Borrador** con fundamento y referencias verificadas: [`evaluation/prueba_comprension.md`](evaluation/prueba_comprension.md); falta revisión de la asesora y validación |
 | ¿Se percibe más fácil? | Dificultad percibida 1–5 por página (y por bloque, para la validez del nivel) | Cuestionario | **Pendiente** |
 | ¿Cambia la lectura? | Relecturas en elementos elegibles para ayuda; dwell medio en elegibles; tiempo en la página | `paginas.csv`, `visitas.csv` | **Definido** (ya se registra) |
 | **¿La ayuda llega a quien la necesita?** | Al terminar cada página el participante marca lo que le costó (`marking.js`): **acierto** = de los elementos con ayuda, % marcados; **cobertura** = de los marcados, % con ayuda. En "sin ayuda" cuenta la ayuda suprimida | `paginas.csv` | **Definido** (2026-10-11) |

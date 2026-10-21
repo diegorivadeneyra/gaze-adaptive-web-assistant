@@ -38,7 +38,16 @@ const ELEMENT_SWITCH_GRACE_MS = 300;
 // leerlo en vez de que desaparezca apenas la mirada se mueve. No afecta
 // la precisión de detección, solo cuánto dura en pantalla — es una mejora
 // "gratis" en ese sentido (no compite con nada del tracking).
-const TOOLTIP_HOLD_MS       = 2500;
+// 4 s (antes 2.5 s): en el piloto P01, 6 de 15 tooltips se ocultaban a los
+// ~3 s mientras la persona intentaba leerlos.
+const TOOLTIP_HOLD_MS       = 4000;
+// Estabilidad de la mirada del Tobii (2026-10-20): el punto temblaba en los
+// bordes de los párrafos y el sistema creía que la persona se había ido.
+// 100 ms (antes 150): con la sesión piloto real, 150 ms demoraba 0.41 s en
+// reconocer un cambio de elemento y 100 ms 0.36 s (antes del suavizado 0.34 s),
+// con la mitad de rebotes que sin suavizar (1.3 frente a 2.6 por minuto).
+const GAZE_SMOOTH_MS        = 100;   // mediana de los últimos 100 ms (~3 puntos a 33 Hz)
+const EDGE_MARGIN_PX        = 40;    // margen alrededor del elemento actual
 
 // ─── Estado ──────────────────────────────────────────────────
 let mouseX                  = 0;
@@ -270,6 +279,9 @@ function getDesignLevel(element) {
 // El resultado puede tener type: "text" | "image" | "chart".
 // "chart" se resuelve a una imagen (base64) solo al disparar el análisis,
 // para no re-renderizar el SVG en cada tick del polling.
+const NO_HELP_SELECTOR = ".footnote, footer, cite, small, [role='note'], [role='doc-footnote'], "
+    + "[role='doc-endnotes'], [role='doc-bibliography']";
+
 function extractContent(element) {
     if (!element) return null;
 
@@ -291,6 +303,11 @@ function extractContent(element) {
     // repiten en el texto de abajo. Revisión del 2026-10-05: 6 de 26 ayudas
     // eran sobre títulos.
     if (/^H[1-6]$/.test(element.tagName)) return null;
+
+    // Notas al pie y referencias bibliográficas: sin ayuda (la revisión del
+    // 2026-10-05 encontró 4 ayudas innecesarias ahí). Se reconocen por el
+    // marcado habitual de HTML para notas y bibliografía.
+    if (element.closest(NO_HELP_SELECTOR)) return null;
 
     if (TEXT_TAGS.includes(element.tagName)) {
         const text = element.innerText?.trim();
@@ -412,6 +429,60 @@ function clearHighlight() {
 // ─── Tooltip ─────────────────────────────────────────────────
 let tooltipHideTimer = null;
 
+// ─── Dónde se coloca el tooltip ───────────────────────────────
+// Antes iba siempre debajo del elemento y tapaba el inicio del párrafo
+// siguiente (y, mientras estaba visible, mirar ahí contaba como "leer el
+// tooltip"). Ahora se prueban, en orden, a la derecha, a la izquierda, debajo
+// y arriba del elemento, y se usa la primera posición que no tape otro
+// contenido; si ninguna está libre, la que menos tapa. Sirve en cualquier página.
+const TOOLTIP_GAP_PX = 14;
+// Un roce de menos de ~1 % del tooltip (un borde que toca) no cuenta como tapar.
+const TOOLTIP_TOUCH_PX2 = 600;
+const TOOLTIP_OBSTACLES = "p,li,h1,h2,h3,h4,h5,h6,table,img,svg,figcaption,.chart-caption,"
+    + "nav,header,footer,.widget,button,input,.note-box";
+
+function rectOverlap(a, b) {
+    const w = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+    const h = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+    return w > 0 && h > 0 ? w * h : 0;
+}
+
+// Devuelve { left, top, side, overlap } en coordenadas del documento.
+function computeTooltipPlacement(element, width, height) {
+    const r = element.getBoundingClientRect();
+    const sx = window.scrollX, sy = window.scrollY;
+    const el = { left: r.left + sx, top: r.top + sy, right: r.right + sx, bottom: r.bottom + sy };
+    const minX = sx + 8, maxX = sx + window.innerWidth - 8;
+    // A los costados se prueba alineado con el inicio y con el final del
+    // elemento (a la altura del inicio puede haber un recuadro lateral).
+    const candidates = [
+        { side: "derecha",   left: el.right + TOOLTIP_GAP_PX, top: el.top },
+        { side: "derecha",   left: el.right + TOOLTIP_GAP_PX, top: el.bottom - height },
+        { side: "izquierda", left: el.left - TOOLTIP_GAP_PX - width, top: el.top },
+        { side: "izquierda", left: el.left - TOOLTIP_GAP_PX - width, top: el.bottom - height },
+        { side: "debajo",    left: el.left, top: el.bottom + TOOLTIP_GAP_PX },
+        { side: "arriba",    left: el.left, top: el.top - TOOLTIP_GAP_PX - height },
+    ];
+    const obstacles = [...document.querySelectorAll(TOOLTIP_OBSTACLES)]
+        .filter(o => o !== element && !o.contains(element) && !element.contains(o)
+            && !o.closest(".debug-panel") && !o.closest("#adaptive-tooltip") && o.offsetParent !== null)
+        .map(o => {
+            const b = o.getBoundingClientRect();
+            return { left: b.left + sx, top: b.top + sy, right: b.right + sx, bottom: b.bottom + sy };
+        });
+    let best = null;
+    for (const c of candidates) {
+        // Debajo / arriba: se ajusta horizontalmente para no salirse de la ventana.
+        if (c.side === "debajo" || c.side === "arriba") c.left = Math.min(Math.max(c.left, minX), maxX - width);
+        if (c.left < minX || c.left + width > maxX || c.top < sy) continue;
+        const box = { left: c.left, top: c.top, right: c.left + width, bottom: c.top + height };
+        c.overlap = obstacles.reduce((sum, o) => sum + rectOverlap(box, o), 0);
+        if (c.overlap < TOOLTIP_TOUCH_PX2) return c;
+        if (!best || c.overlap < best.overlap) best = c;
+    }
+    return best || { ...candidates[4], left: Math.min(Math.max(el.left, minX), maxX - width), overlap: null };
+}
+
 function showTooltip(message, mode, element) {
     if (!message || !adaptiveTooltip) return;
     // Si había un ocultamiento pendiente (de un hideTooltipSoon anterior),
@@ -420,19 +491,16 @@ function showTooltip(message, mode, element) {
         clearTimeout(tooltipHideTimer);
         tooltipHideTimer = null;
     }
-    const icon = mode === "summary" ? "📋" : "💡";
+    const icon = mode === "ampliada" ? "📘" : mode === "summary" ? "📋" : "💡";
     adaptiveTooltip.innerText = `${icon} ${message}`;
     adaptiveTooltip.style.display = "block";
 
     if (element) {
-        const rect = element.getBoundingClientRect();
-        const top  = rect.bottom + window.scrollY + 10;
-        const left = Math.min(
-            Math.max(rect.left + window.scrollX, 12),
-            window.innerWidth - 320
-        );
-        adaptiveTooltip.style.top  = `${top}px`;
-        adaptiveTooltip.style.left = `${left}px`;
+        // Se mide con el texto ya puesto y luego se ubica sin tapar contenido.
+        const place = computeTooltipPlacement(element, adaptiveTooltip.offsetWidth, adaptiveTooltip.offsetHeight);
+        adaptiveTooltip.style.top  = `${place.top}px`;
+        adaptiveTooltip.style.left = `${place.left}px`;
+        adaptiveTooltip.dataset.side = place.side;
     }
 }
 
@@ -458,14 +526,14 @@ function hideTooltipSoon() {
     }, TOOLTIP_HOLD_MS);
 }
 
+// Con el Tobii, el tooltip también tiene margen (EDGE_MARGIN_PX): con ~40 px
+// de error, al leer cerca de sus bordes la mirada caía justo afuera.
 function isPointInsideTooltip(point) {
     if (!adaptiveTooltip || adaptiveTooltip.style.display === "none") {
         return false;
     }
-
-    const rect = adaptiveTooltip.getBoundingClientRect();
-    return point.x >= rect.left && point.x <= rect.right
-        && point.y >= rect.top && point.y <= rect.bottom;
+    const margin = inputSource === "tobii" ? EDGE_MARGIN_PX : 0;
+    return GazeMapping.insideRect(adaptiveTooltip.getBoundingClientRect(), point, margin);
 }
 
 // ─── Status dot ──────────────────────────────────────────────
@@ -518,6 +586,19 @@ function updateAnalysisPanel(diagnosis) {
     analysisResultBox.replaceChildren(concept, badge, assistance, source);
 }
 
+// Términos ya explicados en esta página (primer y segundo nivel): el backend
+// no los vuelve a elegir (text_analyzer.choose_terms). Medido con
+// evaluation/ab_terminos.py: sin esto se repetían 4 de 24 términos.
+// Se llena igual con y sin ayuda visible, para que el sistema funcione igual
+// en ambas condiciones.
+const definedTermsOnPage = [];
+
+function rememberDefinedTerms(terms) {
+    for (const term of terms) {
+        if (term && !definedTermsOnPage.includes(term)) definedTermsOnPage.push(term);
+    }
+}
+
 // ─── Comunicación con backend ─────────────────────────────────
 async function analyzeWithBackend(content, dwellTime) {
     activeRequestController?.abort();
@@ -537,7 +618,8 @@ async function analyzeWithBackend(content, dwellTime) {
                 context:      content.context || "",
                 design_level: content.designLevel || "",
                 chart_text:   content.chartText || "",
-                section:      content.section || ""
+                section:      content.section || "",
+                defined_terms: content.type === "text" ? definedTermsOnPage : []
             }),
             signal: requestController.signal
         });
@@ -630,6 +712,16 @@ function gazeZone(element, point) {
 // Ayuda visible en este momento (para registrar cuánto duró y cuánto se miró).
 let helpCounter = 0;
 let helpState   = null;  // { id, el, shownAt, gazeInsideMs }
+let wasOnTooltip = false;   // la mirada estaba en el tooltip en el tick anterior
+// Última ayuda mostrada en cada elemento (primer o segundo nivel), para que
+// reaparezca si la persona sale un momento y vuelve (ver reshowHelpOnReturn).
+const lastHelpShown = new WeakMap();   // elemento -> { id, el, message, mode }
+
+function tooltipRectOnPage() {
+    if (!adaptiveTooltip || adaptiveTooltip.style.display === "none") return null;
+    const r = adaptiveTooltip.getBoundingClientRect();
+    return { x: Math.round(r.left + scrollX), y: Math.round(r.top + scrollY), w: Math.round(r.width), h: Math.round(r.height) };
+}
 
 function closeHelpLog(reason) {
     if (!helpState) return;
@@ -638,7 +730,9 @@ function closeHelpLog(reason) {
         el: helpState.el,
         reason,
         visible_ms: Date.now() - helpState.shownAt,
-        gaze_inside_ms: helpState.gazeInsideMs
+        gaze_inside_ms: helpState.gazeInsideMs,
+        // Dónde estaba el tooltip (px de la página), para revisar con la mirada cruda.
+        tooltip_rect: tooltipRectOnPage()
     });
     helpState = null;
 }
@@ -651,6 +745,10 @@ function offerPendingHelp(dwellTime) {
     // Tablas, gráficas, imágenes: tiempo fijo según el nivel.
     let decision;
     const info = readingInfo(currentObservedElement);
+    if (info && helpLevelGiven.get(currentObservedElement)) {
+        pendingHelp = null;   // ya tuvo la primera ayuda: ahora decide el segundo nivel
+        return;
+    }
     if (info) {
         const sig = readingModel.signal(elementId(currentObservedElement), info);
         if (!sig) return;
@@ -676,9 +774,19 @@ function offerPendingHelp(dwellTime) {
         complexity: diagnosis.complexity,
         mode: diagnosis.mode,
         concept: diagnosis.concept,
-        explanation: diagnosis.explanation
+        explanation: diagnosis.explanation,
+        help_level: 1
     };
     pendingHelp = null;
+    rememberDefinedTerms([diagnosis.concept]);
+
+    // Texto con regla por conducta: se rearma el modelo (las señales siguientes
+    // piden el segundo nivel) y se pide la ayuda ampliada en segundo plano.
+    if (decision.rule === "conducta") {
+        readingModel.rearm(elementId(currentObservedElement));
+        helpLevelGiven.set(currentObservedElement, 1);
+        prefetchExpandedHelp(currentObservedElement, diagnosis.concept);
+    }
 
     // Condición "sin ayuda" (sesión intra-sujeto): todo el sistema funciona
     // igual, pero el tooltip no se muestra; se registra la ayuda que se
@@ -692,6 +800,161 @@ function offerPendingHelp(dwellTime) {
     showTooltip(diagnosis.explanation, diagnosis.mode, currentObservedElement);
     ExperimentSession.log("help_shown", helpEvent);
     helpState = { id: helpEvent.help_id, el: helpEvent.el, shownAt: Date.now(), gazeInsideMs: 0 };
+    lastHelpShown.set(currentObservedElement, { id: helpEvent.help_id, el: helpEvent.el,
+                                                message: diagnosis.explanation, mode: diagnosis.mode });
+}
+
+// Salida corta (< revisit_gap_ms, 5 s) y vuelta al mismo párrafo: es la misma
+// lectura (el tiempo sigue sumando), así que la ayuda que ya tenía vuelve a
+// aparecer en vez de esperar a que se trabe otra vez (decidido el 2026-10-11:
+// con el tooltip oculto, quien volvía enseguida quedaba sin ayuda hasta la
+// señal del segundo nivel). Se registra como "help_reshown" con el mismo
+// help_id: no cuenta como una ayuda nueva.
+function reshowHelpOnReturn(element, readingEvent) {
+    const last = lastHelpShown.get(element);
+    if (!last || readingEvent !== "continua" || !ExperimentSession.helpEnabled) return;
+    showTooltip(last.message, last.mode, element);   // cancela un ocultamiento pendiente
+    if (helpState && helpState.id === last.id) return;   // no llegó a ocultarse
+    closeHelpLog("reemplazada");
+    ExperimentSession.log("help_reshown", { help_id: last.id, el: last.el });
+    helpState = { id: last.id, el: last.el, shownAt: Date.now(), gazeInsideMs: 0 };
+}
+
+// ─── Condición "a pedido" ──────────────────────────────────────
+// En vez de esperar a la conducta, apenas el análisis dice que hay ayuda se
+// muestra (en el mismo lugar del tooltip) un botón "Ver ayuda". Si la persona
+// hace clic, ve la ayuda; debajo, "Más detalle" da la explicación ampliada.
+// La regla automática sigue corriendo en silencio y registra como
+// "help_suppressed" dónde habría dado la ayuda: así se compara lo que pide la
+// persona con lo que detecta el sistema.
+let askState = null;   // { element, diagnosis, level }
+
+if (adaptiveTooltip && ExperimentSession.onDemand) {
+    adaptiveTooltip.classList.add("on-demand");
+    adaptiveTooltip.addEventListener("click", event => {
+        const button = event.target.closest("button[data-ask]");
+        if (button && askState) requestHelp(button.dataset.ask);
+    });
+}
+
+function renderTooltipHTML(element, html) {
+    if (tooltipHideTimer) { clearTimeout(tooltipHideTimer); tooltipHideTimer = null; }
+    adaptiveTooltip.innerHTML = html;
+    adaptiveTooltip.style.display = "block";
+    const place = computeTooltipPlacement(element, adaptiveTooltip.offsetWidth, adaptiveTooltip.offsetHeight);
+    adaptiveTooltip.style.top  = `${place.top}px`;
+    adaptiveTooltip.style.left = `${place.left}px`;
+    adaptiveTooltip.dataset.side = place.side;
+}
+
+function escapeHTML(text) {
+    return String(text).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+
+function offerHelpButton(element, diagnosis) {
+    if (askState && askState.element === element && adaptiveTooltip.style.display !== "none") return;
+    closeHelpLog("reemplazada");
+    askState = { element, diagnosis, level: 0 };
+    renderTooltipHTML(element, '<button type="button" class="help-ask-btn" data-ask="1">💡 Ver ayuda</button>');
+    ExperimentSession.log("help_offered", { el: elementId(element), complexity: diagnosis.complexity });
+}
+
+async function requestHelp(level) {
+    const { element, diagnosis } = askState;
+    const key = elementId(element);
+    const canExpand = diagnosis && isTextElement(element) && readingInfo(element);
+    if (level === "1") {
+        prefetchExpandedHelp(element, diagnosis.concept);
+        rememberDefinedTerms([diagnosis.concept]);
+        const more = canExpand ? '<button type="button" class="help-ask-btn" data-ask="2">📘 Más detalle</button>' : "";
+        renderTooltipHTML(element, `<div>${escapeHTML(`${diagnosis.mode === "summary" ? "📋" : "💡"} ${diagnosis.explanation}`)}</div>${more}`);
+        logRequestedHelp(element, { help_level: 1, concept: diagnosis.concept, explanation: diagnosis.explanation,
+                                    complexity: diagnosis.complexity, mode: diagnosis.mode });
+        askState.level = 1;
+        return;
+    }
+    renderTooltipHTML(element, '<div>📘 Preparando la explicación…</div>');
+    const result = await expandedHelp.get(element);
+    if (askState?.element !== element) return;
+    if (!result || result.error || !result.explanation) {
+        ExperimentSession.log("help_level2_unavailable", { el: key, error: result?.error ?? "vacía", requested: true });
+        renderTooltipHTML(element, `<div>${escapeHTML(`💡 ${diagnosis.explanation}`)}</div>`);
+        return;
+    }
+    rememberDefinedTerms(result.terms.map(t => t.term));
+    renderTooltipHTML(element, `<div>${escapeHTML(`📘 ${result.explanation}`)}</div>`);
+    logRequestedHelp(element, { help_level: 2, terms: result.terms.map(t => t.term), explanation: result.explanation,
+                                complexity: diagnosis.complexity, mode: "ampliada" });
+    askState.level = 2;
+}
+
+function logRequestedHelp(element, data) {
+    closeHelpLog("reemplazada");
+    const helpEvent = { rule: "a_pedido", signal: "clic", requested: true,
+                        help_id: `${ExperimentSession.pageKey}-${++helpCounter}`, el: elementId(element),
+                        dwell_ms: Date.now() - observationStartTime, ...data };
+    ExperimentSession.log("help_requested", { el: helpEvent.el, help_level: data.help_level, help_id: helpEvent.help_id });
+    ExperimentSession.log("help_shown", helpEvent);
+    helpState = { id: helpEvent.help_id, el: helpEvent.el, shownAt: Date.now(), gazeInsideMs: 0 };
+}
+
+// ─── Segundo nivel de ayuda (explicación ampliada) ─────────────
+// Si la persona se vuelve a trabar en un párrafo después de la primera ayuda
+// (relectura o atascado otra vez), se muestra una explicación más completa:
+// 2–3 términos del párrafo y la idea en palabras simples
+// (backend/analyzers/expanded_help.py). Se pide en segundo plano apenas se da
+// la primera ayuda, para tenerla lista.
+const EXPAND_URL = BACKEND_URL.replace("/analyze", "/expand");
+const helpLevelGiven = new WeakMap();   // elemento -> 1 o 2
+const expandedHelp   = new WeakMap();   // elemento -> promesa del resultado
+let level2Busy = false;
+
+function prefetchExpandedHelp(element, alreadyDefined) {
+    if (expandedHelp.has(element)) return;
+    const content = extractContent(element);
+    if (!content || content.type !== "text") return;
+    expandedHelp.set(element, fetch(EXPAND_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: content.value, section: getSectionHeading(element),
+                               already_defined: alreadyDefined || "",
+                               defined_terms: definedTermsOnPage })
+    }).then(r => r.json()).catch(() => ({ error: "sin conexión" })));
+}
+
+async function offerLevel2(element, sig, dwellTime) {
+    if (level2Busy || !expandedHelp.has(element)) return;
+    level2Busy = true;
+    try {
+        const result = await expandedHelp.get(element);
+        if (currentObservedElement !== element) return;   // ya se fue: se ofrecerá en otra señal
+        const key = elementId(element);
+        readingModel.rearm(key);
+        helpLevelGiven.set(element, 2);
+        if (!result || result.error || !result.explanation) {
+            ExperimentSession.log("help_level2_unavailable", { el: key, error: result?.error ?? "vacía" });
+            return;
+        }
+        const helpEvent = {
+            rule: "conducta", signal: sig.type, ratio: Math.round(sig.ratio * 100) / 100,
+            expected_ms: Math.round(sig.expected), acc_ms: Math.round(sig.accMs),
+            help_id: `${ExperimentSession.pageKey}-${++helpCounter}`, el: key, dwell_ms: dwellTime,
+            mode: "ampliada", help_level: 2, terms: result.terms.map(t => t.term),
+            discarded_terms: result.discarded_terms, explanation: result.explanation
+        };
+        rememberDefinedTerms(helpEvent.terms);
+        if (!ExperimentSession.helpEnabled) {
+            ExperimentSession.log("help_suppressed", helpEvent);
+            return;
+        }
+        closeHelpLog("reemplazada");
+        showTooltip(result.explanation, "ampliada", element);
+        ExperimentSession.log("help_shown", helpEvent);
+        helpState = { id: helpEvent.help_id, el: key, shownAt: Date.now(), gazeInsideMs: 0 };
+        lastHelpShown.set(element, { id: helpEvent.help_id, el: key, message: result.explanation, mode: "ampliada" });
+    } finally {
+        level2Busy = false;
+    }
 }
 
 // ─── Proceso principal ────────────────────────────────────────
@@ -706,10 +969,14 @@ async function processObservation() {
             : `Movimiento · dispersión: ${idt.dispersion?.toFixed(0)}px`;
 
     // Obtener elemento actual independientemente de si hay fijación
-    // Si hay fijación usamos el centroide, si no usamos última posición conocida
+    // Si hay fijación usamos el centroide; si no, con el Tobii, el punto
+    // SUAVIZADO (mediana de los últimos GAZE_SMOOTH_MS: quita el temblor del
+    // sensor); con mouse, la última posición.
+    const smoothed = inputSource === "tobii"
+        ? GazeMapping.smoothPoint(gazePoints, Date.now(), GAZE_SMOOTH_MS) : null;
     const referencePoint = idt.isFixation
         ? idt.centroid
-        : { x: mouseX, y: mouseY };
+        : (smoothed || { x: mouseX, y: mouseY });
 
     // Margen de parpadeo (solo en modo Tobii): si hace poco que llegó la
     // última lectura VÁLIDA, un parpadeo en curso no debe resetear nada —
@@ -726,13 +993,34 @@ async function processObservation() {
     const isReadingTooltip = !trackingLost
         && currentObservedElement
         && isPointInsideTooltip(referencePoint);
-    const candidateElement = isReadingTooltip
+    let candidateElement = isReadingTooltip
         ? currentObservedElement
         : getContentElement(rawElement);
+    // Margen en los bordes (solo Tobii, 2026-10-20): si la mirada sale un poco
+    // del elemento actual (hasta EDGE_MARGIN_PX) y cae en espacio en blanco,
+    // sigue contando como ese elemento. Si entra en OTRO elemento, cambia normal.
+    if (inputSource === "tobii" && !trackingLost && !candidateElement && currentObservedElement
+        && GazeMapping.insideRect(currentObservedElement.getBoundingClientRect(), referencePoint, EDGE_MARGIN_PX)) {
+        candidateElement = currentObservedElement;
+    }
 
     // Tiempo con la mirada dentro del tooltip (resolución: un tick de 100 ms).
-    if (helpState && !trackingLost && isPointInsideTooltip(referencePoint)) {
+    const gazeOnTooltip = !trackingLost && isPointInsideTooltip(referencePoint);
+    if (helpState && gazeOnTooltip) {
         helpState.gazeInsideMs += POLL_INTERVAL_MS;
+    }
+    // Mientras se mira el tooltip, no se oculta (2026-10-20: si la mirada pasaba
+    // por otro elemento camino al tooltip, empezaba la cuenta para ocultarlo y
+    // leerlo ya no la detenía). Al dejar de mirarlo, vuelve a contar el tiempo
+    // de permanencia, salvo que la mirada esté en el elemento de esa ayuda.
+    if (gazeOnTooltip) {
+        if (tooltipHideTimer) { clearTimeout(tooltipHideTimer); tooltipHideTimer = null; }
+        wasOnTooltip = true;
+    } else if (wasOnTooltip) {
+        wasOnTooltip = false;
+        const helpEl = helpState?.el ?? (askState?.element ? elementId(askState.element) : null);
+        const onHelpElement = currentObservedElement && helpEl === elementId(currentObservedElement);
+        if (!onHelpElement && adaptiveTooltip.style.display !== "none") hideTooltipSoon();
     }
 
     // Histéresis de cambio de elemento (solo en modo Tobii): el Tobii 5 no es
@@ -779,6 +1067,7 @@ async function processObservation() {
 
         // Relectura: volver a un elemento ya mirado (regresión) es una señal
         // conocida de dificultad de lectura; adelanta la ayuda de nivel Medium.
+        let readingEvent = null;
         if (fixatedElement) {
             const visits = (elementVisits.get(fixatedElement) || 0) + 1;
             elementVisits.set(fixatedElement, visits);
@@ -786,6 +1075,7 @@ async function processObservation() {
             // primera / continua (salida corta) / relectura / reinicio
             const reading = readingModel && isTextElement(fixatedElement)
                 ? readingModel.enter(elementId(fixatedElement), Date.now()) : null;
+            readingEvent = reading?.event ?? null;
             ExperimentSession.log("element_enter", {
                 el: elementId(fixatedElement),
                 el_type: classifyElement(fixatedElement),
@@ -797,11 +1087,21 @@ async function processObservation() {
         }
         // En modo Tobii se da tiempo de lectura en vez de ocultar de golpe;
         // en modo mouse se deja el comportamiento original (inmediato).
-        if (inputSource === "tobii") {
-            hideTooltipSoon();
-        } else {
-            hideTooltip();
+        // Al apartar la mirada, el tooltip se mantiene TOOLTIP_HOLD_MS (2.5 s)
+        // en todas las condiciones y con mouse o Tobii (2026-10-20: antes, en
+        // "automática" con mouse se ocultaba al instante). Si la mirada vuelve
+        // al párrafo o al tooltip en ese lapso, sigue visible (reshowHelpOnReturn
+        // y showTooltip cancelan el ocultamiento pendiente).
+        hideTooltipSoon();
+        // Volvió al mismo elemento cuya ayuda (o botón "Ver ayuda") sigue a la
+        // vista: se cancela el ocultamiento (párrafos, tablas y gráficas).
+        const backToShown = fixatedElement && ((helpState && helpState.el === elementId(fixatedElement))
+            || (askState && askState.element === fixatedElement));
+        if (backToShown && tooltipHideTimer && adaptiveTooltip.style.display !== "none") {
+            clearTimeout(tooltipHideTimer);
+            tooltipHideTimer = null;
         }
+        if (fixatedElement) reshowHelpOnReturn(fixatedElement, readingEvent);
         updateDwellBar(0);
         if (dwellTimeBox) dwellTimeBox.innerText = "0.0s";
         clearHighlight();
@@ -868,6 +1168,11 @@ async function processObservation() {
         const info = readingInfo(currentObservedElement);
         readingModel.tick(key, dt, gazeZone(currentObservedElement, referencePoint), info, idt.isFixation);
         // Nivel Low: no hay ayuda, pero se registra si la conducta la habría pedido.
+        // Segundo nivel: ya tuvo la primera ayuda y se vuelve a trabar.
+        if (info && helpLevelGiven.get(currentObservedElement)) {
+            const sig = readingModel.signal(key, info);
+            if (sig) offerLevel2(currentObservedElement, sig, dwellTime);
+        }
         if (info && info.level === "Low" && !lowSignalLogged) {
             const sig = readingModel.signal(key, info);
             if (sig) {
@@ -954,6 +1259,9 @@ async function processObservation() {
             });
             updateAnalysisPanel(diagnosis);
 
+            if (ExperimentSession.onDemand && diagnosis.action === "tooltip" && diagnosis.explanation) {
+                offerHelpButton(elementAtTrigger, diagnosis);
+            }
             if (diagnosis.action === "tooltip" && diagnosis.explanation) {
                 // El tooltip aparece cuando el dwell alcance el umbral que la
                 // política de ayuda (backend/decision_engine.py) fija para
@@ -977,6 +1285,8 @@ async function processObservation() {
 // a mitad de la prueba. La IDT/dwell no sabe ni le importa de dónde
 // vienen los puntos: solo consume gazePoints.
 let inputSource = "mouse";
+// Corrección de la mirada medida en calibracion.html (null = sin corregir).
+const gazeCorrection = window.GazeMapping ? GazeMapping.loadCorrection(sessionStorage) : null;
 const CONFIG_URL = "http://127.0.0.1:5000/config";
 const GAZE_WS_URL = "ws://127.0.0.1:5600";
 
@@ -1022,8 +1332,14 @@ function connectTobiiSocket() {
         } catch (error) {
             return;
         }
-        if (data?.valid && typeof data.x === "number" && typeof data.y === "number") {
-            pushGazePoint(data.x, data.y, Date.now());
+        if (data?.valid && typeof data.nx === "number" && typeof data.ny === "number") {
+            // Proporción de pantalla -> página (según este equipo y ventana) y
+            // corrección de la comprobación de 5 puntos (gaze_mapping.js).
+            const p = GazeMapping.applyCorrection(GazeMapping.normalizedToClient(data.nx, data.ny, window),
+                                                  gazeCorrection);
+            pushGazePoint(p.x, p.y, Date.now());
+        } else if (data?.valid && typeof data.x === "number" && typeof data.y === "number") {
+            pushGazePoint(data.x, data.y, Date.now());   // fuente sin proporción (simulate_gaze.py)
         } else {
             // Muestra inválida (parpadeo o pérdida de seguimiento): se
             // registra para medir la calidad del seguimiento por sesión.

@@ -10,7 +10,7 @@ from analyzers.llm_utils import (
     extract_partial_analysis,
     normalize_analysis,
 )
-from analyzers.readability import compute_readability
+from analyzers.readability import compute_readability, count_syllables
 
 OLLAMA_URL = f"{OLLAMA_BASE_URL}/api/generate"
 
@@ -18,6 +18,11 @@ OLLAMA_URL = f"{OLLAMA_BASE_URL}/api/generate"
 # final de párrafos de ~450 caracteres; 900 no cambia la velocidad medida
 # (~3.1 s vs ~3.2 s) y cabe de sobra en num_ctx=1024 junto al prompt.
 TEXT_CHAR_LIMIT = 900
+
+# Ventana de contexto de phi3, COMPARTIDA con la ayuda ampliada
+# (expanded_help.py): si cambia entre peticiones, Ollama recarga el modelo
+# (~6 s medido el 2026-10-11).
+TEXT_NUM_CTX = 1024
 
 ANALYSIS_SCHEMA = {
     "type": "object",
@@ -27,6 +32,37 @@ ANALYSIS_SCHEMA = {
         "explanation": {"type": "string"},
     },
     "required": ["concept", "complexity", "explanation"],
+}
+
+# ── Elección del término (2026-10-11) ──────────────────────────────
+# "modelo": el modelo elige UN término y lo define (versión anterior).
+# "candidatos": propone hasta 3 términos con su definición y el código elige
+#   el primero (en el orden del modelo) que pasa los filtros.
+# "silabas": mismos candidatos y filtros, pero elige el término con la palabra
+#   de más sílabas (misma idea que INFLESZ: más sílabas = más difícil).
+# Filtros: el término está en el texto, no es solo un símbolo o fórmula
+# ("CO₂", "pH") y no se explicó ya en la misma página (defined_terms).
+# Medido en evaluation/ab_terminos.py (2026-10-11): "silabas" cumplió el
+# criterio fijado antes de medir; "candidatos" no (más definiciones incorrectas).
+TERM_SELECTION = "silabas"
+TERM_SELECTION_MODES = ("modelo", "candidatos", "silabas")
+MAX_CANDIDATES = 3
+
+CANDIDATES_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "terms": {
+            "type": "array",
+            "maxItems": MAX_CANDIDATES,
+            "items": {
+                "type": "object",
+                "properties": {"term": {"type": "string"}, "definition": {"type": "string"}},
+                "required": ["term", "definition"],
+            },
+        },
+        "complexity": {"type": "string", "enum": ["Low", "Medium", "High"]},
+    },
+    "required": ["terms", "complexity"],
 }
 
 
@@ -168,6 +204,81 @@ Rules:
 {context}Text: {truncated}"""
 
 
+def build_candidates_prompt(truncated, page_context=None):
+    context = _context_block("Spanish", page_context)
+    return f"""Eres un asistente de lectura. La persona YA LEYÓ este texto (está en español) y no lo terminó de entender, así que NO se lo repitas.
+
+Devuelve SOLO este objeto JSON:
+{{
+"terms": [{{"term": "término técnico que aparece tal cual en el texto (1 a 3 palabras)", "definition": "máximo 35 palabras, en español, un solo párrafo"}}],
+"complexity": "Low, Medium o High"
+}}
+
+Reglas:
+- Responde siempre en español.
+- terms: de 1 a 3 términos, del más al menos difícil para alguien que no conoce el tema. NO elijas palabras de uso común, el tema general del texto ni símbolos o fórmulas sueltos (como CO₂ o pH).
+- complexity: High = términos técnicos o especializados; Medium = requiere conocimientos previos; Low = simple y claro.
+- definition: explica ESE término: qué significa en palabras simples y, si ayuda, para qué sirve o por qué importa. NO repitas, NO resumas ni parafrasees lo que el texto ya dice. Puedes explicar conceptos generales, pero NO inventes datos, cifras, nombres ni fechas. NO uses analogías ni comparaciones. NO empieces con "Imagina".
+
+{context}Texto: {truncated}"""
+
+
+def is_symbol_term(term):
+    """Solo símbolos, fórmulas o siglas de menos de 4 letras ("CO₂", "pH",
+    "W m⁻²"): ninguna palabra de 4+ letras."""
+    return not any(len(word) >= 4 for word in _normalize_words(term))
+
+
+def _term_stems(term):
+    return {word[:max(4, len(word) - 2)] for word in _normalize_words(term) if len(word) >= 4}
+
+
+def same_term(a, b):
+    """Mismo término o uno contenido en el otro ("forzamiento radiativo
+    efectivo" ~ "forzamiento radiativo efectivo antropogénico")."""
+    sa, sb = _term_stems(a), _term_stems(b)
+    if not sa or not sb:
+        return False
+    small, big = (sa, sb) if len(sa) <= len(sb) else (sb, sa)
+    # Tolerando la terminación: "emision" ~ "emisi" (emisiones / emisión).
+    return all(any(x.startswith(y) or y.startswith(x) for y in big) for x in small)
+
+
+def term_syllables(term):
+    """Sílabas de la palabra más larga del término (proxy de rareza)."""
+    words = re.findall(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+", term)
+    return max((count_syllables(w) for w in words), default=0)
+
+
+def choose_terms(candidates, text, defined_terms=(), mode="candidatos"):
+    """Filtra y ordena candidatos [{"term", "definition"}].
+    Devuelve (válidos en orden de preferencia, descartados con motivo)."""
+    valid, discarded = [], []
+    for item in candidates:
+        if not isinstance(item, dict):
+            continue
+        term = str(item.get("term", "")).strip(" .:;")
+        definition = str(item.get("definition", "")).strip()
+        if not term or not definition:
+            continue
+        reason = None
+        if is_symbol_term(term):
+            reason = "simbolo"
+        elif not concept_in_text(term, text):
+            reason = "fuera_del_texto"
+        elif any(same_term(term, d) for d in defined_terms):
+            reason = "ya_definido_en_la_pagina"
+        elif any(same_term(term, v["term"]) for v in valid):
+            reason = "duplicado"
+        if reason:
+            discarded.append({"term": term, "reason": reason})
+        else:
+            valid.append({"term": term, "definition": definition})
+    if mode == "silabas":
+        valid.sort(key=lambda v: -term_syllables(v["term"]))   # estable: empata en el orden del modelo
+    return valid, discarded
+
+
 def _normalize_words(value):
     value = unicodedata.normalize("NFKD", value.lower())
     value = "".join(ch for ch in value if not unicodedata.combining(ch))
@@ -212,7 +323,7 @@ def _fallback_result(language, readability):
     }
 
 
-def analyze_text(text, use_readability=True, page_context=None):
+def analyze_text(text, use_readability=True, page_context=None, defined_terms=(), term_selection=None):
     if len(text.strip()) < 20:
         return {
             "concept": "Contenido breve",
@@ -242,7 +353,11 @@ def analyze_text(text, use_readability=True, page_context=None):
     truncated = text.strip()[:TEXT_CHAR_LIMIT]
     language = detect_language(truncated)
 
-    prompt = build_prompt(language, truncated, page_context)
+    mode = term_selection if term_selection in TERM_SELECTION_MODES else TERM_SELECTION
+    # Solo texto corrido en español; tablas e inglés siguen con un término.
+    use_candidates = mode != "modelo" and use_readability and language == "Spanish"
+    prompt = (build_candidates_prompt(truncated, page_context) if use_candidates
+              else build_prompt(language, truncated, page_context))
 
     try:
         response = requests.post(
@@ -256,7 +371,7 @@ def analyze_text(text, use_readability=True, page_context=None):
                 # ("explande", "explanranza"), la explicación quedaba vacía y
                 # no salía tooltip; sin formato repetía el prompt o encadenaba
                 # varios objetos tras la respuesta.
-                "format": ANALYSIS_SCHEMA,
+                "format": CANDIDATES_SCHEMA if use_candidates else ANALYSIS_SCHEMA,
                 "keep_alive": OLLAMA_KEEP_ALIVE,
                 "options": {
                     "temperature": 0.1,
@@ -266,8 +381,9 @@ def analyze_text(text, use_readability=True, page_context=None):
                     # respuesta se cortaba ANTES de cerrar el JSON, el parseo
                     # fallaba, y eso también disparaba el mensaje genérico de
                     # "conocimientos previos" — en texto normal, no solo tablas.
-                    "num_predict": 200,
-                    "num_ctx": 1024
+                    # Candidatos: hasta 3 definiciones.
+                    "num_predict": 320 if use_candidates else 200,
+                    "num_ctx": TEXT_NUM_CTX
                 }
             },
             timeout=15
@@ -276,6 +392,21 @@ def analyze_text(text, use_readability=True, page_context=None):
         response_text = response.json()["response"].strip()
 
         analysis = extract_json(response_text)
+
+        term_info = None
+        if use_candidates:
+            if not isinstance(analysis, dict) or "terms" not in analysis:
+                raise ValueError("Respuesta de candidatos sin JSON válido")
+            raw = analysis.get("terms") or []
+            valid, discarded = choose_terms(raw, truncated, defined_terms, mode)
+            term_info = {
+                "term_selection": mode,
+                "term_candidates": [str(t.get("term", "")) for t in raw if isinstance(t, dict)],
+                "term_discarded": discarded,
+            }
+            chosen = valid[0] if valid else {"term": "", "definition": ""}
+            analysis = {"concept": chosen["term"], "complexity": analysis.get("complexity", "Medium"),
+                        "explanation": chosen["definition"]}
 
         if not analysis:
             # Suele ser un JSON cortado por num_predict (el modelo se explayó):
@@ -299,12 +430,19 @@ def analyze_text(text, use_readability=True, page_context=None):
             normalized["needs_assistance"] = readability["level"] != "Low"
         normalized["difficulty_source"] = "legibilidad" if readability else "modelo"
         normalized.update(extra)
+        if term_info:
+            normalized.update(term_info)
 
         if (
             not _matches_language(normalized["concept"], language)
             or not _matches_language(normalized["explanation"], language)
         ):
             normalized.update(_local_language_fallback(language, normalized["complexity"]))
+        elif term_info and not normalized["concept"]:
+            # Ningún candidato pasó los filtros (fuera del texto, símbolo o
+            # ya explicado en la página): se conserva el nivel, sin ayuda.
+            normalized["needs_assistance"] = False
+            normalized["help_blocked"] = "sin_termino_valido"
         elif not concept_in_text(normalized["concept"], truncated):
             # El término no está en el texto: la definición no ayuda a leerlo
             # (y suele ser inventada). Se conserva el nivel, pero sin ayuda.

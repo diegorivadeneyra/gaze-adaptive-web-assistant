@@ -37,12 +37,14 @@ VISIT_COLUMNS = ["sesion", "participante", "pagina", "condicion", "elemento", "t
                  "ayuda_mirada_ms", "marcado_dificil"]
 HELP_COLUMNS = ["sesion", "participante", "pagina", "condicion", "help_id", "elemento", "estado",
                 "nivel", "regla", "senal", "ratio_tiempo", "dwell_al_aparecer_ms", "relectura",
-                "visible_ms", "mirada_dentro_ms",
+                "visible_ms", "mirada_dentro_ms", "reapariciones", "pedida", "nivel_ayuda",
                 "concepto", "explicacion", "calificacion"]
-PAGE_COLUMNS = ["sesion", "participante", "pagina", "condicion", "duracion_ms", "elementos_distintos",
+PAGE_COLUMNS = ["sesion", "participante", "pagina", "condicion", "posicion", "duracion_ms", "pausa_ms", "elementos_distintos",
                 "visitas", "relecturas", "visitas_elegibles", "relecturas_elegibles",
                 "dwell_prom_elegibles_ms", "ayudas_mostradas", "ayudas_suprimidas",
-                "ayudas_leidas", "disparos_en_low", "marcados_dificiles", "elementos_con_ayuda",
+                "ayudas_leidas", "disparos_en_low", "botones_ofrecidos", "ayudas_pedidas",
+                "elementos_pedidos", "pedidos_que_la_regla_detecto",
+                "marcados_dificiles", "elementos_con_ayuda",
                 "aciertos", "acierto_pct", "cobertura_pct", "muestras_mirada", "muestras_invalidas_pct"]
 
 
@@ -71,13 +73,15 @@ def summarize(events_path):
     start = next((e for e in events if e["type"] == "session_start"), {})
     participant = start.get("participant", "")
     plan = start.get("plan", {})
+    order = start.get("order") or ["facil", "intermedio", "avanzado"]
 
     visits, helps = [], {}
     open_visit = {}          # página -> visita en curso
     last_visit = {}          # página -> última visita cerrada (para reading_state)
-    pages = defaultdict(lambda: {"duracion_ms": None})
+    pages = defaultdict(lambda: {"duracion_ms": None, "pausa_ms": None})
     marks = defaultdict(set)         # página -> elementos marcados como difíciles
     low_triggers = defaultdict(int)  # página -> disparos de la regla en Low
+    offered = defaultdict(int)       # página -> botones "Ver ayuda" mostrados (a pedido)
 
     for e in events:
         page = e.get("page", "")
@@ -114,6 +118,8 @@ def summarize(events_path):
                              lectura_completa=int(bool(e.get("read_complete"))),
                              llego_al_final=int(bool(e.get("reached_end"))),
                              ritmo_ms_silaba=e.get("pace_ms_per_syllable"))
+        elif kind == "help_offered":
+            offered[page] += 1
         elif kind == "help_would_trigger_low":
             low_triggers[page] += 1
             visit = open_visit.get(page)
@@ -136,17 +142,30 @@ def summarize(events_path):
                                    "ratio_tiempo": e.get("ratio", ""),
                                    "dwell_al_aparecer_ms": e.get("dwell_ms"),
                                    "relectura": int(bool(e.get("revisit"))), "visible_ms": "",
-                                   "mirada_dentro_ms": "", "concepto": e.get("concept"),
-                                   "explicacion": e.get("explanation"), "calificacion": ""}
+                                   "mirada_dentro_ms": "", "concepto": e.get("concept") or ", ".join(e.get("terms") or []),
+                                   "explicacion": e.get("explanation"), "calificacion": "", "reapariciones": 0,
+                                   "pedida": int(bool(e.get("requested"))),
+                                   "nivel_ayuda": e.get("help_level") or 1}
             visit = open_visit.get(page)
             if visit and visit["elemento"] == e.get("el"):
                 visit["ayuda"] = state
                 visit["senal"] = e.get("signal", "")
                 visit["_help_id"] = e["help_id"]
         elif kind == "help_hidden" and e.get("help_id") in helps:
-            helps[e["help_id"]].update(visible_ms=e.get("visible_ms"), mirada_dentro_ms=e.get("gaze_inside_ms"))
-        elif kind == "page_exit":
+            # Si la ayuda reapareció (help_reshown, salida corta) se oculta
+            # más de una vez: se suman los tiempos.
+            h = helps[e["help_id"]]
+            h["visible_ms"] = (h["visible_ms"] or 0) + (e.get("visible_ms") or 0)
+            h["mirada_dentro_ms"] = (h["mirada_dentro_ms"] or 0) + (e.get("gaze_inside_ms") or 0)
+        elif kind == "help_reshown" and e.get("help_id") in helps:
+            helps[e["help_id"]]["reapariciones"] = helps[e["help_id"]].get("reapariciones", 0) + 1
+        elif kind == "reading_end":
+            # Duración de la LECTURA (hasta "Terminé"), sin la pausa ni el marcado.
             pages[page]["duracion_ms"] = e.get("duration_ms")
+        elif kind == "pause_end":
+            pages[page]["pausa_ms"] = e.get("duration_ms")
+        elif kind == "page_exit" and pages[page]["duracion_ms"] is None:
+            pages[page]["duracion_ms"] = e.get("duration_ms")   # sesiones anteriores a la pausa
 
     for visit in visits:
         if visit["pagina"] in marks:   # solo si el participante llegó a marcar
@@ -164,14 +183,21 @@ def summarize(events_path):
         dwell_eligible = [v["dwell_ms"] for v in eligible if v["dwell_ms"] is not None]
         ph = [h for h in helps.values() if h["pagina"] == page]
         n_gaze, invalid_pct = quality.get(page, (0, None))
-        helped = {h["elemento"] for h in ph}            # la regla dio (o habría dado) ayuda
+        # La regla automática dio (o habría dado) ayuda; en "a pedido" no
+        # cuentan las que pidió la persona (esas van aparte).
+        helped = {h["elemento"] for h in ph if not h["pedida"]}
+        requested = {h["elemento"] for h in ph if h["pedida"]}
         marked = marks[page] if page in marks else None
         hits = len(helped & marked) if marked is not None else ""
         if not pv and not n_gaze:
             continue  # página no visitada
         page_rows.append({
             "sesion": session_id, "participante": participant, "pagina": page,
-            "condicion": plan.get(page, ""), "duracion_ms": pages[page]["duracion_ms"],
+            "condicion": plan.get(page, ""),
+            # 1, 2 o 3: en qué lugar leyó esta página (el orden es aleatorio).
+            "posicion": order.index(page) + 1 if page in order else "",
+            "duracion_ms": pages[page]["duracion_ms"],
+            "pausa_ms": pages[page]["pausa_ms"],
             "elementos_distintos": len({v["elemento"] for v in pv}), "visitas": len(pv),
             "relecturas": sum(v["relectura"] for v in pv), "visitas_elegibles": len(eligible),
             "relecturas_elegibles": sum(v["relectura"] for v in eligible),
@@ -182,6 +208,12 @@ def summarize(events_path):
             # (criterio inicial, igual al umbral base de atención sostenida).
             "ayudas_leidas": sum(h["estado"] == "mostrada" and (h["mirada_dentro_ms"] or 0) >= 500 for h in ph),
             "disparos_en_low": low_triggers[page],
+            "botones_ofrecidos": offered[page],
+            "ayudas_pedidas": sum(bool(h["pedida"]) for h in ph),
+            "elementos_pedidos": len(requested),
+            # Validación del detector: de lo que la persona pidió, cuánto
+            # habría detectado la regla automática.
+            "pedidos_que_la_regla_detecto": len(requested & helped),
             "marcados_dificiles": len(marked) if marked is not None else "",
             "elementos_con_ayuda": len(helped),
             "aciertos": hits,

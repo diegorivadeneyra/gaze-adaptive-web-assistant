@@ -37,7 +37,7 @@ const ExperimentSession = (() => {
 
     const session   = load();
     const pageKey   = (window.location.pathname.split("/").pop() || "index.html").replace(".html", "");
-    // "ayuda" | "sin_ayuda" | null (página fuera del plan o modo libre)
+    // "ayuda" (automática) | "a_pedido" | "sin_ayuda" | null (fuera del plan o modo libre)
     const condition = session?.plan?.[pageKey] || null;
 
     let events = [];
@@ -51,7 +51,7 @@ const ExperimentSession = (() => {
     // Muestra cruda: coordenadas de la ventana + desplazamiento de la página,
     // para ubicar después la mirada sobre el contenido (layout del page_enter).
     function logGaze(x, y, valid) {
-        if (!session) return;
+        if (!session || window.recordingPaused) return;   // pausa entre páginas: nada se guarda
         gaze.push([
             Date.now(),
             valid ? Math.round(x) : "",
@@ -98,13 +98,19 @@ const ExperimentSession = (() => {
     }
 
     if (session) setInterval(flush, LOG_FLUSH_MS);
+    // En sesión se ocultan elementos que no deben verse (temas.css: .in-session).
+    if (session) document.documentElement.classList.add("in-session");
 
     return {
         session,
         pageKey,
         condition,
         active: Boolean(session),
-        helpEnabled: condition !== "sin_ayuda",
+        // helpEnabled: la ayuda aparece SOLA cuando la conducta lo pide.
+        // En "a_pedido" no: se ofrece un botón y la persona decide; la ayuda
+        // que habría salido sola se registra como suprimida (para comparar).
+        helpEnabled: condition !== "sin_ayuda" && condition !== "a_pedido",
+        onDemand: condition === "a_pedido",
         log,
         logGaze,
         flush,

@@ -23,7 +23,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SESSIONS_DIR = PROJECT_ROOT / "data" / "sessions"
 
 PAGES = ("facil", "intermedio", "avanzado")
-CONDITIONS = ("ayuda", "sin_ayuda")
+CONDITIONS = ("ayuda", "sin_ayuda", "a_pedido")
 GAZE_COLUMNS = ["t_ms", "x", "y", "scroll_x", "scroll_y", "valid", "page"]
 
 MAX_EVENTS_PER_BATCH = 5000
@@ -53,17 +53,21 @@ def _paths(session_id):
 
 
 def validate_start(data):
-    """Devuelve (participante, plan) o lanza ValueError con el motivo."""
+    """Devuelve (participante, plan, orden) o lanza ValueError con el motivo."""
     participant = data.get("participant")
     if not isinstance(participant, str) or not _PARTICIPANT_RE.match(participant):
         raise ValueError("Código de participante inválido (letras, números, - o _; máx. 20)")
     plan = data.get("plan")
     if not isinstance(plan, dict) or set(plan) != set(PAGES) or any(v not in CONDITIONS for v in plan.values()):
         raise ValueError(f"El plan debe asignar {PAGES} a {CONDITIONS}")
-    return participant, plan
+    # Orden de lectura (aleatorio por participante); sin orden = el de siempre.
+    order = data.get("order") or list(PAGES)
+    if not isinstance(order, list) or sorted(order) != sorted(PAGES):
+        raise ValueError(f"El orden debe ser una permutación de {PAGES}")
+    return participant, plan, order
 
 
-def start_session(participant, plan, client_info, server_info):
+def start_session(participant, plan, client_info, server_info, order=PAGES):
     SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
     stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     session_id = f"{participant}_{stamp}"
@@ -78,6 +82,7 @@ def start_session(participant, plan, client_info, server_info):
         "session_id": session_id,
         "participant": participant,
         "plan": plan,
+        "order": list(order),
         "client": client_info if isinstance(client_info, dict) else {},
         "server": {**server_info, **_git_version()},
     }

@@ -1,5 +1,5 @@
 {
- "fecha": "2026-10-11T21:35:23.787Z",
+ "fecha": "2026-10-21T02:39:24.780Z",
  "politica": {
   "base_ms_per_syllable": 140,
   "level_factor": {
@@ -12,6 +12,7 @@
   "start_region": 0.3333333333333333,
   "reread_start_min_ms": 1500,
   "reread_requires_fixation": true,
+  "level2_extra_fraction": 1,
   "read_fraction": 0.4,
   "end_region": 0.3333333333333333,
   "end_min_height_px": 60,
@@ -37,6 +38,7 @@
   "start_region": 0.3333333333333333,
   "reread_start_min_ms": 1500,
   "reread_requires_fixation": true,
+  "level2_extra_fraction": 1,
   "read_fraction": 0.4,
   "end_region": 0.3333333333333333,
   "end_min_height_px": 60,

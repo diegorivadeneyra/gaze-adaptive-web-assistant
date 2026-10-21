@@ -1,0 +1,1814 @@
+{
+ "metricas": {
+  "modelo": {
+   "parrafos": 26,
+   "ayudas": 24,
+   "bloqueadas": 2,
+   "repetidas_en_la_pagina": 4,
+   "simbolos": 0,
+   "silabas_prom": 4.92,
+   "latencia_s_prom": 2.82
+  },
+  "candidatos": {
+   "parrafos": 26,
+   "ayudas": 26,
+   "bloqueadas": 0,
+   "repetidas_en_la_pagina": 0,
+   "simbolos": 0,
+   "silabas_prom": 4.81,
+   "latencia_s_prom": 3.63
+  },
+  "silabas": {
+   "parrafos": 26,
+   "ayudas": 26,
+   "bloqueadas": 0,
+   "repetidas_en_la_pagina": 0,
+   "simbolos": 0,
+   "silabas_prom": 5.19,
+   "latencia_s_prom": 3.61
+  }
+ },
+ "detalle": [
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acción diaria",
+   "explicacion": "Acción diaria: se refiere a actividades cotidianas realizadas regularmente que pueden tener un impacto a largo plazo.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 2,
+   "s": 3.07
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acción diaria",
+   "explicacion": "Acción diaria: una actividad que se realiza a diario, como cepillarse los dientes o hacer ejercicio.",
+   "bloqueo": null,
+   "candidatos": [
+    "acción diaria",
+    "conservación energética",
+    "impacto ambiental"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "conservación energética"
+    },
+    {
+     "reason": "fuera_del_texto",
+     "term": "impacto ambiental"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 2,
+   "s": 3.45
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acción diaria",
+   "explicacion": "Acción diaria: una actividad que se realiza a diario, como cepillarse los dientes o limpiar la casa.",
+   "bloqueo": null,
+   "candidatos": [
+    "acción diaria",
+    "conservación energética",
+    "impacto ambiental"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "conservación energética"
+    },
+    {
+     "reason": "fuera_del_texto",
+     "term": "impacto ambiental"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 2,
+   "s": 3.32
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "gases de efecto invernadero",
+   "explicacion": "Gases de efecto invernadero: son gases que, al absorber y reemitir radiación infrarroja, contribuyen al calentamiento del planeta.",
+   "bloqueo": null,
+   "candidatos": [
+    "gases de efecto invernadero",
+    "forzamiento radiativo",
+    "combustibles fósiles"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.59
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "gases de efecto invernadero",
+   "explicacion": "Gases de efecto invernadero: son gases que atrapan el calor en la atmósfera de la Tierra, lo que lleva al calentamiento global.",
+   "bloqueo": null,
+   "candidatos": [
+    "gases de efecto invernadero",
+    "forzamiento radiativo",
+    "combustibles fósiles"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.63
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "gases de efecto invernadero",
+   "explicacion": "Gases de efecto invernadero: son gases que atrapan el calor en la atmósfera, contribuyendo al calentamiento global. El CO₂ y el metano son ejemplos.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 2.73
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde medi",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "registros meteorológicos",
+   "explicacion": "Registros meteorológicos: Recuentos sistemáticos de datos climáticos como temperatura, humedad y presión atmosférica, recogidos por estaciones, boyas y satélites.",
+   "bloqueo": null,
+   "candidatos": [
+    "registros meteorológicos",
+    "estaciones meteorológicas",
+    "boyas oceánicas"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 7,
+   "s": 3.56
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde medi",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "emisiones industriales",
+   "explicacion": "Emisiones industriales: se refiere a la liberación de sustancias contaminantes por parte de industrias, que contribuyen al cambio climático al aumentar las temperaturas globales.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 2.75
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde medi",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "registros meteorológicos",
+   "explicacion": "Registros meteorológicos: Mediante instrumentos situados en distintos puntos del planeta, se recogen datos como temperatura, humedad y presión atmosférica para estudiar el clima.",
+   "bloqueo": null,
+   "candidatos": [
+    "registros meteorológicos",
+    "boyas oceánicas",
+    "alta temperatura superficial global"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "alta temperatura superficial global"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 7,
+   "s": 3.67
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, ll",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "deshielo de glaciares",
+   "explicacion": "Deshielo de glaciares: se refiere al proceso por el cual los glaciares pierden hielo, lo que puede afectar el nivel del mar y los patrones climáticos regionales.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 3,
+   "s": 2.72
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, ll",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "deshielo de glaciares",
+   "explicacion": "Deshielo de glaciares: es el proceso por el cual el hielo se derrite y se convierte en agua, generalmente debido a temperaturas más altas, lo que puede llevar al aumento del nivel del mar.",
+   "bloqueo": null,
+   "candidatos": [
+    "deshielo de glaciares",
+    "capas de hielo",
+    "consecuencias regionales"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "consecuencias regionales"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 3,
+   "s": 3.87
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, ll",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "deshielo de glaciares",
+   "explicacion": "Deshielo de glaciares: es el proceso por el cual los glaciares pierden masa debido a que se derriten, lo cual puede ser causado por el calentamiento global.",
+   "bloqueo": null,
+   "candidatos": [
+    "deshielo de glaciares",
+    "capas de hielo",
+    "alta frecuencia de sequías"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "alta frecuencia de sequías"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 3,
+   "s": 3.68
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "dióxido de carbono",
+   "explicacion": "Dióxido de carbono: es un gas formado cuando el carbono quema en presencia de oxígeno, y es un importante gas de efecto invernadero que contribuye al calentamiento global.",
+   "bloqueo": null,
+   "candidatos": [
+    "dióxido de carbono",
+    "ácido carbónico",
+    "acidificación oceánica"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 3,
+   "s": 3.87
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acidificación oceánica",
+   "explicacion": "Acidificación oceánica: es el fenómeno por el cual el pH del mar disminuye debido a la formación de ácido carbónico, lo que puede tener impactos negativos en la vida marina.",
+   "bloqueo": null,
+   "candidatos": [
+    "dióxido de carbono",
+    "ácido carbónico",
+    "acidificación oceánica"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.67
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acidificación oceánica",
+   "explicacion": "Acidificación oceánica: es el proceso por el cual el dióxido de carbono disuelto en el agua del océano forma ácido carbónico, lo que reduce el pH del mar.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 2.84
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "microalgas",
+   "explicacion": "Microalgas: son pequeñas algas que viven en el océano y son esenciales para la supervivencia de ciertos organismos marinos, como los corales, ya que les proporcionan alimento y color.",
+   "bloqueo": null,
+   "candidatos": [
+    "acidificación",
+    "plancton",
+    "microalgas"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "acidificación"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 3.82
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los ",
+   "nivel": "Medium",
+   "ayuda": false,
+   "termino": "",
+   "explicacion": "",
+   "bloqueo": "termino_fuera_del_texto",
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": null,
+   "s": 2.83
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acidificación",
+   "explicacion": "Acidificación: es el proceso por el cual el pH del agua se reduce debido a la absorción de dióxido de carbono, afectando negativamente a los organismos marinos que dependen de la calidad del agua para construir sus estructuras.",
+   "bloqueo": null,
+   "candidatos": [
+    "acidificación",
+    "plancton",
+    "esqueletos y conchas"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.8
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial gl",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo neto",
+   "explicacion": "Forzamiento radiativo neto: es la diferencia entre la radiación solar que llega a la Tierra y la radiación que sale. Se utiliza para entender cómo la atmósfera y la superficie de la Tierra interactúan con el calor.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 2.96
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial gl",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "sensibilidad climática de equilibrio (ECS)",
+   "explicacion": "Sensibilidad climática de equilibrio (ECS): La medida de cuánto aumentará la temperatura global en promedio después de que el sistema se haya aclimatado a un cambio en la cantidad de gases de efecto invernadero.",
+   "bloqueo": null,
+   "candidatos": [
+    "sensibilidad climática de equilibrio (ECS)",
+    "regresión multivariable",
+    "forzamiento radiativo neto"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.75
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial gl",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "sensibilidad climática de equilibrio",
+   "explicacion": "Sensibilidad climática de equilibrio: La medida de cuánto aumentará la temperatura global en promedio después de que el sistema se haya aclimado a un cambio en la concentración de gases de efecto invernadero.",
+   "bloqueo": null,
+   "candidatos": [
+    "sensibilidad climática de equilibrio",
+    "regresión multivariable",
+    "forzamiento radiativo neto"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.75
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "modelo lineal generalizado",
+   "explicacion": "Modelo lineal generalizado: Un modelo estadístico que permite estimar parámetros cuando la relación entre variables es lineal pero los términos de error pueden tener una estructura más compleja que la linealidad simple.",
+   "bloqueo": null,
+   "candidatos": [
+    "modelo lineal generalizado",
+    "errores autocorrelacionados",
+    "proceso AR(1)"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.64
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "errores autocorrelacionados",
+   "explicacion": "Errores autocorrelacionados: Errores en los datos que están relacionados con los errores anteriores, lo que puede afectar la precisión de los resultados.",
+   "bloqueo": null,
+   "candidatos": [
+    "modelo lineal generalizado",
+    "errores autocorrelacionados",
+    "proceso AR(1)"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 8,
+   "s": 3.44
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "errores autocorrelacionados",
+   "explicacion": "Errores autocorrelacionados: son errores que se repiten en el tiempo, lo que significa que no son aleatorios y se correlacionan entre sí. Se usan para ajustar los residuos en modelos estadísticos.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 8,
+   "s": 2.89
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "GEI equivalentes",
+   "explicacion": "GEI equivalentes: Representan las emisiones de gases de efecto invernadero, expresadas en términos de la cantidad de dióxido de carbono que tendrían las mismas emisiones.",
+   "bloqueo": null,
+   "candidatos": [
+    "GEI equivalentes",
+    "Contribución sectorial",
+    "Emisiones de gases de efecto invernadero"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "Emisiones de gases de efecto invernadero"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.71
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "GEI equivalentes",
+   "explicacion": "GEI equivalentes: representa las emisiones de gases de efecto invernadero en términos de la cantidad de dióxido de carbono que tendrían las mismas emisiones.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 2.83
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "GEI equivalentes",
+   "explicacion": "GEI equivalentes: Representan las emisiones de gases de efecto invernadero, expresadas en términos de la cantidad de dióxido de carbono que tendrían las mismas emisiones.",
+   "bloqueo": null,
+   "candidatos": [
+    "GEI equivalentes",
+    "Contribución sectorial",
+    "Emisiones de GEI equivalentes"
+   ],
+   "descartados": [
+    {
+     "reason": "duplicado",
+     "term": "Emisiones de GEI equivalentes"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.69
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento por aerosoles antropogénicos",
+   "explicacion": "Forzamiento por aerosoles antropogénicos: se refiere al cambio en la radiación que atraviesa la atmósfera debido a la presencia de partículas humanas, lo que puede afectar el clima.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 2.72
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento por aerosoles antropogénicos",
+   "explicacion": "Forzamiento por aerosoles antropogénicos: es la influencia que los humanos tienen en el clima al liberar partículas en la atmósfera que pueden reflejar la luz solar, reduciendo la cantidad de calor que llega a la superficie terrestre.",
+   "bloqueo": null,
+   "candidatos": [
+    "sensibilidad climática de equilibrio estimada (ECS)",
+    "forzamiento por aerosoles antropogénicos",
+    "ENOS (Oscilación del Niño-Soporte)"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "sensibilidad climática de equilibrio estimada (ECS)"
+    },
+    {
+     "reason": "fuera_del_texto",
+     "term": "ENOS (Oscilación del Niño-Soporte)"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.78
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento por aerosoles antropogénicos",
+   "explicacion": "Forzamiento por aerosoles antropogénicos: Impacto que tienen las partículas humanas en el aire sobre el clima, que puede enmasillar o disminuir el efecto de los gases de efecto invernadero.",
+   "bloqueo": null,
+   "candidatos": [
+    "sensibilidad climática de equilibrio estimada",
+    "forzamiento por aerosoles antropogénicos",
+    "ENOS"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "sensibilidad climática de equilibrio estimada"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.71
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcial",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo efectivo",
+   "explicacion": "Forzamiento radiativo efectivo: es la diferencia entre la radiación solar que llega a la Tierra y la radiación infrarroja que sale a la atmósfera, influenciada por gases y partículas.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamiento radiativo efectivo",
+    "amplificadores térmicos",
+    "amplificación ártica"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 3.76
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcial",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "amplificadores térmicos",
+   "explicacion": "Amplificadores térmicos: Factores que aumentan la temperatura de la superficie terrestre, como el vapor de agua y el gradiente térmico vertical.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamiento radiativo efectivo",
+    "amplificadores térmicos",
+    "amplificación ártica"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.64
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcial",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo efectivo",
+   "explicacion": "Forzamiento radiativo efectivo: es la medida del cambio en la energía radiativa del planeta debido a las actividades humanas, expresada en vatios por metro cuadrado.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 2.77
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles ant",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "serie de forzamiento por aerosoles",
+   "explicacion": "Serie de forzamiento por aerosoles: Cantidad de aerosoles en la atmósfera que pueden afectar la radiación solar y el clima.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamientos antropogénicos",
+    "serie de forzamiento por aerosoles",
+    "linealidad entre forzamiento y respuesta"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "forzamientos antropogénicos"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.52
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles ant",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamientos antropogénicos",
+   "explicacion": "Forzamientos antropogénicos: se refiere a los cambios en el clima causados por actividades humanas, como la quema de combustibles fósiles.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": true,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 2.62
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles ant",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "serie de forzamiento por aerosoles",
+   "explicacion": "Serie de forzamiento por aerosoles: Cantidad de aerosoles en la atmósfera que pueden afectar la radiación solar y el clima.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamientos antropogénicos",
+    "serie de forzamiento por aerosoles",
+    "linealidad entre forzamiento y respuesta"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "forzamientos antropogénicos"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.36
+  },
+  {
+   "rep": 0,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación de",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo antropogénico",
+   "explicacion": "Forzamiento radiativo antropogénico: se refiere al cambio en la fuerza del efecto de la radiación debido a las actividades humanas, como la quema de combustibles fósiles, que altera el balance energético del planeta.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": true,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 2.79
+  },
+  {
+   "rep": 0,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación de",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo antropogénico",
+   "explicacion": "Forzamiento radiativo antropogénico: es la influencia que las actividades humanas tienen sobre el balance de energía radiativa en la atmósfera terrestre, afectando el clima.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamiento radiativo antropogénico",
+    "desagregación por componente",
+    "evaluación del IPCC AR6"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "desagregación por componente"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.76
+  },
+  {
+   "rep": 0,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación de",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "desagregado por componente",
+   "explicacion": "Desagregado por componente: se refiere a la separación y análisis de los diferentes factores que contribuyen al forzamiento radiativo, como los gases de efecto invernadero y los aerosoles.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamiento radiativo",
+    "antropogénico",
+    "desagregado por componente"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "antropogénico"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.56
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acción diaria",
+   "explicacion": "Acción diaria: una actividad que se realiza a diario, como cepillarse los dientes o ir al trabajo.",
+   "bloqueo": null,
+   "candidatos": [
+    "acción diaria",
+    "acumulación",
+    "conservación energética"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "acumulación"
+    },
+    {
+     "reason": "fuera_del_texto",
+     "term": "conservación energética"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 2,
+   "s": 3.29
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acción diaria",
+   "explicacion": "Acción diaria: una actividad que se realiza a diario, como cepillarse los dientes o hacer ejercicio.",
+   "bloqueo": null,
+   "candidatos": [
+    "acción diaria",
+    "conservación energética",
+    "impacto ambiental"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "conservación energética"
+    },
+    {
+     "reason": "fuera_del_texto",
+     "term": "impacto ambiental"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 2,
+   "s": 3.34
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acción diaria",
+   "explicacion": "Acción diaria: se refiere a actividades cotidianas realizadas regularmente que pueden tener un impacto a largo plazo.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 2,
+   "s": 2.68
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "gases de efecto invernadero",
+   "explicacion": "Gases de efecto invernadero: son sustancias que, al absorber la radiación infrarroja emitida por la Tierra, retienen el calor y contribuyen al calentamiento global.",
+   "bloqueo": null,
+   "candidatos": [
+    "gases de efecto invernadero",
+    "forzamiento radiativo",
+    "combustibles fósiles"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.82
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "gases de efecto invernadero",
+   "explicacion": "Gases de efecto invernadero: son gases que atrapan el calor en la atmósfera, lo que lleva al calentamiento global. El CO₂ y el metano son ejemplos de estos gases.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 2.77
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "gases de efecto invernadero",
+   "explicacion": "Gases de efecto invernadero: son sustancias que, al absorber la radiación infrarroja emitida por la Tierra, retienen el calor y contribuyen al calentamiento global.",
+   "bloqueo": null,
+   "candidatos": [
+    "gases de efecto invernadero",
+    "forzamiento radiativo",
+    "combustibles fósiles"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.71
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde medi",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "emisiones industriales",
+   "explicacion": "Emisiones industriales: se refiere a la liberación de sustancias contaminantes por parte de industrias, que pueden contribuir al cambio climático al aumentar las temperaturas globales.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 2.75
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde medi",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "registros meteorológicos",
+   "explicacion": "Registros meteorológicos: se refiere a los datos recogidos por instrumentos en estaciones meteorológicas para estudiar el clima.",
+   "bloqueo": null,
+   "candidatos": [
+    "registros meteorológicos",
+    "emisiones industriales",
+    "aumento acelerado"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 7,
+   "s": 3.47
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde medi",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "estaciones meteorológicas",
+   "explicacion": "Estaciones meteorológicas: Sistemas que recopilan datos climáticos en ubicaciones fijas en tierra para estudiar el clima local.",
+   "bloqueo": null,
+   "candidatos": [
+    "estaciones meteorológicas",
+    "boyas oceánicas",
+    "satélites climáticos"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "satélites climáticos"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 7,
+   "s": 3.5
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, ll",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "deshielo de glaciares",
+   "explicacion": "Deshielo de glaciares: es el proceso por el cual el hielo se derrite y se libera al ambiente, lo que puede elevar el nivel del mar.",
+   "bloqueo": null,
+   "candidatos": [
+    "deshielo de glaciares",
+    "capas de hielo",
+    "alamben"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "alamben"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 3,
+   "s": 3.51
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, ll",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "deshielo de glaciares",
+   "explicacion": "Deshielo de glaciares: es el proceso por el cual los glaciares pierden masa debido a que se derriten, lo que puede ser causado por el calentamiento global.",
+   "bloqueo": null,
+   "candidatos": [
+    "deshielo de glaciares",
+    "capas de hielo",
+    "alta frecuencia de sequías"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "alta frecuencia de sequías"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 3,
+   "s": 3.63
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, ll",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "deshielo de glaciares",
+   "explicacion": "Deshielo de glaciares: se refiere al proceso por el cual los glaciares pierden hielo, lo que puede afectar el nivel del mar y los patrones climáticos regionales.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 3,
+   "s": 2.81
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acidificación oceánica",
+   "explicacion": "Acidificación oceánica: es el proceso por el cual el pH del mar se reduce debido a la formación de ácido carbónico a partir del dióxido de carbono disuelto.",
+   "bloqueo": null,
+   "candidatos": [
+    "dióxido de carbono",
+    "ácido carbónico",
+    "acidificación oceánica"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.65
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acidificación oceánica",
+   "explicacion": "Acidificación oceánica: es el proceso por el cual el dióxido de carbono disuelto en el agua del océano forma ácido carbónico, lo que reduce el pH del mar.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 2.81
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "dióxido de carbono",
+   "explicacion": "Dióxido de carbono: es un gas compuesto por dos átomos de carbono y dos de oxígeno, liberado por la combustión de combustibles fósiles y plantas, y absorbido por el océano, contribuyendo a la acidificación marina.",
+   "bloqueo": null,
+   "candidatos": [
+    "dióxido de carbono",
+    "ácido carbónico",
+    "acidificación oceánica"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 3,
+   "s": 3.87
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los ",
+   "nivel": "Medium",
+   "ayuda": false,
+   "termino": "",
+   "explicacion": "",
+   "bloqueo": "termino_fuera_del_texto",
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": null,
+   "s": 2.92
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "acidificación",
+   "explicacion": "Acidificación: es el proceso por el cual el pH del agua disminuye, haciéndola más ácida, debido a la absorción de dióxido de carbono.",
+   "bloqueo": null,
+   "candidatos": [
+    "acidificación",
+    "esqueletos y conchas",
+    "microalgas"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.59
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los ",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "esqueletos y conchas",
+   "explicacion": "Esqueletos y conchas: son estructuras duraderas que algunos organismos marinos, como corales y moluscos, construyen para protegerse y mantener su forma corporal.",
+   "bloqueo": null,
+   "candidatos": [
+    "acidificación oceánica",
+    "esqueletos y conchas",
+    "microalgas"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "acidificación oceánica"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 3.81
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial gl",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "sensibilidad climática de equilibrio",
+   "explicacion": "Sensibilidad climática de equilibrio: La medida de cuánto la temperatura global aumentará en respuesta a un cambio en la concentración de gases de efecto invernadero.",
+   "bloqueo": null,
+   "candidatos": [
+    "sensibilidad climática de equilibrio",
+    "regresión multivariable",
+    "forzamiento radiativo neto"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.46
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial gl",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "sensibilidad climática de equilibrio",
+   "explicacion": "Sensibilidad climática de equilibrio: La medida de cuánto aumentará la temperatura global en promedio después de que el sistema se haya aclimado a un aumento en las emisiones de gases de efecto invernadero.",
+   "bloqueo": null,
+   "candidatos": [
+    "sensibilidad climática de equilibrio",
+    "regresión multivariable",
+    "temperatura superficial global"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.49
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial gl",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo neto",
+   "explicacion": "Forzamiento radiativo neto: es la diferencia entre la radiación solar que llega a la Tierra y la radiación que sale. Es un concepto clave para entender el cambio climático, ya que las emisiones humanas aumentan este forzamiento, llevando a un calentamiento global.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 2.9
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "errores autocorrelacionados",
+   "explicacion": "Errores autocorrelacionados: Errores que se repiten en un patrón a lo largo del tiempo en un conjunto de datos.",
+   "bloqueo": null,
+   "candidatos": [
+    "modelo lineal generalizado",
+    "errores autocorrelacionados",
+    "proceso AR(1)"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 8,
+   "s": 3.46
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "errores autocorrelacionados",
+   "explicacion": "Errores autocorrelacionados: son errores que se repiten en el tiempo en los datos, lo que significa que el valor erróneo en un punto puede influir en el siguiente, complicando la interpretación.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 8,
+   "s": 2.77
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "modelo lineal generalizado",
+   "explicacion": "Modelo lineal generalizado: Un modelo estadístico que permite la estimación de parámetros cuando hay variables dependientes y independientes no observadas.",
+   "bloqueo": null,
+   "candidatos": [
+    "modelo lineal generalizado",
+    "errores autocorrelacionados",
+    "proceso AR(1)"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.35
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "emisiones de GEI equivalentes",
+   "explicacion": "Emisiones de GEI equivalentes: representa la cantidad de emisiones de gases de efecto invernadero de un sector, expresada en términos de emisiones de dióxido de carbono equivalentes, para facilitar la comparación y la mitigación.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 2.9
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "GEI equivalentes",
+   "explicacion": "GEI equivalentes: Representan las emisiones de gases de efecto invernadero, expresadas en términos de la cantidad de dióxido de carbono que tendrían las mismas emisiones.",
+   "bloqueo": null,
+   "candidatos": [
+    "GEI equivalentes",
+    "Contribución sectorial",
+    "Dióxido de carbono equivalente"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "Dióxido de carbono equivalente"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.72
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel": "Medium",
+   "ayuda": true,
+   "termino": "GEI equivalentes",
+   "explicacion": "GEI equivalentes: Representan las emisiones de gases de efecto invernadero, expresadas en términos de la cantidad de dióxido de carbono que tendrían las mismas emisiones.",
+   "bloqueo": null,
+   "candidatos": [
+    "GEI equivalentes",
+    "Contribución sectorial",
+    "Emisiones de gases de efecto invernadero"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "Emisiones de gases de efecto invernadero"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.61
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento por aerosoles antropogénicos",
+   "explicacion": "Forzamiento por aerosoles antropogénicos: Impacto que los humanos tienen en el clima al liberar partículas en la atmósfera que pueden reflejar la luz solar, reduciendo el efecto calentante.",
+   "bloqueo": null,
+   "candidatos": [
+    "sensibilidad climática de equilibrio estimada",
+    "forzamiento por aerosoles antropogénicos",
+    "ENOS"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "sensibilidad climática de equilibrio estimada"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.69
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento por aerosoles antropogénicos",
+   "explicacion": "Forzamiento por aerosoles antropogénicos: Efecto que los humanos tienen en el clima al liberar partículas en la atmósfera que pueden reflejar la luz solar, reduciendo la temperatura global.",
+   "bloqueo": null,
+   "candidatos": [
+    "sensibilidad climática de equilibrio estimada",
+    "forzamiento por aerosoles antropogénicos",
+    "ENOS"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "sensibilidad climática de equilibrio estimada"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.59
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. ",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento por aerosoles antropogénicos",
+   "explicacion": "Forzamiento por aerosoles antropogénicos: se refiere al impacto que los humanos tienen en la atmósfera al emitir partículas que pueden afectar el clima, reduciendo o enmascarando el calentamiento global.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 2.91
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcial",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "amplificadores térmicos",
+   "explicacion": "Amplificadores térmicos: Factores que aumentan la temperatura de la superficie terrestre, como el vapor de agua y el gradiente térmico vertical.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamiento radiativo efectivo",
+    "CO₂",
+    "amplificadores térmicos"
+   ],
+   "descartados": [
+    {
+     "reason": "simbolo",
+     "term": "CO₂"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.71
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcial",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo efectivo",
+   "explicacion": "Forzamiento radiativo efectivo: es la medida del cambio en la radiación que llega a la superficie terrestre debido a las actividades humanas, expresada en vatios por metro cuadrado.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 2.85
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcial",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo efectivo",
+   "explicacion": "Forzamiento radiativo efectivo: es la diferencia entre la radiación solar que llega a la superficie de la Tierra y la radiación infrarroja que sale al espacio, influenciada por gases y partículas en la atmósfera.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamiento radiativo efectivo",
+    "amplificadores térmicos",
+    "amplificación ártica"
+   ],
+   "descartados": [],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 4,
+   "s": 3.68
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles ant",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamientos antropogénicos",
+   "explicacion": "Forzamientos antropogénicos: se refiere a los cambios en el clima causados por actividades humanas, como la quema de combustibles fósiles, que emiten gases que alteran el clima.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": true,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 2.88
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles ant",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "serie de forzamiento por aerosoles",
+   "explicacion": "Serie de forzamiento por aerosoles: Cantidad de aerosoles en la atmósfera que pueden afectar la radiación solar y el clima.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamientos antropogénicos",
+    "serie de forzamiento por aerosoles",
+    "linealidad entre forzamiento y respuesta"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "forzamientos antropogénicos"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.6
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles ant",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "serie de forzamiento por aerosoles",
+   "explicacion": "Serie de forzamiento por aerosoles: Cantidad de aerosoles en la atmósfera que pueden afectar la radiación solar y el clima.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamientos antropogénicos",
+    "serie de forzamiento por aerosoles",
+    "linealidad entre forzamiento y respuesta"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "forzamientos antropogénicos"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.42
+  },
+  {
+   "rep": 1,
+   "variante": "candidatos",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación de",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "desagregado por componente",
+   "explicacion": "Desagregado por componente: se refiere a la separación del efecto total en términos de los diferentes gases y aerosoles que contribuyen al forzamiento radiativo.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamiento radiativo",
+    "antropogénico",
+    "desagregado por componente"
+   ],
+   "descartados": [
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "forzamiento radiativo"
+    },
+    {
+     "reason": "ya_definido_en_la_pagina",
+     "term": "antropogénico"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 5,
+   "s": 3.49
+  },
+  {
+   "rep": 1,
+   "variante": "silabas",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación de",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo antropogénico",
+   "explicacion": "Forzamiento radiativo antropogénico: es la influencia que las actividades humanas tienen en la radiación que llega a la atmósfera terrestre, afectando el equilibrio térmico.",
+   "bloqueo": null,
+   "candidatos": [
+    "forzamiento radiativo antropogénico",
+    "desagregación por componente",
+    "evaluación del IPCC AR6"
+   ],
+   "descartados": [
+    {
+     "reason": "fuera_del_texto",
+     "term": "desagregación por componente"
+    }
+   ],
+   "repetido": false,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 3.73
+  },
+  {
+   "rep": 1,
+   "variante": "modelo",
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación de",
+   "nivel": "High",
+   "ayuda": true,
+   "termino": "forzamiento radiativo efectivo antropogénico",
+   "explicacion": "Forzamiento radiativo efectivo antropogénico: se refiere al cambio en la fuerza del efecto de la radiación debido a las actividades humanas, como la quema de combustibles fósiles, que altera el balance de energía en la atmósfera terrestre.",
+   "bloqueo": null,
+   "candidatos": null,
+   "descartados": null,
+   "repetido": true,
+   "simbolo": false,
+   "silabas": 6,
+   "s": 2.91
+  }
+ ]
+}

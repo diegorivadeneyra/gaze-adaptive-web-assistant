@@ -1,3 +1,8 @@
+> **Versión lista para usar (2026-10-20):** `bin/gaze_server.exe` + `bin/tobii_stream_engine.dll`
+> (Release x86, runtime de C++ incluido: corre sin Visual Studio). `backend/app.py`
+> lo abre solo en modo Tobii. Si se modifica `gaze_server.cpp`, recompilar Release|Win32
+> y copiar el `.exe` a `bin/`.
+
 # tobii_bridge
 
 Puente entre el Tobii 5 (SDK en C++) y el backend en Python (`backend/app.py`).

@@ -21,6 +21,7 @@ persona muestra que lo necesita? → ayuda (tooltip) → todo queda registrado.*
 |---|---|---|---|
 | Se analiza al mirar el mismo elemento de forma sostenida | 0.5 s | Inicial (≈ 2 fijaciones de lectura; Rayner, 1998) | `gaze.js` `DWELL_THRESHOLD_MS` |
 | Los títulos (h1–h6) no se analizan ni reciben ayuda | — | Medido (6 de 26 ayudas eran sobre títulos) | `gaze.js` `extractContent` |
+| Notas al pie y referencias (`.footnote`, `footer`, `cite`, `small`, roles de nota/bibliografía) no se analizan ni reciben ayuda | — | Medido (4 de 17 ayudas innecesarias eran notas o referencias) | `gaze.js` `NO_HELP_SELECTOR` |
 
 ---
 
@@ -30,7 +31,8 @@ persona muestra que lo necesita? → ayuda (tooltip) → todo queda registrado.*
 |---|---|---|---|
 | Texto de 8 palabras o más | Legibilidad INFLESZ: ≥ 55 Low, 40–55 Medium, < 40 High | Estándar (cortes) / medido (mínimo de 8 palabras) | `readability.py` |
 | Gráficas de las páginas | Nivel con que se diseñaron (`data-design-level`) | Diseño del estímulo (el juicio de la IA cambiaba entre días) | HTML + `image_analyzer.py` |
-| Tablas, fotos y textos cortos | Juicio de la IA | No calibrado | `text_analyzer.py`, `image_analyzer.py` |
+| Fotos de las páginas (6) | **Low** por diseño (`data-design-level="Low"`): son ilustrativas, sin datos que entender | Diseño del estímulo (con contexto, la IA daba ayudas descriptivas a fotos) | HTML |
+| Tablas y textos cortos | Juicio de la IA | No calibrado | `text_analyzer.py`, `image_analyzer.py` |
 
 ---
 
@@ -68,6 +70,7 @@ Cómo se cuenta el tiempo:
 | Sale **más de 5 s** sin haberlo leído | Se **reinicia** (solo había mirado el inicio) |
 | Sale más de 5 s **habiéndolo leído** y vuelve | **Relectura** → ayuda |
 | Mira el tooltip | No suma al tiempo del párrafo |
+| Ya tenía una ayuda, sale **menos de 5 s** y vuelve | La **misma ayuda reaparece** (es la misma lectura). Se registra como `help_reshown`, no como una ayuda nueva (desde el 2026-10-11) |
 
 **Fijaciones (I-DT, 300 ms / 60 px):** sirven para medir la relectura en el
 párrafo (arriba) y se registran por visita: cantidad, tiempo total en
@@ -80,9 +83,11 @@ fijo de tablas, gráficas e imágenes, y el **tiempo acumulado del párrafo**
 (un dwell relativo: comparado con lo que esa persona debería tardar).
 
 **Ritmo de la persona (adaptativo, sin medición previa):**
-- Arranca en el **promedio general**: ≈ 140 ms por sílaba (≈ 220 palabras/min
-  en español; Brysbaert, 2019, *a verificar*; ~2 sílabas por palabra, *medido*
-  en las páginas).
+- Arranca en un **promedio general**: 140 ms por sílaba (≈ 214 palabras/min
+  con ~2 sílabas por palabra, *medido* en las páginas). *Verificado*: Brysbaert
+  (2019, Tabla 5) da **278 palabras/min** de lectura silenciosa en español
+  (≈ 108 ms/sílaba), así que 140 es **conservador** (más lento). Quien sabe que
+  le harán preguntas lee más lento (Brysbaert, 2019). A calibrar con el piloto.
 - Cada vez que lee un **párrafo fácil (Low) completo y sin señales**, el ritmo
   se acerca al suyo (30 % del camino). Solo cuenta si el tiempo observado está
   entre 0.4 y 2 veces el esperado (fuera de eso: hojeo o distracción).
@@ -94,8 +99,8 @@ registra (`help_would_trigger_low`) para estudiarlo.
 
 | Parámetro | Valor | Origen |
 |---|---|---|
-| Ritmo base | 140 ms/sílaba | Literatura (a verificar) + medido (sílabas/palabra) |
-| Factor del nivel | Low 1.0 · Medium 1.3 · High 1.6 | Inicial |
+| Ritmo base | 140 ms/sílaba | Inicial, conservador: la literatura da ≈ 108 ms/sílaba para español (Brysbaert, 2019, Tabla 5) |
+| Factor del nivel | Low 1.0 · Medium 1.3 · High 1.6 | Inicial. Referencia: textos difíciles se leyeron 1.44 veces más lento (262 vs 182 palabras/min; Britton et al., 1978, citado en Brysbaert, 2019) |
 | Umbral de atascado | 1.5 × esperado, a más tardar esperado + 15 s | Inicial (tope: ver sensibilidad en §8) |
 | Relectura en el párrafo | ≥ 1.5 s en el primer tercio, después de haberlo leído | Inicial (con 0.4 s, quien solo revisa un dato recibía ayuda) |
 | "Lo leyó" | en el último tercio con ≥ 40 % del esperado acumulado | Inicial (con 70 %, un lector rápido sin ritmo adaptado necesitaba ~2 lecturas) |
@@ -115,7 +120,33 @@ ayudas innecesarias a lectores lentos (1 % con +15 s; 10 %, 15 % y 24 % con +10,
 esperar al menos su tiempo de lectura. La señal que adelanta la ayuda de verdad
 es la **relectura en el párrafo**.
 
-### 4.2 Tablas, gráficas e imágenes: tiempo fijo
+### 4.2 Segundo nivel: ayuda ampliada (desde el 2026-10-11)
+
+Si después de la primera ayuda la persona **se vuelve a trabar en el mismo
+párrafo**, el tooltip cambia (📘) a una explicación más completa.
+
+| Señal para el segundo nivel | Valor | Origen |
+|---|---|---|
+| Atascado otra vez | sigue en el párrafo **1.0 × su tiempo esperado más** desde la primera ayuda (`level2_extra_fraction`) | Inicial (con 0.75, una sola relectura a ritmo normal ya lo daba en Medium) |
+| Relectura en el párrafo | vuelve a llegar al último tercio y regresa al primero (≥ 1.5 s con fijación) | Igual que el primer nivel |
+| Relectura al volver | sale > 5 s y vuelve | Igual que el primer nivel |
+
+**Por qué 1.0 y no 0.75** (decidido el 2026-10-11): en un párrafo Medium,
+leer una vez a ritmo normal toma ≈ 0.77 del tiempo esperado (1 / 1.3); con
+0.75, **una sola relectura completa** después de la primera ayuda ya daba el
+nivel 2 (prueba en el navegador), y releer tras una definición puede ser solo
+integrarla. Costo: quien sigue trabado lo recibe ~4–5 s más tarde. Prueba:
+"releer una vez completo a ritmo normal no lo dispara" en
+`tests/test_reading_model.js`.
+
+**En todos los niveles, también High:** sus explicaciones incorrectas no
+son más frecuentes que en Medium (2/14 vs. 2/12); sí son más vagas.
+
+La ampliada se pide en segundo plano en cuanto se muestra la primera ayuda,
+así que aparece al instante. Código: `reading_model.rearm()`,
+`gaze.js` (`prefetchExpandedHelp`, `offerLevel2`), `expanded_help.py`.
+
+### 4.3 Tablas, gráficas e imágenes: tiempo fijo
 
 "Sílabas" no tiene sentido ahí, así que se mantiene la regla anterior:
 Medium tras **2 s**, High tras **0.5 s**, y **0.5 s** si es una relectura
@@ -128,23 +159,36 @@ Medium tras **2 s**, High tras **0.5 s**, y **0.5 s** si es una relectura
 | Regla | Detalle | Origen |
 |---|---|---|
 | Texto: define el término más difícil | "Término: definición", sin resumir el texto ni usar analogías; máximo 55 palabras (recorte en código) | Medido (versiones anteriores copiaban el texto o inventaban) |
+| Cómo se elige el término (texto) | La IA propone hasta 3; el código descarta símbolos o fórmulas ("CO₂"), términos que no están en el párrafo y los **ya explicados en la página**, y elige el de la palabra con más sílabas (como INFLESZ). Lo mismo en el segundo nivel | Medido (`ab_terminos.py`): 26/26 párrafos con ayuda (antes 24), 0 términos repetidos (antes 4), 16/22 términos centrales (antes 14), 0 definiciones incorrectas; +0.8 s. Segundo nivel en avanzado: 5 → 2 incorrectas |
 | Bloqueo si el término no está en el texto | Si el término definido no aparece en el párrafo, no se muestra | Medido (evitó un término inventado; 11/11 casos bien) |
 | Contexto de sección | Al texto y las tablas se les pasa el subtítulo de su sección (no el título de la página) | Medido (8 mejoras / 2 empeoramientos; el título empeoraba) |
 | Gráficas SVG | Se pasan sus valores y etiquetas escritos; se pide explicar qué mide | Medido (corrigió el orden de las barras; ahora menciona la unidad) |
-| Modelos | `phi3` (texto) y `qwen2.5vl:3b` (imágenes), locales en Ollama | Medido (latencia ~2.7 s; caben juntos en 8 GB) |
+| Segundo nivel (ayuda ampliada) | 2–3 términos del párrafo con definición breve (sin repetir el del primer nivel; cada uno debe estar en el texto) + "En pocas palabras:" la idea del párrafo en palabras simples. Aquí **sí** se reformula: ya no lo entendió ni con la definición | Medido: 26/26 válidas, 3.5 s; juicio: 17 correctas, 3 imprecisas, 6 incorrectas (**5 de 14 en avanzado**). `evaluation/results/revision_ayuda_ampliada_20261011.md` |
+| Dónde aparece el tooltip | A la derecha, izquierda, debajo o arriba del elemento: la primera posición que no tape texto, tablas, imágenes ni controles (`computeTooltipPlacement`) | Medido: elementos tapados 45/51 → 16/51; con el tooltip más alto del nivel 2, 3/44 de los que pueden recibir ayuda |
+| Modelos | `phi3` (texto) y `qwen2.5vl:3b` (imágenes), locales en Ollama. El primer y el segundo nivel usan la **misma ventana de contexto** (`TEXT_NUM_CTX` = 1024) | Medido (latencia ~2.7 s; caben juntos en 8 GB). Si la ventana cambia entre peticiones, Ollama recarga phi3 (~6 s): la ampliada tardaba 8.9 s |
 
 ---
 
 ## 6. ¿Cómo se mide si el sistema le SIRVE al usuario?
 
-**Diseño intra-sujeto:** cada persona lee las 3 páginas, unas **con ayuda** y
-otras **sin ayuda**, con 6 patrones rotados entre participantes. En "sin ayuda"
-el sistema funciona igual, pero no muestra el tooltip: registra la ayuda que
-habría dado.
+**Diseño final (2026-10-20, con la asesora): dos métodos, ayuda automática y
+ayuda a pedido; orden de páginas aleatorio** por participante; la página fácil
+siempre "a pedido" e intermedia/avanzada al azar, una con cada método (cada
+persona prueba ambos). "Sin ayuda" ya no se usa en
+las pruebas. Cuestionarios: comprensión y NASA-TLX (Anexo 3, ponderado) por
+página; SUS y post-experimento (Anexo 4) al final.
+
+*Antes* (2026-10-17): **diseño intra-sujeto, 3 condiciones**: cada persona lee
+cada página una vez, con una condición distinta en cada una: **sin ayuda**,
+**automática** (la ayuda aparece sola por la conducta) o **a pedido** (aparece
+un botón "Ver ayuda" apenas hay ayuda; la persona decide). Los 6 órdenes se
+rotan entre participantes. En "sin ayuda" y "a pedido" la regla automática
+sigue corriendo y registra dónde habría dado la ayuda: en "a pedido" eso
+permite comparar lo que la persona pide con lo que detecta el sistema.
 
 | Pregunta | Medida | Estado |
 |---|---|---|
-| **¿Entiende mejor?** (principal) | Prueba de comprensión por página | **Pendiente** |
+| **¿Entiende mejor?** (principal) | Prueba de comprensión por página: 6 preguntas (3 literales y 3 inferenciales, según Kintsch, 1988), cada una ligada a su bloque | **Borrador** en [`evaluation/prueba_comprension.md`](evaluation/prueba_comprension.md); falta revisarla con la asesora y validarla |
 | ¿Le parece más fácil? | Cuestionario 1–5 | Pendiente |
 | **¿La ayuda llega a quien la necesita?** | El participante **marca lo que le costó** al terminar cada página → **acierto** (de las ayudas, cuántas fueron a algo que marcó) y **cobertura** (de lo que marcó, a cuánto llegó la ayuda) | **Listo** (`marking.js`, `analyze_sessions.py`) |
 | ¿Lee distinto? | Relecturas, tiempo por párrafo, tiempo en la página | Listo (registro) |
@@ -179,6 +223,8 @@ verificar que solo haya un `python app.py`.
 |---|---|
 | `python evaluation/run_metrics.py --suite all` | Idioma, legibilidad, prompts de texto y de visión |
 | `python evaluation/ab_contexto.py` | Variantes de contexto de página |
+| `python evaluation/ab_terminos.py --reps 2` | Cómo se elige el término: modelo / candidatos / sílabas |
+| `python evaluation/medir_ayuda_ampliada.py --reps 2` | Segundo nivel (ayuda ampliada) sobre los párrafos reales: válidas, términos, latencia; textos para revisar a mano |
 | `node tests/test_reading_model.js` | Reglas de la ayuda por conducta (pruebas + simulación) |
 | `python evaluation/analyze_sessions.py` | Sesiones reales: lectura, ayudas, acierto y cobertura |
 

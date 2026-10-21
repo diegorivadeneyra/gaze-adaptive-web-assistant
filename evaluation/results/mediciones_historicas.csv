@@ -18,3 +18,18 @@ fecha,tema,variante,metrica,valor,n,nota
 2026-10-04,longitud_phi3_vs_tope_pedido,pedir_40_palabras,palabras_max,65,7,
 2026-10-04,longitud_phi3_vs_tope_pedido,pedir_30_palabras,palabras_prom,62,7,pedir menos NO bajó la longitud
 2026-10-04,longitud_phi3_vs_tope_pedido,pedir_30_palabras,palabras_max,90,7,
+2026-10-11,recarga_phi3,num_ctx_alterno_1024_1536,load_s_por_cambio,6.03,3,load_duration de Ollama; sin cambio de num_ctx 0.01 s
+2026-10-11,ayuda_ampliada,num_ctx_1536_antes,latencia_s_prom,8.89,23,alternando /analyze y /expand (medir_ayuda_ampliada.py)
+2026-10-11,ayuda_ampliada,num_ctx_1024_compartido,latencia_s_prom,3.47,26,idem; nivel 1 alternando 2.95 s
+2026-10-11,ayuda_ampliada,sin_maxItems,validas,23,26,13 párrafos con ayuda x 2 reps (sin notas al pie)
+2026-10-11,ayuda_ampliada,maxItems_3,validas,26,26,idem
+2026-10-11,ayuda_ampliada,maxItems_3,juicio_correctas,17,26,revision_ayuda_ampliada_20261011.md; imprecisas 3; incorrectas 6 (5 en avanzado)
+2026-10-11,eleccion_termino,modelo,ayudas,24,26,ab_terminos.py; 13 párrafos en orden x 2
+2026-10-11,eleccion_termino,silabas,ayudas,26,26,idem
+2026-10-11,eleccion_termino,modelo,repetidos_en_pagina,4,26,idem
+2026-10-11,eleccion_termino,silabas,repetidos_en_pagina,0,26,idem
+2026-10-11,eleccion_termino,modelo,juicio_relevantes,14,22,revision_terminos_20261011.md
+2026-10-11,eleccion_termino,candidatos,juicio_relevantes,15,22,idem; 2 incorrectas
+2026-10-11,eleccion_termino,silabas,juicio_relevantes,16,22,idem; 0 incorrectas
+2026-10-11,eleccion_termino,silabas,latencia_s_prom,3.61,26,modelo 2.82 s
+2026-10-11,ayuda_ampliada,eleccion_silabas,juicio_correctas,13,26,imprecisas 9; incorrectas 4 (2 en avanzado)

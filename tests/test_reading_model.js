@@ -184,6 +184,55 @@ test("relectura en el párrafo: el tiempo sin fijación no cuenta", () => {
     assert.strictEqual(m.signal("p", medium).type, "relectura_en_el_parrafo");
 });
 
+test("segundo nivel: tras la ayuda, la relectura en el párrafo exige volver a llegar al final", () => {
+    const m = createReadingModel(RP);
+    m.enter("p", 0);
+    read(m, "p", EXP * 0.9, medium);
+    for (let t = 0; t < RP.reread_start_min_ms; t += 100) m.tick("p", 100, "inicio", medium, true);
+    assert.strictEqual(m.signal("p", medium).type, "relectura_en_el_parrafo");
+    m.rearm("p");                                             // se mostró la primera ayuda
+    assert.strictEqual(m.signal("p", medium), null);
+    for (let t = 0; t < 3000; t += 100) m.tick("p", 100, "inicio", medium, true);
+    assert.strictEqual(m.signal("p", medium), null, "seguir arriba no basta");
+    read(m, "p", EXP * 0.6, medium);                           // vuelve a leer hasta el final
+    for (let t = 0; t < RP.reread_start_min_ms; t += 100) m.tick("p", 100, "inicio", medium, true);
+    assert.strictEqual(m.signal("p", medium).type, "relectura_en_el_parrafo");
+});
+
+test("segundo nivel: atascado se mide desde la ayuda", () => {
+    const m = createReadingModel(RP);
+    m.enter("p", 0);
+    for (let t = 0; t < EXP * 1.6; t += 100) m.tick("p", 100, "medio", medium);
+    assert.strictEqual(m.signal("p", medium).type, "atascado");
+    m.rearm("p");
+    assert.strictEqual(m.signal("p", medium), null);
+    for (let t = 0; t < EXP * RP.level2_extra_fraction - 200; t += 100) m.tick("p", 100, "medio", medium);
+    assert.strictEqual(m.signal("p", medium), null);
+    for (let t = 0; t < 300; t += 100) m.tick("p", 100, "medio", medium);
+    assert.strictEqual(m.signal("p", medium).type, "atascado");
+});
+
+test("segundo nivel: releer una vez completo a ritmo normal no lo dispara", () => {
+    // Releer tras recibir la definición puede ser solo integrarla. A ritmo
+    // normal, leer un párrafo Medium toma 1/1.3 del tiempo esperado.
+    const m = createReadingModel(RP);
+    m.enter("p", 0);
+    for (let t = 0; t < EXP * 1.6; t += 100) m.tick("p", 100, "medio", medium);
+    m.rearm("p");                                             // primera ayuda
+    read(m, "p", EXP / RP.level_factor.Medium, medium);        // una relectura completa
+    assert.strictEqual(m.signal("p", medium), null);
+});
+
+test("segundo nivel: volver después de la ayuda cuenta como relectura", () => {
+    const m = createReadingModel(RP);
+    m.enter("p", 0);
+    read(m, "p", EXP * 0.9, medium);
+    m.rearm("p");
+    m.leave("p", 30000, medium, true);
+    assert.strictEqual(m.enter("p", 30000 + RP.revisit_gap_ms + 1000).event, "relectura");
+    assert.strictEqual(m.signal("p", medium).type, "relectura");
+});
+
 // ── 2. Simulación con lectores simulados ─────────────────────────
 function rng(seed) {
     let s = seed >>> 0;

@@ -32,10 +32,14 @@ HELP_POLICY = {
 REVISIT_MIN_DWELL_MS = BASE_DWELL_MS
 
 READING_POLICY = {
-    # Ritmo promedio de partida. Lectura silenciosa en español ≈ 220 palabras
-    # por minuto (≈ 275 ms/palabra; Brysbaert, 2019, a verificar) y ~2 sílabas
-    # por palabra (medido en las páginas: 1.85 fácil, 2.31 intermedio, 2.48
-    # avanzado) -> ≈ 140 ms por sílaba.
+    # Ritmo promedio de partida: 140 ms por sílaba ≈ 214 palabras/min con
+    # ~2 sílabas por palabra (medido en las páginas: 1.85 fácil, 2.31
+    # intermedio, 2.48 avanzado). VERIFICADO el 2026-10-11 en Brysbaert (2019,
+    # J. Memory and Language 109, Tabla 5): lectura silenciosa en español =
+    # 278 palabras/min (5 estudios), en inglés no ficción 238. O sea, 140 es
+    # más lento que ese promedio (278 ≈ 108 ms/sílaba). Es conservador a
+    # propósito: quien sabe que le harán preguntas lee más lento (Brysbaert
+    # 2019, sobre Carver y Kemper y Sumner). A calibrar con el piloto.
     "base_ms_per_syllable": 140,
     # Cuánto más lento se lee, aunque se entienda, según el nivel del texto.
     # Ojo: las sílabas ya alargan el tiempo de los textos difíciles (palabras
@@ -57,6 +61,12 @@ READING_POLICY = {
     # indicador clásico de dificultad). Si el piloto muestra que el Tobii
     # detecta pocas fijaciones al leer, poner False (cuenta cualquier mirada).
     "reread_requires_fixation": True,
+    # Segundo nivel de ayuda: tras la primera ayuda, "atascado" otra vez si
+    # sigue en el párrafo 1.0 × su tiempo esperado más. Con 0.75, en Medium
+    # una sola relectura completa a ritmo normal (1/1.3 ≈ 0.77 del esperado)
+    # ya lo daba (prueba en el navegador, 2026-10-11). La relectura (volviendo
+    # o dentro del párrafo) también lo dispara.
+    "level2_extra_fraction": 1.0,
     # "Lo leyó": la mirada está en el último tercio cuando ya acumuló >= 40 %
     # del tiempo esperado. Con 70 %, un lector rápido cuyo ritmo aún no se
     # adaptó necesitaba ~2 lecturas para que contara (lo notó el usuario);

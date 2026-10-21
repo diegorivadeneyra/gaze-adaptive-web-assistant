@@ -27,3 +27,10 @@ data/
 # Editor / sistema
 .vscode/
 Thumbs.db
+
+# Respaldos locales (diseño anterior, capturas): no hacen falta para correr el sistema
+respaldos/
+
+# Material de referencia y borradores sueltos en la raíz (no son parte del sistema)
+/*.docx
+/guion.md

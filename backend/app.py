@@ -9,16 +9,27 @@ from analyzers.image_analyzer import analyze_image, analyze_image_data
 from analyzers.llm_utils import TEXT_MODEL, VISION_MODEL, ensure_ollama_models
 from analyzers.decision_engine import HELP_POLICY, READING_POLICY, REVISIT_MIN_DWELL_MS
 from analyzers.readability import count_text_syllables
+from analyzers.expanded_help import expand_text
 import session_log
 import asyncio
+import atexit
+import subprocess
 import base64
 import io
 import json
 import math
+import os
 import socket
+import sys
 import threading
 import time
 import websockets
+
+# Los print muestran términos del modelo (p. ej. "CO₂"). Si la consola no es
+# UTF-8 (salida redirigida en Windows = cp1252), el print lanzaba
+# UnicodeEncodeError y la ruta respondía 500 sin dar la ayuda.
+for _stream in (sys.stdout, sys.stderr):
+    _stream.reconfigure(encoding="utf-8", errors="replace")
 
 # ── Interruptor de fuente de coordenadas ────────────────────────────
 # Cambia esta variable a mano y reinicia el servidor. No cambia en vivo
@@ -27,7 +38,10 @@ import websockets
 INPUT_SOURCE_MOUSE = 1
 INPUT_SOURCE_TOBII = 2
 
-GAZE_INPUT_SOURCE = INPUT_SOURCE_MOUSE
+GAZE_INPUT_SOURCE = INPUT_SOURCE_TOBII
+# Solo para pruebas sin tocar el código: GAZE_SOURCE=tobii python app.py
+if os.environ.get("GAZE_SOURCE", "").lower() in ("tobii", "mouse"):
+    GAZE_INPUT_SOURCE = INPUT_SOURCE_TOBII if os.environ["GAZE_SOURCE"].lower() == "tobii" else INPUT_SOURCE_MOUSE
 
 _INPUT_SOURCE_NAMES = {INPUT_SOURCE_MOUSE: "mouse", INPUT_SOURCE_TOBII: "tobii"}
 if GAZE_INPUT_SOURCE not in _INPUT_SOURCE_NAMES:
@@ -50,7 +64,22 @@ WS_PORT = 5600
 # estos valores a mano y reinicia este script — no hace falta recompilar
 # gaze_server.cpp. Ej.: si detecta ~40px más abajo de lo real, usa -40.
 GAZE_OFFSET_X = 0
-GAZE_OFFSET_Y = -40
+GAZE_OFFSET_Y = 0   # antes −40 (manual); ahora lo corrige la comprobación de 5 puntos (calibracion.html)
+
+
+def _screen_size():
+    """Resolución de pantalla que usa gaze_server.cpp para pasar la mirada a
+    píxeles (GetSystemMetrics, igual que aquí). Sirve para volver a la
+    proporción de pantalla (0–1), que el navegador convierte según el equipo."""
+    try:
+        import ctypes
+        user32 = ctypes.windll.user32
+        return user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+    except Exception:   # no es Windows
+        return None
+
+
+TOBII_SCREEN = _screen_size()
 
 def _warmup_image_b64():
     """Imagen en blanco de 64x64 usada solo para precalentar el modelo de
@@ -94,7 +123,7 @@ async def _ws_broadcast(payload):
     )
 
 
-def _push_gaze_point(x, y, valid, timestamp_us=None):
+def _push_gaze_point(x, y, valid, timestamp_us=None, nx=None, ny=None):
     """Punto de entrada único para cualquier fuente de coordenadas de
     mirada (bridge TCP real o POST de prueba): valida y lo empuja de
     inmediato a los clientes WebSocket conectados."""
@@ -103,7 +132,11 @@ def _push_gaze_point(x, y, valid, timestamp_us=None):
         "x": x if valid else None,
         "y": y if valid else None,
         "valid": valid,
-        "timestamp_us": timestamp_us
+        "timestamp_us": timestamp_us,
+        # Proporción de pantalla (0–1): el navegador la pasa a la página según el
+        # equipo (gaze_mapping.js). x, y quedan por compatibilidad.
+        "nx": nx if valid else None,
+        "ny": ny if valid else None,
     }
     if _ws_loop is not None:
         asyncio.run_coroutine_threadsafe(_ws_broadcast(payload), _ws_loop)
@@ -126,7 +159,8 @@ def _run_websocket_server():
 def get_config():
     # La regla de lectura (READING_POLICY) también vive solo en el backend.
     return jsonify({"input_source": _INPUT_SOURCE_NAMES[GAZE_INPUT_SOURCE],
-                    "reading_policy": READING_POLICY})
+                    "reading_policy": READING_POLICY,
+                    "tobii_screen": TOBII_SCREEN})
 
 
 @app.route("/gaze-latest", methods=["POST"])
@@ -143,6 +177,24 @@ def home():
     return send_file(FRONTEND_DIR / "index.html")
 
 
+# ── Segundo nivel de ayuda (ver analyzers/expanded_help.py) ─────────
+@app.route("/expand", methods=["POST"])
+def expand():
+    data = request.get_json(silent=True) or {}
+    content = data.get("content")
+    if not isinstance(content, str) or not content.strip() or len(content) > 12000:
+        return jsonify({"error": "content debe ser texto"}), 400
+    section = data.get("section") if isinstance(data.get("section"), str) else ""
+    defined = data.get("already_defined") if isinstance(data.get("already_defined"), str) else ""
+    page_terms = data.get("defined_terms")
+    page_terms = [t.strip()[:120] for t in page_terms[:30] if isinstance(t, str) and t.strip()] \
+        if isinstance(page_terms, list) else []
+    result = expand_text(content, section.strip()[:150], defined.strip()[:120], page_terms)
+    print(f"[AYUDA 2] {result.get('processing_time')}s · términos {[t['term'] for t in result.get('terms', [])]}"
+          f" · descartados {result.get('discarded_terms')}")
+    return jsonify(result), (502 if "error" in result else 200)
+
+
 # ── Registro de sesiones (ver backend/session_log.py) ──────────────
 MAX_LOG_BODY_BYTES = 5_000_000
 
@@ -151,7 +203,7 @@ MAX_LOG_BODY_BYTES = 5_000_000
 def session_start():
     data = request.get_json(silent=True) or {}
     try:
-        participant, plan = session_log.validate_start(data)
+        participant, plan, order = session_log.validate_start(data)
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     server_info = {
@@ -163,8 +215,8 @@ def session_start():
         "reading_policy": READING_POLICY,
         "gaze_offset_y": GAZE_OFFSET_Y,
     }
-    session_id = session_log.start_session(participant, plan, data.get("client"), server_info)
-    print(f"[SESION] Iniciada {session_id} · plan {plan}")
+    session_id = session_log.start_session(participant, plan, data.get("client"), server_info, order)
+    print(f"[SESION] Iniciada {session_id} · orden {order} · plan {plan}")
     return jsonify({"session_id": session_id})
 
 
@@ -206,6 +258,13 @@ def analyze():
             if isinstance(value, str) and value.strip()
         }
 
+        # Términos ya explicados en esta página (el navegador los lleva):
+        # el análisis de texto no vuelve a elegirlos. term_selection solo lo
+        # usan los scripts de evaluación para comparar variantes.
+        defined_terms = data.get("defined_terms")
+        defined_terms = [t.strip()[:120] for t in defined_terms[:30] if isinstance(t, str) and t.strip()]             if isinstance(defined_terms, list) else []
+        term_selection = data.get("term_selection") if isinstance(data.get("term_selection"), str) else None
+
         if not isinstance(content, str):
             return jsonify({"error": "Content must be a string"}), 400
         if not isinstance(context, str):
@@ -239,7 +298,8 @@ def analyze():
         start_time = time.time()
 
         if content_type == "text":
-            analysis = analyze_text(content, page_context=page_context)
+            analysis = analyze_text(content, page_context=page_context,
+                                    defined_terms=defined_terms, term_selection=term_selection)
         elif content_type == "table":
             # La legibilidad (INFLESZ) mide texto corrido; en una tabla el
             # nivel lo juzga el modelo.
@@ -287,6 +347,9 @@ def analyze():
             "inflesz": analysis.get("inflesz"),
             "inflesz_label": analysis.get("inflesz_label"),
             "help_blocked": analysis.get("help_blocked"),
+            "term_selection": analysis.get("term_selection"),
+            "term_candidates": analysis.get("term_candidates"),
+            "term_discarded": analysis.get("term_discarded"),
             # Solo texto corrido: base del tiempo de lectura esperado.
             "syllables": count_text_syllables(content) if content_type == "text" else None,
             "processing_time": processing_time
@@ -310,26 +373,83 @@ def _handle_tobii_line(line):
         return
     try:
         x, y, timestamp_us, valid_flag = parts
+        x, y = float(x), float(y)
+        nx = x / TOBII_SCREEN[0] if TOBII_SCREEN else None
+        ny = y / TOBII_SCREEN[1] if TOBII_SCREEN else None
         _push_gaze_point(
-            float(x) + GAZE_OFFSET_X,
-            float(y) + GAZE_OFFSET_Y,
+            x + GAZE_OFFSET_X,
+            y + GAZE_OFFSET_Y,
             valid_flag == "1",
-            int(timestamp_us)
+            int(timestamp_us),
+            nx, ny
         )
     except ValueError:
         pass
 
 
+# ── Puente del Tobii (gaze_server.exe) lanzado por este servidor ────
+# En modo Tobii, app.py abre el puente en OTRA ventana (no hace falta abrirlo
+# a mano) y lo cierra al terminar. El puente acepta UNA sola conexión: si se
+# desconecta, queda inútil, así que se cierra y se abre uno nuevo.
+BRIDGE_AUTOSTART = True
+_bridge_proc = None
+
+
+def _bridge_exe():
+    base = PROJECT_ROOT / "tobii_bridge"
+    # bin/ = versión Release ya compilada que viene en el repositorio (corre sin
+    # Visual Studio, p. ej. en la laptop de las pruebas); luego, lo compilado aquí.
+    for folder in ("bin", "Release", "Debug"):
+        exe = base / folder / "gaze_server.exe"
+        if exe.exists():
+            return exe
+    return None
+
+
+def _stop_bridge():
+    global _bridge_proc
+    if _bridge_proc is not None and _bridge_proc.poll() is None:
+        _bridge_proc.terminate()
+    _bridge_proc = None
+
+
+def _start_bridge():
+    """Cierra puentes viejos (de una ejecución anterior) y abre uno nuevo."""
+    global _bridge_proc
+    exe = _bridge_exe()
+    if exe is None:
+        print("[TOBII] No se encontró tobii_bridge/(Release|Debug)/gaze_server.exe: "
+              "compílalo con Visual Studio (ver tobii_bridge/README.md) o ábrelo a mano.")
+        return False
+    _stop_bridge()
+    subprocess.run(["taskkill", "/F", "/IM", "gaze_server.exe"], capture_output=True)
+    _bridge_proc = subprocess.Popen([str(exe)], cwd=str(exe.parent),
+                                    creationflags=getattr(subprocess, "CREATE_NEW_CONSOLE", 0))
+    print(f"[TOBII] Puente abierto en otra ventana: {exe.relative_to(PROJECT_ROOT)}")
+    time.sleep(1.5)   # tiempo para que empiece a escuchar
+    return True
+
+
+atexit.register(_stop_bridge)
+
+
 def _tobii_socket_bridge():
     """Cliente TCP que se conecta a tobii_bridge/gaze_server.cpp (el proceso en
     C++ que sí habla con el eye tracker) y reenvía cada punto que manda vía
-    _push_gaze_point. Reintenta la conexión si gaze_server.exe todavía no
-    arrancó, o si se cae."""
+    _push_gaze_point. Si el puente no está abierto (o se cerró), lo abre."""
     buffer = ""
     while True:
+        if BRIDGE_AUTOSTART and (_bridge_proc is None or _bridge_proc.poll() is not None):
+            if _bridge_proc is not None:
+                print("[TOBII] El puente se cerró (¿Tobii desconectado?). Se vuelve a abrir.")
+            _start_bridge()
         try:
             print(f"[TOBII] Conectando a gaze_server.exe en {TOBII_BRIDGE_HOST}:{TOBII_BRIDGE_PORT}...")
             with socket.create_connection((TOBII_BRIDGE_HOST, TOBII_BRIDGE_PORT), timeout=5) as sock:
+                # Sin tiempo límite al RECIBIR: si la persona se aparta y el
+                # Tobii deja de enviar unos segundos, no se corta la conexión
+                # (el puente acepta una sola; cortarla obligaba a reiniciar).
+                sock.settimeout(None)
                 print("[TOBII] Conectado. Recibiendo coordenadas...")
                 while True:
                     chunk = sock.recv(1024)
@@ -339,6 +459,9 @@ def _tobii_socket_bridge():
                     while "\n" in buffer:
                         line, buffer = buffer.split("\n", 1)
                         _handle_tobii_line(line)
+            print("[TOBII] El puente cortó la conexión. Se abre uno nuevo.")
+            if BRIDGE_AUTOSTART:
+                _stop_bridge()
         except (ConnectionRefusedError, OSError, socket.timeout) as e:
             print(f"[TOBII] Sin conexión con gaze_server.exe ({e}). Reintentando en 3s...")
         time.sleep(3)
@@ -352,7 +475,11 @@ def _warmup_models():
         if not ensure_ollama_models([TEXT_MODEL, VISION_MODEL]):
             return
         print("\n[WARMUP] Precalentando modelos...")
-        analyze_text("El cielo es azul y el pasto es verde.")
+        # use_readability=False: con la legibilidad, esta frase es Low y no
+        # llegaba a phi3, así que phi3 NO se precalentaba (medido el
+        # 2026-10-17: la primera ayuda de la sesión salía con el mensaje
+        # genérico por exceder el tiempo límite mientras cargaba el modelo).
+        analyze_text("El cielo es azul y el pasto es verde.", use_readability=False)
         analyze_image_data(_warmup_image_b64(), "")
         print("[WARMUP] Modelos listos.\n")
     except Exception as e:

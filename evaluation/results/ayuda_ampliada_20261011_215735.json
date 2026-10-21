@@ -1,0 +1,557 @@
+{
+ "metricas": {
+  "respuestas": 32,
+  "validas": 32,
+  "con_2_o_mas_terminos": 26,
+  "terminos_prom": 1.78,
+  "terminos_descartados": 4,
+  "repite_termino_nivel1": 0,
+  "con_frase_simple": 32,
+  "palabras_prom": 57.4,
+  "latencia_s_prom": 3.42,
+  "latencia_s_max": 3.86,
+  "latencia_nivel1_s_prom": 2.95
+ },
+ "detalle": [
+  {
+   "rep": 0,
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel1_concepto": "",
+   "terminos": [
+    "Acción diaria",
+    "Ahorrar energía"
+   ],
+   "descartados": [
+    "recuerda"
+   ],
+   "simple": "Cuando muchas personas hacen pequeñas cosas todos los días, como no usar mucha electricidad, esto puede tener un gran impacto positivo.",
+   "explicacion": "Acción diaria: una actividad que se realiza a diario\nAhorrar energía: evitar el uso innecesario de electricidad o recursos naturales para reducir costos o beneficiar el medio ambiente\nEn pocas palabras: Cuando muchas personas hacen pequeñas cosas todos los días, como no usar mucha electricidad, esto puede tener un gran impacto positivo.",
+   "error": null,
+   "s": 2.99,
+   "s_nivel1": 8.61
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la quema de combustibles fósiles. Estos gas",
+   "nivel1_concepto": "gases de efecto invernadero",
+   "terminos": [
+    "Dióxido de carbono",
+    "Metano"
+   ],
+   "descartados": [],
+   "simple": "El cambio climático se debe a gases que atrapan calor en nuestro aire y se liberan de quemar combustibles como carbón y petróleo.",
+   "explicacion": "Dióxido de carbono: Un gas que se libera cuando se quema combustibles fósiles y atrapa el calor.\nMetano: Un gas que se libera de ciertos procesos y atrapa el calor.\nEn pocas palabras: El cambio climático se debe a gases que atrapan calor en nuestro aire y se liberan de quemar combustibles como carbón y petróleo.",
+   "error": null,
+   "s": 3.33,
+   "s_nivel1": 2.66
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde mediados del siglo XX, coincidiendo con el a",
+   "nivel1_concepto": "emisiones industriales",
+   "terminos": [],
+   "descartados": [],
+   "simple": "Se ha notado que la temperatura del planeta ha estado aumentando desde la mitad del siglo pasado, lo que coincide con un incremento en las sustancias que las industrias liberan al aire.",
+   "explicacion": "En pocas palabras: Se ha notado que la temperatura del planeta ha estado aumentando desde la mitad del siglo pasado, lo que coincide con un incremento en las sustancias que las industrias liberan al aire.",
+   "error": null,
+   "s": 3.09,
+   "s_nivel1": 2.69
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, lluvias más intensas.",
+   "nivel1_concepto": "aumento del nivel del mar",
+   "terminos": [
+    "Deshielo de glaciares",
+    "Capas de hielo"
+   ],
+   "descartados": [],
+   "simple": "El derretimiento de hielo en regiones polares y montañas eleva el nivel del mar y altera los patrones de lluvia y sequía en diferentes zonas.",
+   "explicacion": "Deshielo de glaciares: el proceso por el cual los glaciares pierden hielo y se derriten\nCapas de hielo: conjuntos de hielo grueso que se encuentran en regiones polares y montañas\nEn pocas palabras: El derretimiento de hielo en regiones polares y montañas eleva el nivel del mar y altera los patrones de lluvia y sequía en diferentes zonas.",
+   "error": null,
+   "s": 3.51,
+   "s_nivel1": 2.82
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[1]>p[0]",
+   "texto": "Notas: los valores son promedios globales simplificados con fines ilustrativos para este artículo.",
+   "nivel1_concepto": "",
+   "terminos": [
+    "Promedios globales",
+    "Valores"
+   ],
+   "descartados": [
+    "décadas"
+   ],
+   "simple": "Este artículo presenta los promedios globales de la temperatura calculados para cada década, para mostrar cómo ha cambiado la temperatura a lo largo del tiempo.",
+   "explicacion": "Promedios globales: calculos hechos para representar la temperatura en todo el mundo.\nValores: números obtenidos.\nEn pocas palabras: Este artículo presenta los promedios globales de la temperatura calculados para cada década, para mostrar cómo ha cambiado la temperatura a lo largo del tiempo.",
+   "error": null,
+   "s": 3.24,
+   "s_nivel1": 2.74
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[1]>p[0]",
+   "texto": "Notas de imagen: fotografía de archivo utilizada como referencia visual del retroceso glaciar.",
+   "nivel1_concepto": "fotografía de archivo",
+   "terminos": [
+    "Notas de imagen",
+    "Retroceso glaciar"
+   ],
+   "descartados": [],
+   "simple": "Una fotografía de un glaciar que se mueve hacia arriba o hacia atrás, utilizada para observar el cambio de temperatura promedio cada década.",
+   "explicacion": "Notas de imagen: anotaciones o comentarios adjuntos a una fotografía para explicar su contenido\nRetroceso glaciar: desplazamiento de hielo desde su posición original, generalmente hacia arriba o hacia atrás\nEn pocas palabras: Una fotografía de un glaciar que se mueve hacia arriba o hacia atrás, utilizada para observar el cambio de temperatura promedio cada década.",
+   "error": null,
+   "s": 3.49,
+   "s_nivel1": 2.72
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico y reduce el pH del mar, un proceso conoc",
+   "nivel1_concepto": "acidificación oceánica",
+   "terminos": [
+    "Dióxido de carbono",
+    "Ácido carbónico",
+    "PH"
+   ],
+   "descartados": [],
+   "simple": "El océano toma parte del dióxido de carbono que las personas liberan al quemar combustibles fósiles, formando ácido carbónico y haciendo que el mar sea más ácido, lo que se conoce como acidificación oceánica.",
+   "explicacion": "Dióxido de carbono: un gas que se produce cuando se quema combustibles fósiles como el carbón, el petróleo y el gas natural.\nÁcido carbónico: un compuesto formado cuando el dióxido de carbono se disuelve en el agua y se convierte en un ácido.\nPH: una medida que indica cuán ácido o básico es una sustancia.\nEn pocas palabras: El océano toma parte del dióxido de carbono que las personas liberan al quemar combustibles fósiles, formando ácido carbónico y haciendo que el mar sea más ácido, lo que se conoce como acidificación oceánica.",
+   "error": null,
+   "s": 3.78,
+   "s_nivel1": 2.78
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los corales expulsan las microalgas que les ",
+   "nivel1_concepto": "",
+   "terminos": [
+    "Acidificación",
+    "Esqueletos y conchas",
+    "Microalgas"
+   ],
+   "descartados": [],
+   "simple": "La acidificación del mar hace que los corales y otros animales marinos no puedan formar sus estructuras protectoras y que pierdan su color, lo que puede ser perjudicial para ellos.",
+   "explicacion": "Acidificación: es cuando el agua se vuelve más ácida, lo que puede ser dañino para los organismos marinos.\nEsqueletos y conchas: son estructuras protectoras que algunos animales marinos construyen, parecidas a huesos o conchas.\nMicroalgas: son pequeñas plantas que viven en el agua y que los corales consumen para vivir y obtener su color.\nEn pocas palabras: La acidificación del mar hace que los corales y otros animales marinos no puedan formar sus estructuras protectoras y que pierdan su color, lo que puede ser perjudicial para ellos.",
+   "error": null,
+   "s": 3.58,
+   "s_nivel1": 2.82
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial global y forzamiento radiativo neto (1880–",
+   "nivel1_concepto": "forzamiento radiativo neto",
+   "terminos": [
+    "Equilibrio climático de sensibilidad",
+    "Regresión multivariable"
+   ],
+   "descartados": [],
+   "simple": "Se usa un método estadístico para entender cómo el calentamiento del clima está relacionado con los gases que calientan el planeta, basándose en datos de temperatura y radiación desde hace más de cien años.",
+   "explicacion": "Equilibrio climático de sensibilidad: la temperatura promedio del planeta cuando el calentamiento es igual al calentamiento causado por el cambio climático.\nRegresión multivariable: un método estadístico para analizar datos con varias variables.\nEn pocas palabras: Se usa un método estadístico para entender cómo el calentamiento del clima está relacionado con los gases que calientan el planeta, basándose en datos de temperatura y radiación desde hace más de cien años.",
+   "error": null,
+   "s": 3.67,
+   "s_nivel1": 2.8
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia de los coeficientes se evaluó mediante p",
+   "nivel1_concepto": "errores autocorrelacionados",
+   "terminos": [
+    "Proceso AR(1)",
+    "Newey-West"
+   ],
+   "descartados": [],
+   "simple": "Se usó un modelo para corregir errores repetidos en el tiempo y se comprobaron los coeficientes. Se usó R² ajustado y AIC para medir qué tan bien se ajusta el modelo.",
+   "explicacion": "Proceso AR(1): Proceso en el que el error de un punto en el tiempo depende del error anterior\nNewey-West: Método para corregir errores en pruebas estadísticas cuando hay variación en la desviación estándar y correlación entre puntos en el tiempo\nEn pocas palabras: Se usó un modelo para corregir errores repetidos en el tiempo y se comprobaron los coeficientes. Se usó R² ajustado y AIC para medir qué tan bien se ajusta el modelo.",
+   "error": null,
+   "s": 3.5,
+   "s_nivel1": 2.79
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel1_concepto": "GEI equivalentes",
+   "terminos": [
+    "Emisiones",
+    "CO₂-eq"
+   ],
+   "descartados": [],
+   "simple": "Este gráfico muestra las emisiones de gases de efecto invernadero, expresadas en unidades llamadas GEI equivalentes, para el año 2023.",
+   "explicacion": "Emisiones: La liberación de sustancias, como los gases de efecto invernadero, al ambiente.\nCO₂-eq: Una medida que compara la cantidad de diferentes gases de efecto invernadero en función de su capacidad para retener el calor.\nEn pocas palabras: Este gráfico muestra las emisiones de gases de efecto invernadero, expresadas en unidades llamadas GEI equivalentes, para el año 2023.",
+   "error": null,
+   "s": 3.42,
+   "s_nivel1": 2.79
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. El forzamiento por aerosoles antropogéni",
+   "nivel1_concepto": "forzamiento por aerosoles antropogénicos",
+   "terminos": [
+    "Sensibilidad climática de equilibrio estimada",
+    "ENOS"
+   ],
+   "descartados": [],
+   "simple": "El cambio en la temperatura del planeta depende de la cantidad de CO₂ y otros gases que liberamos. Los humanos también liberan partículas que pueden cambiar el clima, pero esto puede compensar otros cambios.",
+   "explicacion": "Sensibilidad climática de equilibrio estimada: La respuesta del clima a cambios en la concentración de CO₂.\nENOS: Oscilación del clima en el sur del Pacífico que afecta el clima.\nEn pocas palabras: El cambio en la temperatura del planeta depende de la cantidad de CO₂ y otros gases que liberamos. Los humanos también liberan partículas que pueden cambiar el clima, pero esto puede compensar otros cambios.",
+   "error": null,
+   "s": 3.85,
+   "s_nivel1": 2.82
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>div[0]>p[0]",
+   "texto": "Notas de imagen: fotografía histórica citada con fines ilustrativos; no corresponde a datos satelitales del estudio.",
+   "nivel1_concepto": "fotografía histórica",
+   "terminos": [],
+   "descartados": [],
+   "simple": "Una fotografía tomada en el pasado ilustra cómo era algo en un momento específico, pero no es un dato satelital.",
+   "explicacion": "En pocas palabras: Una fotografía tomada en el pasado ilustra cómo era algo en un momento específico, pero no es un dato satelital.",
+   "error": null,
+   "s": 2.85,
+   "s_nivel1": 2.72
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcialmente compensado por las interacciones a",
+   "nivel1_concepto": "forzamiento radiativo efectivo",
+   "terminos": [
+    "CO₂",
+    "Interacciones aerosol-radiación"
+   ],
+   "descartados": [],
+   "simple": "El forzamiento radiativo efectivo es la acción de los gases de efecto invernadera y partículas en el cambio climático global, con el CO₂ siendo un gas que quema y quema, emite calor y contribuye al calentamiento global, y las interacciones…",
+   "explicacion": "CO₂: un gas que quema y quema, emite calor y contribuye al calentamiento global\nInteracciones aerosol-radiación: reacciones entre partículas y luz que afectan la temperatura del planeta\nEn pocas palabras: El forzamiento radiativo efectivo es la acción de los gases de efecto invernadera y partículas en el cambio climático global, con el CO₂ siendo un gas que quema y quema, emite calor y contribuye al calentamiento global, y las interacciones…",
+   "error": null,
+   "s": 3.86,
+   "s_nivel1": 2.78
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles anterior a 1950 y el supuesto de linealidad",
+   "nivel1_concepto": "forzamientos antropogénicos",
+   "terminos": [
+    "Serie de forzamiento por aerosoles",
+    "Linealidad entre forzamiento y respuesta"
+   ],
+   "descartados": [],
+   "simple": "El texto habla de cómo las acciones humanas pueden cambiar el clima, cómo las partículas en el aire también pueden causar cambios climáticos y cómo estos cambios no siempre son directos y constantes.",
+   "explicacion": "Serie de forzamiento por aerosoles: Cambios en el clima debido a partículas en el aire\nLinealidad entre forzamiento y respuesta: Asociación directa y constante entre cambios en el clima y la respuesta del planeta\nEn pocas palabras: El texto habla de cómo las acciones humanas pueden cambiar el clima, cómo las partículas en el aire también pueden causar cambios climáticos y cómo estos cambios no siempre son directos y constantes.",
+   "error": null,
+   "s": 3.61,
+   "s_nivel1": 2.76
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación del IPCC AR6.",
+   "nivel1_concepto": "forzamiento radiativo efectivo",
+   "terminos": [
+    "Antropogénico",
+    "Desagregado por componente"
+   ],
+   "descartados": [],
+   "simple": "El texto habla sobre cómo los humanos han afectado el calentamiento global al analizar cómo cada gas contribuye al calentamiento.",
+   "explicacion": "Antropogénico: Causado por actividades humanas.\nDesagregado por componente: Se separa la acción de cada gas individualmente.\nEn pocas palabras: El texto habla sobre cómo los humanos han afectado el calentamiento global al analizar cómo cada gas contribuye al calentamiento.",
+   "error": null,
+   "s": 3.37,
+   "s_nivel1": 2.85
+  },
+  {
+   "rep": 1,
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel1_concepto": "acción diaria",
+   "terminos": [],
+   "descartados": [],
+   "simple": "Las pequeñas cosas que hacemos todos los días, como ahorrar energía, pueden tener un gran impacto positivo.",
+   "explicacion": "En pocas palabras: Las pequeñas cosas que hacemos todos los días, como ahorrar energía, pueden tener un gran impacto positivo.",
+   "error": null,
+   "s": 2.79,
+   "s_nivel1": 2.66
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la quema de combustibles fósiles. Estos gas",
+   "nivel1_concepto": "gases de efecto invernadero",
+   "terminos": [
+    "Dióxido de carbono",
+    "Metano"
+   ],
+   "descartados": [],
+   "simple": "El cambio climático se debe a que liberamos gases que atrapan el calor en nuestro planeta al quemir combustibles como el carbón o el petróleo.",
+   "explicacion": "Dióxido de carbono: Química: CO2, es un gas que se libera al quemar combustibles como el carbón o el petróleo\nMetano: Química: CH4, es un gas que se libera de la tierra y del agua, y es muy potente para calentar el planeta\nEn pocas palabras: El cambio climático se debe a que liberamos gases que atrapan el calor en nuestro planeta al quemir combustibles como el carbón o el petróleo.",
+   "error": null,
+   "s": 3.55,
+   "s_nivel1": 2.79
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde mediados del siglo XX, coincidiendo con el a",
+   "nivel1_concepto": "emisiones industriales",
+   "terminos": [],
+   "descartados": [],
+   "simple": "Se observa que la temperatura del planeta ha estado aumentando desde la mitad del siglo XX, lo que coincide con un incremento en las emisiones industriales.",
+   "explicacion": "En pocas palabras: Se observa que la temperatura del planeta ha estado aumentando desde la mitad del siglo XX, lo que coincide con un incremento en las emisiones industriales.",
+   "error": null,
+   "s": 3.03,
+   "s_nivel1": 2.67
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, lluvias más intensas.",
+   "nivel1_concepto": "deshielo de glaciares",
+   "terminos": [
+    "Aumento del nivel del mar",
+    "Sequías"
+   ],
+   "descartados": [],
+   "simple": "El derretimiento de hielos continentales eleva el nivel del mar y altera los patrones climáticos, causando sequías y lluvias intensas en diferentes regiones.",
+   "explicacion": "Aumento del nivel del mar: la subida del nivel del agua en los océanos debido a que se agrega más agua.\nSequías: periodos largos sin lluvia, donde no llueve y el suelo se seca.\nEn pocas palabras: El derretimiento de hielos continentales eleva el nivel del mar y altera los patrones climáticos, causando sequías y lluvias intensas en diferentes regiones.",
+   "error": null,
+   "s": 3.44,
+   "s_nivel1": 2.75
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[1]>p[0]",
+   "texto": "Notas: los valores son promedios globales simplificados con fines ilustrativos para este artículo.",
+   "nivel1_concepto": "",
+   "terminos": [
+    "Promedios globales",
+    "Valores ilustrativos"
+   ],
+   "descartados": [
+    "décadas"
+   ],
+   "simple": "Este artículo presenta promedios globales de temperatura para cada década, para ayudar a entender cómo cambia la temperatura del planeta a lo largo del tiempo.",
+   "explicacion": "Promedios globales: calculos hechos para representar la temperatura en todo el mundo, en lugar de en un solo lugar.\nValores ilustrativos: datos presentados para ayudar a entender mejor un tema.\nEn pocas palabras: Este artículo presenta promedios globales de temperatura para cada década, para ayudar a entender cómo cambia la temperatura del planeta a lo largo del tiempo.",
+   "error": null,
+   "s": 3.35,
+   "s_nivel1": 2.67
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[1]>p[0]",
+   "texto": "Notas de imagen: fotografía de archivo utilizada como referencia visual del retroceso glaciar.",
+   "nivel1_concepto": "fotografía de archivo",
+   "terminos": [
+    "Retroceso glaciar"
+   ],
+   "descartados": [
+    "temperatura promedio"
+   ],
+   "simple": "Imagen digital tomada en el pasado muestra el hielo que se movió hacia atrás en el tiempo, y esto se refleja en el promedio de temperaturas medidas cada década.",
+   "explicacion": "Retroceso glaciar: desplazamiento de hielo glaciario hacia atrás en el tiempo\nEn pocas palabras: Imagen digital tomada en el pasado muestra el hielo que se movió hacia atrás en el tiempo, y esto se refleja en el promedio de temperaturas medidas cada década.",
+   "error": null,
+   "s": 3.34,
+   "s_nivel1": 2.63
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico y reduce el pH del mar, un proceso conoc",
+   "nivel1_concepto": "acidificación oceánica",
+   "terminos": [
+    "Dióxido de carbono",
+    "Ácido carbónico"
+   ],
+   "descartados": [],
+   "simple": "El océano toma parte del dióxido de carbono que las personas liberan y hace que el agua sea más ácida, lo que puede afectar a los organismos marinos.",
+   "explicacion": "Dióxido de carbono: gas emitido por actividades humanas, que se disuelve en el agua y forma ácido\nÁcido carbónico: sustancia formada cuando el dióxido de carbono se mezcla con agua, que hace que el mar sea más ácido\nEn pocas palabras: El océano toma parte del dióxido de carbono que las personas liberan y hace que el agua sea más ácida, lo que puede afectar a los organismos marinos.",
+   "error": null,
+   "s": 3.47,
+   "s_nivel1": 2.76
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los corales expulsan las microalgas que les ",
+   "nivel1_concepto": "",
+   "terminos": [
+    "Acidificación",
+    "Esqueletos y conchas",
+    "Plancton"
+   ],
+   "descartados": [],
+   "simple": "La acidificación del océano hace que los corales y otros organismos marinos tengan dificultades para construir sus esqueletos y conchas, y también puede hacer que los corales se vuelvan blancos al expulsar a las microalgas que les dan color y…",
+   "explicacion": "Acidificación: es cuando el agua se vuelve más ácida, lo que puede ser dañino para los organismos marinos.\nEsqueletos y conchas: son estructuras protectoras que algunos animales marinos construyen, parecidas a huesos o conchas.\nPlancton: es un grupo de organismos microscópicos que viven en el agua y sirven como alimento para otros animales marinos.\nEn pocas palabras: La acidificación del océano hace que los corales y otros organismos marinos tengan dificultades para construir sus esqueletos y conchas, y también puede hacer que los corales se vuelvan blancos al expulsar a las microalgas que les dan color y…",
+   "error": null,
+   "s": 3.79,
+   "s_nivel1": 2.87
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial global y forzamiento radiativo neto (1880–",
+   "nivel1_concepto": "forzamiento radiativo neto",
+   "terminos": [
+    "Equilibrio climático de sensibilidad",
+    "Regresión multivariable"
+   ],
+   "descartados": [],
+   "simple": "Se usa un modelo para averiguar cómo la temperatura del planeta cambia cuando emite más calor infrarrojo que recibe del sol.",
+   "explicacion": "Equilibrio climático de sensibilidad: la temperatura promedio del planeta cuando el calentamiento es justo suficiente para que el calentamiento sea igual al calentamiento del planeta.\nRegresión multivariable: un método estadístico para encontrar la relación entre varias variables y una variable dependiente.\nEn pocas palabras: Se usa un modelo para averiguar cómo la temperatura del planeta cambia cuando emite más calor infrarrojo que recibe del sol.",
+   "error": null,
+   "s": 3.73,
+   "s_nivel1": 2.81
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia de los coeficientes se evaluó mediante p",
+   "nivel1_concepto": "errores autocorrelacionados",
+   "terminos": [
+    "Proceso AR(1)",
+    "Newey-West"
+   ],
+   "descartados": [],
+   "simple": "Se usó un modelo para corregir errores repetidos en los datos a lo largo del tiempo, y se evaluó su precisión.",
+   "explicacion": "Proceso AR(1): Un proceso en el que cada error se basa en el anterior\nNewey-West: Una técnica para corregir errores en los datos que se repiten\nEn pocas palabras: Se usó un modelo para corregir errores repetidos en los datos a lo largo del tiempo, y se evaluó su precisión.",
+   "error": null,
+   "s": 3.24,
+   "s_nivel1": 2.76
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel1_concepto": "GEI equivalentes",
+   "terminos": [
+    "Contribución sectorial",
+    "Emisiones"
+   ],
+   "descartados": [],
+   "simple": "Este gráfico muestra cuánto cada sector contribuye a las emisiones totales, incluyendo los que reducen el impacto ambiental.",
+   "explicacion": "Contribución sectorial: Contribución de cada sector a las emisiones totales.\nEmisiones: Producción de gases que afectan el clima.\nEn pocas palabras: Este gráfico muestra cuánto cada sector contribuye a las emisiones totales, incluyendo los que reducen el impacto ambiental.",
+   "error": null,
+   "s": 3.2,
+   "s_nivel1": 2.78
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. El forzamiento por aerosoles antropogéni",
+   "nivel1_concepto": "forzamiento por aerosoles antropogénicos",
+   "terminos": [
+    "Sensibilidad climática de equilibrio estimada",
+    "ENOS"
+   ],
+   "descartados": [],
+   "simple": "El cambio en la temperatura del planeta responde a la cantidad de CO₂. Los humanos añaden partículas que pueden cambiar el efecto. También hay variaciones en el Pacífico que afectan el clima.",
+   "explicacion": "Sensibilidad climática de equilibrio estimada: la respuesta del clima a cambios en la concentración de CO₂\nENOS: una variación climática en el sudeste del Pacífico que afecta el clima global\nEn pocas palabras: El cambio en la temperatura del planeta responde a la cantidad de CO₂. Los humanos añaden partículas que pueden cambiar el efecto. También hay variaciones en el Pacífico que afectan el clima.",
+   "error": null,
+   "s": 3.53,
+   "s_nivel1": 2.88
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>div[0]>p[0]",
+   "texto": "Notas de imagen: fotografía histórica citada con fines ilustrativos; no corresponde a datos satelitales del estudio.",
+   "nivel1_concepto": "fotografía histórica",
+   "terminos": [],
+   "descartados": [],
+   "simple": "Una fotografía tomada en el pasado que muestra cómo era algo en un momento específico, pero no es un dato satelital.",
+   "explicacion": "En pocas palabras: Una fotografía tomada en el pasado que muestra cómo era algo en un momento específico, pero no es un dato satelital.",
+   "error": null,
+   "s": 2.93,
+   "s_nivel1": 2.73
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcialmente compensado por las interacciones a",
+   "nivel1_concepto": "forzamiento radiativo efectivo",
+   "terminos": [
+    "CO₂",
+    "Retroalimentaciones"
+   ],
+   "descartados": [],
+   "simple": "El forzamiento radiativo efectivo antropogénico es la acción de gases como el CO₂ y partículas que cambian el clima global. Estos gases atrapan calor, haciendo que la Tierra se caliente más.",
+   "explicacion": "CO₂: un gas que quema y se quema, que atrapa calor en la atmósfera\nRetroalimentaciones: efectos que hacen que el cambio climático sea más o menos fuerte\nEn pocas palabras: El forzamiento radiativo efectivo antropogénico es la acción de gases como el CO₂ y partículas que cambian el clima global. Estos gases atrapan calor, haciendo que la Tierra se caliente más.",
+   "error": null,
+   "s": 3.77,
+   "s_nivel1": 2.81
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles anterior a 1950 y el supuesto de linealidad",
+   "nivel1_concepto": "forzamientos antropogénicos",
+   "terminos": [
+    "Serie de forzamiento por aerosoles",
+    "Linealidad entre forzamiento y respuesta"
+   ],
+   "descartados": [],
+   "simple": "El texto habla de cómo los humanos afectan el clima, cómo los aerosoles en el aire también pueden causar cambios climáticos, y cómo estos cambios no siempre son directamente proporcionales a las causas.",
+   "explicacion": "Serie de forzamiento por aerosoles: Cambios en el clima debido a partículas en el aire\nLinealidad entre forzamiento y respuesta: Cambio climático directamente relacionado con la causa\nEn pocas palabras: El texto habla de cómo los humanos afectan el clima, cómo los aerosoles en el aire también pueden causar cambios climáticos, y cómo estos cambios no siempre son directamente proporcionales a las causas.",
+   "error": null,
+   "s": 3.52,
+   "s_nivel1": 2.89
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación del IPCC AR6.",
+   "nivel1_concepto": "forzamiento radiativo antropogénico",
+   "terminos": [
+    "Forzamiento radiativo",
+    "Antropogénico",
+    "Desagregado"
+   ],
+   "descartados": [],
+   "simple": "El texto habla sobre el cambio en la temperatura causado por gases que absorben y emiten radiación debido a actividades humanas, y cómo este cambio se ha separado en componentes para estudiarlos más detalladamente.",
+   "explicacion": "Forzamiento radiativo: La acción de los gases en la atmósfera que causan un cambio en la temperatura al absorber y emitir radiación.\nAntropogénico: Que proviene de actividades humanas.\nDesagregado: Se separa en partes más pequeñas para analizar cada una individualmente.\nEn pocas palabras: El texto habla sobre el cambio en la temperatura causado por gases que absorben y emiten radiación debido a actividades humanas, y cómo este cambio se ha separado en componentes para estudiarlos más detalladamente.",
+   "error": null,
+   "s": 3.52,
+   "s_nivel1": 2.83
+  }
+ ]
+}

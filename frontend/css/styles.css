@@ -305,6 +305,32 @@ figcaption {
     margin-bottom: 6px;
 }
 
+/* Condición "a pedido": el tooltip acepta clics (botón "Ver ayuda"). */
+#adaptive-tooltip.on-demand {
+    pointer-events: auto;
+}
+
+#adaptive-tooltip.on-demand div {
+    white-space: pre-line;   /* la ampliada trae un término por línea */
+}
+
+.help-ask-btn {
+    display: block;
+    margin-top: 8px;
+    padding: 6px 12px;
+    font: inherit;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.help-ask-btn:hover {
+    background: var(--accent);
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(4px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -315,7 +341,8 @@ figcaption {
     outline: 2px solid rgba(79, 142, 247, 0.5) !important;
     outline-offset: 3px !important;
     border-radius: 4px !important;
-    transition: outline var(--transition) !important;
+    /* Sin animación: aparecía con 0.2 s de retraso visual (se sentía lento). */
+    transition: none !important;
 }
 
 /* ─── Ocultar panel de debug (?debug=0) ──────────────────────── */

@@ -1,0 +1,368 @@
+/* ═══════════════════════════════════════════════════════════════
+   Temas por página (2026-10-17)
+   Cada página imita un tipo de sitio real y distinto:
+     fácil      → revista de divulgación (EcoFácil): clara, verde, amable
+     intermedio → enciclopedia en línea (EcoWiki): estilo wiki
+     avanzado   → revista científica (J. Clim. Res.): artículo académico
+   SOLO cambia el aspecto (colores, tipografía, bordes, espacios): el HTML
+   y el texto no cambian, porque el sistema identifica cada bloque por su
+   posición en la página (preguntas ligadas a bloques, registro).
+   Para volver al diseño anterior: quitar el <link> a este archivo
+   (respaldo en respaldos/diseno_antes_2026-10-17/).
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Base clara común ───────────────────────────────────────── */
+body[data-level] {
+    --bg-panel:       #ffffff;
+    --bg-section:     #f3f4f6;
+    --bg-card:        #ffffff;
+    --border:         #d8dce3;
+    --success:        #1a9a63;
+    --warning:        #e6a700;
+    --danger:         #d64545;
+    --text-primary:   #1d2330;
+    --text-secondary: #3d4554;
+    --text-muted:     #6b7280;
+    --tooltip-bg:     #ffffff;
+    --card-border:    #e1e4ea;
+    background: var(--page-bg);
+    color: var(--text-primary);
+}
+
+body[data-level] .page-wrapper { background: var(--page-bg); }
+
+/* El panel de monitoreo (solo para el investigador) sigue oscuro. */
+body[data-level] .debug-panel {
+    --bg: #0f1117; --bg-panel: #1a1d27; --bg-section: #1e2130; --bg-card: #252838;
+    --border: #2e3347; --text-primary: #e8eaf0; --text-secondary: #8b91a8; --text-muted: #555c75;
+    --accent: #4f8ef7; --accent-soft: rgba(79,142,247,0.15); --card-border: #252840;
+    color: var(--text-primary);
+}
+
+/* En sesión no se muestra el contorno que sigue la mirada: el participante lo
+   perseguía con la vista y le revelaba el seguimiento. Solo es un indicador:
+   el análisis depende del tiempo en el elemento, no del contorno. */
+.in-session .gaze-highlight { outline: none !important; }
+
+/* En sesión no se muestra la barra "Fácil / Intermedio / Avanzado":
+   revelaba el nivel de dificultad al participante. */
+.in-session .level-nav { display: none; }
+
+/* Botones sin función dentro del artículo (adorno): fuera de la vista. */
+body[data-level] .article-footer { display: none; }
+
+/* Texto del artículo: más contraste y mejor ritmo de lectura. */
+body[data-level] .article-card p,
+body[data-level] .content-section p,
+body[data-level] .hero-lead,
+body[data-level] .bullet-list li { color: var(--text-secondary); }
+
+/* Tooltip de ayuda en tema claro. */
+body[data-level] #adaptive-tooltip {
+    background: #ffffff;
+    color: #1d2330;
+    border: 1px solid var(--accent);
+    box-shadow: 0 10px 30px rgba(20, 30, 50, 0.18);
+}
+body[data-level] .help-ask-btn { color: #ffffff; background: var(--accent); }
+body[data-level] .help-ask-btn:hover { filter: brightness(0.92); }
+
+body[data-level] .data-table th { background: var(--bg-section); }
+body[data-level] .footnote,
+body[data-level] .chart-caption,
+body[data-level] figcaption { color: var(--text-muted); }
+
+/* ═══ 1. FÁCIL · EcoFácil (revista de divulgación) ═══════════════ */
+body[data-level="easy"] {
+    --page-bg:   #f2f8f4;
+    --nav-bg:    #ffffff;
+    --card-bg:   #ffffff;
+    --accent:    #13894f;
+    --accent-soft: rgba(19, 137, 79, 0.10);
+    --tooltip-border: #13894f;
+    --tag-blue:  #e3f4ea;
+    --tag-blue-text: #13894f;
+    font-family: "Segoe UI", "Trebuchet MS", system-ui, sans-serif;
+}
+body[data-level="easy"] .navbar {
+    background: #ffffff;
+    border-bottom: 3px solid #13894f;
+    box-shadow: 0 2px 10px rgba(19, 137, 79, 0.08);
+}
+body[data-level="easy"] .nav-logo { color: #13894f; font-size: 1.5rem; }
+body[data-level="easy"] .hero-section {
+    background: linear-gradient(135deg, #e3f4ea 0%, #fdf6e3 100%);
+    border-radius: 20px;
+    margin: 28px 48px 32px;
+    padding: 36px 40px 28px;
+    max-width: none;
+}
+body[data-level="easy"] .hero-tag {
+    display: inline-block;
+    background: #13894f;
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: 999px;
+}
+body[data-level="easy"] .hero-title { color: #0f5132; font-size: 2.2rem; }
+body[data-level="easy"] .hero-image {
+    max-width: 640px;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    margin-bottom: 10px;
+}
+body[data-level="easy"] .article-card {
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(20, 60, 40, 0.08);
+    border-top: 5px solid #13894f;
+}
+body[data-level="easy"] .article-card:nth-of-type(2) { border-top-color: #2b7bd6; }
+body[data-level="easy"] .article-card:nth-of-type(3) { border-top-color: #e08a00; }
+body[data-level="easy"] .article-card:nth-of-type(4) { border-top-color: #8a4fd6; }
+body[data-level="easy"] .article-card h2 { color: #0f3d2a; font-size: 1.3rem; }
+body[data-level="easy"] .article-card p,
+body[data-level="easy"] .bullet-list li { font-size: 1rem; }
+body[data-level="easy"] .compare-card {
+    background: #f6faf8;
+    border: 1px solid #d5ebde;
+    border-radius: 14px;
+}
+body[data-level="easy"] .mini-chart {
+    background: #ffffff;
+    border: 1px solid #e3ece6;
+    border-radius: 16px;
+    max-width: 560px;
+    margin: 0 auto;
+}
+body[data-level="easy"] .widget {
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(20, 60, 40, 0.08);
+}
+body[data-level="easy"] .widget--highlight {
+    background: #fff6d9;
+    border-left: 6px solid #e6a700;
+}
+body[data-level="easy"] .widget h4 { color: #0f3d2a; font-size: 1rem; border-bottom-color: #e6e1cf; }
+body[data-level="easy"] .widget p { font-size: 0.95rem; color: var(--text-secondary); }
+body[data-level="easy"] .page-footer { background: #0f5132; color: #d7efe2; }
+body[data-level="easy"] .page-footer a { color: #d7efe2; }
+
+/* ═══ 2. INTERMEDIO · EcoWiki (estilo enciclopedia en línea) ══════ */
+body[data-level="medium"] {
+    --page-bg:   #f6f6f6;
+    --nav-bg:    #ffffff;
+    --card-bg:   #ffffff;
+    --accent:    #3366cc;
+    --accent-soft: rgba(51, 102, 204, 0.10);
+    --tooltip-border: #3366cc;
+    --card-border: #c8ccd1;
+    --text-primary: #202122;
+    --text-secondary: #202122;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+body[data-level="medium"] .navbar {
+    background: #ffffff;
+    border-bottom: 1px solid #c8ccd1;
+}
+body[data-level="medium"] .nav-logo {
+    font-family: Georgia, "Times New Roman", serif;
+    color: #202122;
+    font-weight: 400;
+    font-size: 1.6rem;
+    letter-spacing: 0.02em;
+}
+body[data-level="medium"] .hero-tag { color: #54595d; letter-spacing: 0.05em; }
+body[data-level="medium"] .content-grid {
+    background: #ffffff;
+    border: 1px solid #c8ccd1;
+    margin: 24px 32px;
+    padding: 24px 32px 40px;
+}
+body[data-level="medium"] .page-header h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 2rem;
+    color: #000000;
+    border-bottom: 1px solid #a2a9b1;
+}
+body[data-level="medium"] .content-section {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+}
+body[data-level="medium"] .content-section h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 1.5rem;
+    color: #000000;
+    border-bottom: 1px solid #a2a9b1;
+}
+body[data-level="medium"] .content-section h3 { color: #202122; font-weight: 700; }
+body[data-level="medium"] .content-section p { font-size: 0.98rem; line-height: 1.7; }
+body[data-level="medium"] .mini-chart,
+body[data-level="medium"] figure {
+    background: #f8f9fa;
+    border: 1px solid #c8ccd1;
+    border-radius: 0;
+    padding: 6px;
+}
+body[data-level="medium"] .note-box {
+    background: #eaf3ff;
+    border: 1px solid #a7c4f2;
+    border-left: 4px solid #3366cc;
+    border-radius: 0;
+    color: #202122;
+}
+body[data-level="medium"] .data-table { border: 1px solid #a2a9b1; background: #f8f9fa; }
+body[data-level="medium"] .data-table th,
+body[data-level="medium"] .data-table td { border: 1px solid #a2a9b1; }
+body[data-level="medium"] .data-table th { background: #eaecf0; color: #202122; }
+body[data-level="medium"] .widget {
+    background: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    border-radius: 0;
+}
+body[data-level="medium"] .widget h4 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 1.05rem;
+    color: #000000;
+    border-bottom-color: #a2a9b1;
+}
+body[data-level="medium"] .trending-list a { color: #3366cc; }
+body[data-level="medium"] .trend-num { color: #72777d; }
+body[data-level="medium"] .page-footer { background: #ffffff; border-top: 1px solid #c8ccd1; }
+
+/* ═══ 3. AVANZADO · J. Clim. Res. (revista científica) ═══════════ */
+body[data-level="advanced"] {
+    --page-bg:   #ffffff;
+    --nav-bg:    #0b2545;
+    --card-bg:   #ffffff;
+    --accent:    #b5531c;
+    --accent-soft: rgba(181, 83, 28, 0.10);
+    --tooltip-border: #0b2545;
+    --card-border: #dde2ea;
+    --text-primary: #111827;
+    --text-secondary: #222a36;
+    font-family: Georgia, "Times New Roman", serif;
+}
+body[data-level="advanced"] .navbar {
+    background: #0b2545;
+    border-bottom: 4px solid #b5531c;
+}
+body[data-level="advanced"] .nav-logo { color: #ffffff; font-family: Georgia, serif; }
+body[data-level="advanced"] .navbar .hero-tag { color: #c9d6ea; }
+body[data-level="advanced"] .navbar input { background: #ffffff; border-color: #6b7f99; }
+body[data-level="advanced"] .page-header h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.9rem;
+    line-height: 1.35;
+    color: #0b2545;
+    border-bottom: 2px solid #0b2545;
+}
+body[data-level="advanced"] .content-section {
+    background: #ffffff;
+    border: none;
+    border-top: 1px solid #dde2ea;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 20px 4px;
+}
+body[data-level="advanced"] .main-column > .content-section:first-of-type {
+    background: #f2f5f9;
+    border: 1px solid #d3dbe6;
+    border-left: 4px solid #0b2545;
+    padding: 22px 24px;
+}
+body[data-level="advanced"] .content-section h2,
+body[data-level="advanced"] .content-section h3 {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #0b2545;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 1rem;
+}
+body[data-level="advanced"] .content-section h3 { color: #b5531c; font-size: 0.92rem; }
+body[data-level="advanced"] .content-section p { font-size: 1rem; line-height: 1.75; text-align: justify; }
+body[data-level="advanced"] .mini-chart,
+body[data-level="advanced"] figure {
+    background: #ffffff;
+    border: 1px solid #dde2ea;
+    border-radius: 2px;
+}
+body[data-level="advanced"] .chart-caption,
+body[data-level="advanced"] figcaption {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 0.78rem;
+    color: #4b5563;
+}
+body[data-level="advanced"] .data-table { font-family: "Segoe UI", Arial, sans-serif; }
+body[data-level="advanced"] .data-table th {
+    background: transparent;
+    color: #0b2545;
+    border-top: 2px solid #0b2545;
+    border-bottom: 1px solid #0b2545;
+}
+body[data-level="advanced"] .data-table tr:last-child td { border-bottom: 2px solid #0b2545; }
+body[data-level="advanced"] .widget {
+    background: #f7f8fa;
+    border: 1px solid #dde2ea;
+    border-radius: 2px;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+body[data-level="advanced"] .widget h4 { color: #0b2545; text-transform: uppercase; letter-spacing: 0.05em; }
+body[data-level="advanced"] .page-footer { background: #0b2545; color: #c9d6ea; }
+body[data-level="advanced"] .page-footer a { color: #c9d6ea; }
+
+/* ─── Pausa entre páginas (tapa el texto) ────────────────────── */
+.pause-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef1f5;
+}
+.pause-card {
+    max-width: 560px;
+    margin: 16px;
+    padding: 36px 40px;
+    background: #ffffff;
+    color: #1d2330;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(20, 30, 50, 0.15);
+    font-family: "Segoe UI", Arial, sans-serif;
+    line-height: 1.6;
+}
+.pause-card h2 { font-size: 1.8rem; margin: 4px 0 14px; color: #1d2330; }
+.pause-card p { margin-bottom: 12px; color: #3d4554; }
+.pause-step { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280 !important; }
+.pause-note { font-size: 0.85rem; color: #6b7280 !important; }
+.pause-card .btn-primary { margin-top: 10px; padding: 10px 20px; font-size: 1rem; }
+
+/* ─── Ajustes de orden y espacios (comunes) ──────────────────── */
+/* Una sola línea bajo el título y menos espacio vacío entre secciones. */
+body[data-level] .page-header {
+    border-bottom: none;
+    margin-bottom: 8px;
+    padding-bottom: 0;
+}
+body[data-level] .content-section { margin-bottom: 0; }
+body[data-level] .main-column { gap: 24px; }
+
+/* Fácil: la foto principal completa (antes se recortaba el título de la imagen). */
+body[data-level="easy"] .hero-image {
+    object-fit: contain;
+    max-height: none;
+    height: auto;
+    background: #ffffff;
+}
+
+/* Avanzado: sin justificar (en columnas angostas dejaba huecos grandes). */
+body[data-level="advanced"] .content-section p { text-align: left; }

@@ -1,0 +1,508 @@
+{
+ "metricas": {
+  "respuestas": 32,
+  "validas": 29,
+  "con_2_o_mas_terminos": 23,
+  "terminos_prom": 1.69,
+  "terminos_descartados": 2,
+  "repite_termino_nivel1": 0,
+  "con_frase_simple": 29,
+  "palabras_prom": 56.5,
+  "latencia_s_prom": 8.92,
+  "latencia_s_max": 9.81
+ },
+ "detalle": [
+  {
+   "rep": 0,
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel1_concepto": "acción diaria",
+   "terminos": [],
+   "descartados": [],
+   "simple": "Las pequeñas cosas que hacemos todos los días, como ahorrar energía, pueden tener un gran impacto positivo.",
+   "explicacion": "En pocas palabras: Las pequeñas cosas que hacemos todos los días, como ahorrar energía, pueden tener un gran impacto positivo.",
+   "error": null,
+   "s": 8.6
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la quema de combustibles fósiles. Estos gas",
+   "nivel1_concepto": "gases de efecto invernadero",
+   "terminos": [
+    "Dióxido de carbono",
+    "Metano"
+   ],
+   "descartados": [],
+   "simple": "El cambio climático se debe a gases que atrapan calor en nuestro aire, liberados por quemar combustibles como carbón y gasolina.",
+   "explicacion": "Dióxido de carbono: Gas que se libera cuando quemamos combustibles fósiles y atrapa calor\nMetano: Gas que se libera de formas naturales y humanas y atrapa calor\nEn pocas palabras: El cambio climático se debe a gases que atrapan calor en nuestro aire, liberados por quemar combustibles como carbón y gasolina.",
+   "error": null,
+   "s": 9.2
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde mediados del siglo XX, coincidiendo con el a",
+   "nivel1_concepto": "emisiones industriales",
+   "terminos": [
+    "Estaciones meteorológicas",
+    "Boyas oceánicas"
+   ],
+   "descartados": [],
+   "simple": "Se observa que la temperatura del planeta ha estado aumentando desde la mitad del siglo XX, lo que coincide con un incremento en las emisiones industriales.",
+   "explicacion": "Estaciones meteorológicas: sitios equipados para medir y registrar datos climáticos.\nBoyas oceánicas: dispositivos flotantes que recopilan información sobre el clima y la salinidad del mar.\nEn pocas palabras: Se observa que la temperatura del planeta ha estado aumentando desde la mitad del siglo XX, lo que coincide con un incremento en las emisiones industriales.",
+   "error": null,
+   "s": 9.16
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, lluvias más intensas.",
+   "nivel1_concepto": "aumento del nivel del mar",
+   "terminos": [
+    "Deshielo de glaciares",
+    "Capas de hielo"
+   ],
+   "descartados": [],
+   "simple": "El derretimiento de hielo en montañas y polares eleva el nivel del mar y cambia los patrones de lluvia y sequía en diferentes regiones.",
+   "explicacion": "Deshielo de glaciares: el proceso por el cual los glaciares pierden hielo y se derriten\nCapas de hielo: conjuntos de hielo grueso que se forman en regiones polares y montañas\nEn pocas palabras: El derretimiento de hielo en montañas y polares eleva el nivel del mar y cambia los patrones de lluvia y sequía en diferentes regiones.",
+   "error": null,
+   "s": 9.42
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[1]>p[0]",
+   "texto": "Notas: los valores son promedios globales simplificados con fines ilustrativos para este artículo.",
+   "nivel1_concepto": "",
+   "terminos": [
+    "Promedios globales",
+    "Valores"
+   ],
+   "descartados": [
+    "décadas"
+   ],
+   "simple": "Este artículo muestra el clima promedio del mundo para cada grupo de diez años, usando datos de todo el planeta.",
+   "explicacion": "Promedios globales: calculos hechos con datos de todo el mundo para ver el clima promedio.\nValores: números obtenidos de los datos.\nEn pocas palabras: Este artículo muestra el clima promedio del mundo para cada grupo de diez años, usando datos de todo el planeta.",
+   "error": null,
+   "s": 9.07
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[1]>p[0]",
+   "texto": "Notas de imagen: fotografía de archivo utilizada como referencia visual del retroceso glaciar.",
+   "nivel1_concepto": "fotografía de archivo",
+   "terminos": [
+    "Referencia visual",
+    "Retroceso glaciar"
+   ],
+   "descartados": [],
+   "simple": "Una fotografía guardada en un disco o memoria se usa para ver cómo un glaciar se ha movido desde su lugar original.",
+   "explicacion": "Referencia visual: imagen o cosa que se usa para ayudar a entender algo más complejo\nRetroceso glaciar: desplazamiento de hielo desde su posición original, generalmente hacia arriba o hacia atrás\nEn pocas palabras: Una fotografía guardada en un disco o memoria se usa para ver cómo un glaciar se ha movido desde su lugar original.",
+   "error": null,
+   "s": 9.26
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico y reduce el pH del mar, un proceso conoc",
+   "nivel1_concepto": "acidificación oceánica",
+   "terminos": [
+    "Dióxido de carbono",
+    "Ácido carbónico"
+   ],
+   "descartados": [],
+   "simple": "El océano toma cerca de un cuarto del dióxido de carbono que las personas liberan, lo que hace que el agua se vuelva más ácida y el pH del mar baje.",
+   "explicacion": "Dióxido de carbono: gas emitido por actividades humanas, que se disuelve en el agua y forma ácido\nÁcido carbónico: sustancia formada cuando el dióxido de carbono se disuelve en el agua, que reduce el pH del mar\nEn pocas palabras: El océano toma cerca de un cuarto del dióxido de carbono que las personas liberan, lo que hace que el agua se vuelva más ácida y el pH del mar baje.",
+   "error": null,
+   "s": 9.39
+  },
+  {
+   "rep": 0,
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los corales expulsan las microalgas que les ",
+   "nivel1_concepto": "",
+   "terminos": [
+    "Acidificación",
+    "Esqueletos y conchas",
+    "Plancton"
+   ],
+   "descartados": [],
+   "simple": "La acidificación del océano hace que sea más difícil para los corales y otros organismos marinos construir sus esqueletos y conchas, y cuando los corales se queman internamente, pierden su color y alimento, lo que puede llevar a su muerte.",
+   "explicacion": "Acidificación: Es cuando el agua del océano se vuelve más ácida, lo que hace que sea más difícil para algunos organismos formar sus estructuras.\nEsqueletos y conchas: Son estructuras protectoras que algunos animales marinos, como los corales y moluscos, construyen.\nPlancton: Es un grupo de organismos microscópicos que viven en el agua y que forman parte de la cadena alimenticia marina.\nEn pocas palabras: La acidificación del océano hace que sea más difícil para los corales y otros organismos marinos construir sus esqueletos y conchas, y cuando los corales se queman internamente, pierden su color y alimento, lo que puede llevar a su muerte.",
+   "error": null,
+   "s": 9.69
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial global y forzamiento radiativo neto (1880–",
+   "nivel1_concepto": "forzamiento radiativo neto",
+   "terminos": [
+    "Equilibrio climático de sensibilidad",
+    "Regresión multivariable"
+   ],
+   "descartados": [],
+   "simple": "Se usa un método estadístico para relacionar la temperatura del planeta con la cantidad de gases que emiten calor y cómo esto afecta la temperatura global a lo largo del tiempo.",
+   "explicacion": "Equilibrio climático de sensibilidad: la temperatura que se alcanza cuando el calentamiento del planeta se equilibra con el enfriamiento\nRegresión multivariable: un método estadístico para encontrar la relación entre varias variables\nEn pocas palabras: Se usa un método estadístico para relacionar la temperatura del planeta con la cantidad de gases que emiten calor y cómo esto afecta la temperatura global a lo largo del tiempo.",
+   "error": null,
+   "s": 9.47
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia de los coeficientes se evaluó mediante p",
+   "nivel1_concepto": "errores autocorrelacionados",
+   "terminos": [],
+   "descartados": [],
+   "simple": "",
+   "explicacion": "",
+   "error": null,
+   "s": 10.16
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel1_concepto": "GEI equivalentes",
+   "terminos": [
+    "Emisiones",
+    "CO₂-eq"
+   ],
+   "descartados": [],
+   "simple": "Este gráfico muestra las emisiones de gases de efecto invernadero, expresadas en CO₂ equivalente, de diferentes sectores en 2023.",
+   "explicacion": "Emisiones: La liberación de gases, como el dióxido de carbono, al ambiente.\nCO₂-eq: Una medida que compara la cantidad de diferentes gases de efecto invernadero en función de su capacidad para calentar el clima.\nEn pocas palabras: Este gráfico muestra las emisiones de gases de efecto invernadero, expresadas en CO₂ equivalente, de diferentes sectores en 2023.",
+   "error": null,
+   "s": 9.47
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. El forzamiento por aerosoles antropogéni",
+   "nivel1_concepto": "enmascaramiento negativo",
+   "terminos": [
+    "Sensibilidad climática de equilibrio estimada",
+    "ENOS"
+   ],
+   "descartados": [],
+   "simple": "El texto habla sobre cómo el cambio en la cantidad de CO₂ afecta al clima y cómo ciertos aerosoles y fenómenos como El Niño pueden influir en la variación climática.",
+   "explicacion": "Sensibilidad climática de equilibrio estimada: la respuesta del clima a cambios en la concentración de CO₂\nENOS: Oscilación del Sur relacionada con El Niño\nEn pocas palabras: El texto habla sobre cómo el cambio en la cantidad de CO₂ afecta al clima y cómo ciertos aerosoles y fenómenos como El Niño pueden influir en la variación climática.",
+   "error": null,
+   "s": 9.18
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>div[0]>p[0]",
+   "texto": "Notas de imagen: fotografía histórica citada con fines ilustrativos; no corresponde a datos satelitales del estudio.",
+   "nivel1_concepto": "fotografía histórica",
+   "terminos": [],
+   "descartados": [],
+   "simple": "La fotografía histórica es una imagen tomada en el pasado para mostrar cómo era algo en un momento específico.",
+   "explicacion": "En pocas palabras: La fotografía histórica es una imagen tomada en el pasado para mostrar cómo era algo en un momento específico.",
+   "error": null,
+   "s": 8.73
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcialmente compensado por las interacciones a",
+   "nivel1_concepto": "forzamiento radiativo efectivo",
+   "terminos": [],
+   "descartados": [],
+   "simple": "",
+   "explicacion": "",
+   "error": null,
+   "s": 10.26
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles anterior a 1950 y el supuesto de linealidad",
+   "nivel1_concepto": "forzamientos antropogénicos",
+   "terminos": [
+    "Serie de forzamiento por aerosoles",
+    "Linealidad entre forzamiento y respuesta"
+   ],
+   "descartados": [],
+   "simple": "El texto habla de cómo los cambios humanos en el clima están vinculados entre sí y son incertos antes de 1950, y que asumir que el cambio climático es directamente proporcional a estos cambios es simplista y no considera cómo…",
+   "explicacion": "Serie de forzamiento por aerosoles: Cambios en el clima debido a partículas en el aire que provienen de actividades humanas.\nLinealidad entre forzamiento y respuesta: La idea de que el cambio climático es directamente proporcional a los cambios en el clima.\nEn pocas palabras: El texto habla de cómo los cambios humanos en el clima están vinculados entre sí y son incertos antes de 1950, y que asumir que el cambio climático es directamente proporcional a estos cambios es simplista y no considera cómo…",
+   "error": null,
+   "s": 9.65
+  },
+  {
+   "rep": 0,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación del IPCC AR6.",
+   "nivel1_concepto": "forzamiento radiativo efectivo antropogénico",
+   "terminos": [],
+   "descartados": [],
+   "simple": "El forzamiento radiativo efectivo antropogénico se refiere a cómo las actividades humanas, como la quema de combustibles fósiles, afectan el calor que retiene la Tierra.",
+   "explicacion": "En pocas palabras: El forzamiento radiativo efectivo antropogénico se refiere a cómo las actividades humanas, como la quema de combustibles fósiles, afectan el calor que retiene la Tierra.",
+   "error": null,
+   "s": 8.95
+  },
+  {
+   "rep": 1,
+   "pagina": "facil",
+   "el": "aside[0]>div[1]>p[0]",
+   "texto": "Pequeñas acciones diarias, como ahorrar energía, suman cuando las hace mucha gente.",
+   "nivel1_concepto": "acción diaria",
+   "terminos": [],
+   "descartados": [],
+   "simple": "Las pequeñas cosas que hacemos todos los días, como ahorrar energía, pueden tener un gran impacto positivo.",
+   "explicacion": "En pocas palabras: Las pequeñas cosas que hacemos todos los días, como ahorrar energía, pueden tener un gran impacto positivo.",
+   "error": null,
+   "s": 8.58
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[0]",
+   "texto": "El cambio climático actual se atribuye principalmente al aumento de gases de efecto invernadero, como el dióxido de carbono (CO₂) y el metano, liberados por la quema de combustibles fósiles. Estos gas",
+   "nivel1_concepto": "gases de efecto invernadero",
+   "terminos": [
+    "Dióxido de carbono",
+    "Metano"
+   ],
+   "descartados": [],
+   "simple": "El cambio climático se debe a gases que atrapan el calor en nuestro aire, liberados por quemir combustibles como el petróleo y el carbón.",
+   "explicacion": "Dióxido de carbono: Gas que se libera cuando quemamos combustibles como el petróleo y el carbón, y que atrapa el calor\nMetano: Gas que se libera de los animales y plantas en descomposición, y que atrapa el calor\nEn pocas palabras: El cambio climático se debe a gases que atrapan el calor en nuestro aire, liberados por quemir combustibles como el petróleo y el carbón.",
+   "error": null,
+   "s": 4.55
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[1]",
+   "texto": "Los registros de estaciones meteorológicas, boyas oceánicas y satélites muestran una tendencia sostenida al alza en la temperatura superficial global desde mediados del siglo XX, coincidiendo con el a",
+   "nivel1_concepto": "emisiones industriales",
+   "terminos": [
+    "Estaciones meteorológicas",
+    "Boyas oceánicas"
+   ],
+   "descartados": [],
+   "simple": "Se observa que la temperatura del planeta ha estado aumentando desde la mitad del siglo XX, al mismo tiempo que las industrias emiten más contaminantes.",
+   "explicacion": "Estaciones meteorológicas: Lugares equipados para medir y registrar datos climáticos.\nBoyas oceánicas: Dispositivos flotantes que recogen información sobre el clima y el mar.\nEn pocas palabras: Se observa que la temperatura del planeta ha estado aumentando desde la mitad del siglo XX, al mismo tiempo que las industrias emiten más contaminantes.",
+   "error": null,
+   "s": 9.2
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[0]>p[2]",
+   "texto": "El deshielo de glaciares y capas de hielo contribuye al aumento del nivel del mar, mientras que algunas regiones experimentan sequías más frecuentes y otras, lluvias más intensas.",
+   "nivel1_concepto": "aumento del nivel del mar",
+   "terminos": [
+    "Deshielo de glaciares",
+    "Capas de hielo"
+   ],
+   "descartados": [],
+   "simple": "El derretimiento de hielo en glaciares y capas de hielo hace que el nivel del mar suba, lo que puede causar sequías o lluvias más intensas en algunas regiones.",
+   "explicacion": "Deshielo de glaciares: el proceso por el cual los glaciares pierden hielo y se derriten\nCapas de hielo: conjuntos de hielo grueso que se encuentran en regiones polares y montañas\nEn pocas palabras: El derretimiento de hielo en glaciares y capas de hielo hace que el nivel del mar suba, lo que puede causar sequías o lluvias más intensas en algunas regiones.",
+   "error": null,
+   "s": 9.35
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[0]>article[1]>p[0]",
+   "texto": "Notas: los valores son promedios globales simplificados con fines ilustrativos para este artículo.",
+   "nivel1_concepto": "",
+   "terminos": [
+    "Promedios globales",
+    "Valores ilustrativos"
+   ],
+   "descartados": [
+    "décadas"
+   ],
+   "simple": "Este artículo presenta los promedios globales de temperatura calculados para todos los continentes y océanos del mundo, organizados por décadas para ayudar a entender cómo cambian las temperaturas a lo largo del tiempo.",
+   "explicacion": "Promedios globales: valores calculados para todos los continentes y océanos del mundo.\nValores ilustrativos: datos presentados de manera que se pueda entender fácilmente.\nEn pocas palabras: Este artículo presenta los promedios globales de temperatura calculados para todos los continentes y océanos del mundo, organizados por décadas para ayudar a entender cómo cambian las temperaturas a lo largo del tiempo.",
+   "error": null,
+   "s": 9.24
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[0]>div[1]>p[0]",
+   "texto": "Notas de imagen: fotografía de archivo utilizada como referencia visual del retroceso glaciar.",
+   "nivel1_concepto": "fotografía de archivo",
+   "terminos": [
+    "Referencia visual",
+    "Retroceso glaciar"
+   ],
+   "descartados": [],
+   "simple": "Una fotografía guardada en un disco o tarjeta se usa para mostrar cómo un glaciar se está moviendo hacia afuera o hacia abajo.",
+   "explicacion": "Referencia visual: imagen que se usa para ayudar a entender algo más complejo\nRetroceso glaciar: desplazamiento de hielo glaciario desde su posición original, generalmente hacia afuera o hacia abajo\nEn pocas palabras: Una fotografía guardada en un disco o tarjeta se usa para mostrar cómo un glaciar se está moviendo hacia afuera o hacia abajo.",
+   "error": null,
+   "s": 9.31
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[0]",
+   "texto": "El océano absorbe cerca de una cuarta parte del dióxido de carbono emitido por las actividades humanas. Al disolverse en el agua, ese gas forma ácido carbónico y reduce el pH del mar, un proceso conoc",
+   "nivel1_concepto": "acidificación oceánica",
+   "terminos": [
+    "Dióxido de carbono",
+    "Ácido carbónico"
+   ],
+   "descartados": [],
+   "simple": "El océano toma cerca de un cuarto del dióxido de carbono que las personas liberan, lo que hace que el agua se vuelva más ácida y el pH del mar baje.",
+   "explicacion": "Dióxido de carbono: gas emitido por actividades humanas, que se disuelve en el agua y forma ácido\nÁcido carbónico: sustancia formada cuando el dióxido de carbono se disuelve en el agua, que reduce el pH del mar\nEn pocas palabras: El océano toma cerca de un cuarto del dióxido de carbono que las personas liberan, lo que hace que el agua se vuelva más ácida y el pH del mar baje.",
+   "error": null,
+   "s": 9.32
+  },
+  {
+   "rep": 1,
+   "pagina": "intermedio",
+   "el": "main[0]>div[1]>div[0]>article[0]>p[1]",
+   "texto": "La acidificación dificulta que corales, moluscos y algunos tipos de plancton formen sus esqueletos y conchas. Además, cuando el agua se calienta en exceso, los corales expulsan las microalgas que les ",
+   "nivel1_concepto": "",
+   "terminos": [
+    "Acidificación",
+    "Esqueletos y conchas",
+    "Plancton"
+   ],
+   "descartados": [],
+   "simple": "La acidificación del océano hace que los corales y otros organismos marinos tengan dificultades para construir sus esqueletos y conchas, y también puede hacer que los corales se descolore y se marchiten.",
+   "explicacion": "Acidificación: es el proceso por el cual el agua se vuelve más ácida, afectando a los organismos marinos.\nEsqueletos y conchas: son estructuras protectoras que algunos animales marinos construyen, como los corales y moluscos.\nPlancton: es un grupo de organismos microscópicos que viven en el agua y forman parte de la cadena alimenticia marina.\nEn pocas palabras: La acidificación del océano hace que los corales y otros organismos marinos tengan dificultades para construir sus esqueletos y conchas, y también puede hacer que los corales se descolore y se marchiten.",
+   "error": null,
+   "s": 9.49
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[0]",
+   "texto": "Se estima la sensibilidad climática de equilibrio (ECS) mediante un modelo de regresión multivariable aplicado a series temporales de temperatura superficial global y forzamiento radiativo neto (1880–",
+   "nivel1_concepto": "forzamiento radiativo neto",
+   "terminos": [
+    "Equilibrio climático de sensibilidad",
+    "Regresión multivariable"
+   ],
+   "descartados": [],
+   "simple": "Estiman cómo cambia la temperatura promedio del planeta cuando emiten más CO2, usando múltiples factores y datos de temperatura.",
+   "explicacion": "Equilibrio climático de sensibilidad: La temperatura promedio del planeta después de que el sistema climático se adapta a un cambio en el forzamiento climático.\nRegresión multivariable: Una técnica estadística que permite entender cómo múltiples factores afectan a una variable.\nEn pocas palabras: Estiman cómo cambia la temperatura promedio del planeta cuando emiten más CO2, usando múltiples factores y datos de temperatura.",
+   "error": null,
+   "s": 9.54
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>article[0]>p[1]",
+   "texto": "Se empleó un modelo lineal generalizado con errores autocorrelacionados (proceso AR(1)) para corregir la dependencia temporal de los residuos. La significancia de los coeficientes se evaluó mediante p",
+   "nivel1_concepto": "errores autocorrelacionados",
+   "terminos": [],
+   "descartados": [],
+   "simple": "",
+   "explicacion": "",
+   "error": null,
+   "s": 5.36
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 1. Contribución sectorial a emisiones de GEI equivalentes, 2023 (Gt CO₂-eq). Valores ilustrativos.",
+   "nivel1_concepto": "GEI equivalentes",
+   "terminos": [],
+   "descartados": [],
+   "simple": "Este texto muestra las emisiones totales de gases de efecto invernadero asociadas a diferentes sectores de la economía para el año 2023.",
+   "explicacion": "En pocas palabras: Este texto muestra las emisiones totales de gases de efecto invernadero asociadas a diferentes sectores de la economía para el año 2023.",
+   "error": null,
+   "s": 4.07
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>article[0]>p[0]",
+   "texto": "La sensibilidad climática de equilibrio estimada (ECS ≈ 3.0 °C por duplicación de CO₂, IC 90% [2.1, 4.5]) es consistente con el rango evaluado por el IPCC AR6. El forzamiento por aerosoles antropogéni",
+   "nivel1_concepto": "forzamiento por aerosoles antropogénicos",
+   "terminos": [
+    "Sensibilidad climática de equilibrio estimada",
+    "ENOS"
+   ],
+   "descartados": [],
+   "simple": "El texto habla sobre cómo el clima cambia con más CO₂ y cómo los humanos con sus partículas afectan esto. También menciona un fenómeno en el Pacífico que también cambia el clima.",
+   "explicacion": "Sensibilidad climática de equilibrio estimada: la respuesta del clima a cambios en la concentración de CO₂\nENOS: una variación climática en el sudeste del Pacífico que afecta el clima global\nEn pocas palabras: El texto habla sobre cómo el clima cambia con más CO₂ y cómo los humanos con sus partículas afectan esto. También menciona un fenómeno en el Pacífico que también cambia el clima.",
+   "error": null,
+   "s": 9.33
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[1]>div[0]>p[0]",
+   "texto": "Notas de imagen: fotografía histórica citada con fines ilustrativos; no corresponde a datos satelitales del estudio.",
+   "nivel1_concepto": "fotografía histórica",
+   "terminos": [],
+   "descartados": [],
+   "simple": "Una fotografía tomada en el pasado ilustra cómo era algo en un momento específico.",
+   "explicacion": "En pocas palabras: Una fotografía tomada en el pasado ilustra cómo era algo en un momento específico.",
+   "error": null,
+   "s": 8.69
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[0]",
+   "texto": "El forzamiento radiativo efectivo (ERF) antropogénico total para 1750–2019 se estima en 2.72 W m⁻² (rango muy probable 1.96–3.48), dominado por el CO₂ y parcialmente compensado por las interacciones a",
+   "nivel1_concepto": "forzamiento radiativo efectivo",
+   "terminos": [
+    "CO₂",
+    "Interacciones aerosol-radiación y aerosol-nube"
+   ],
+   "descartados": [],
+   "simple": "El aumento de gases como el CO₂ en la atmósfera hace que la Tierra se caliente más, pero también hay otros factores que pueden enfriar o calentar el planeta, como las partículas en el aire y cómo afectan la luz…",
+   "explicacion": "CO₂: Gas en la atmósfera que, al aumentar su concentración, atrapa más calor y contribuye al calentamiento global.\nInteracciones aerosol-radiación y aerosol-nube: Efectos que los partículas en el aire tienen sobre la luz solar y la formación de nubes, que pueden enfriar o calentar el planeta.\nEn pocas palabras: El aumento de gases como el CO₂ en la atmósfera hace que la Tierra se caliente más, pero también hay otros factores que pueden enfriar o calentar el planeta, como las partículas en el aire y cómo afectan la luz…",
+   "error": null,
+   "s": 9.81
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>article[0]>p[1]",
+   "texto": "Entre las limitaciones del enfoque destacan la colinealidad entre los forzamientos antropogénicos, la incertidumbre de la serie de forzamiento por aerosoles anterior a 1950 y el supuesto de linealidad",
+   "nivel1_concepto": "forzamientos antropogénicos",
+   "terminos": [
+    "Serie de forzamiento por aerosoles",
+    "Linealidad entre forzamiento y respuesta"
+   ],
+   "descartados": [],
+   "simple": "El texto habla de limitaciones en un enfoque científico relacionado con el cambio climático, incluyendo que las acciones humanas pueden afectar el clima, que hay incertidumbre en los cambios climáticos antes de 1950 debido a partículas en el aire, y…",
+   "explicacion": "Serie de forzamiento por aerosoles: Cambios en el clima debido a partículas en el aire antes de 1950\nLinealidad entre forzamiento y respuesta: Cambios en el clima directamente relacionados con cambios en el forzamiento\nEn pocas palabras: El texto habla de limitaciones en un enfoque científico relacionado con el cambio climático, incluyendo que las acciones humanas pueden afectar el clima, que hay incertidumbre en los cambios climáticos antes de 1950 debido a partículas en el aire, y…",
+   "error": null,
+   "s": 9.71
+  },
+  {
+   "rep": 1,
+   "pagina": "avanzado",
+   "el": "main[0]>div[2]>div[0]>div[0]>p[0]",
+   "texto": "Fig. 3. Forzamiento radiativo efectivo antropogénico desagregado por componente (W m⁻²) entre 1750 y 2019, con valores aproximados derivados de la evaluación del IPCC AR6.",
+   "nivel1_concepto": "forzamiento radiativo antropogénico",
+   "terminos": [
+    "Forzamiento radiativo",
+    "Antropogénico",
+    "Desagregado por componente"
+   ],
+   "descartados": [],
+   "simple": "El texto habla sobre cómo los seres humanos han hecho que el calentamiento del planeta sea más fuerte, dividiendo el efecto en partes para estudiar cada una.",
+   "explicacion": "Forzamiento radiativo: La acción de alterar el balance de energía del planeta, causando un calentamiento o enfriamiento.\nAntropogénico: Que proviene de actividades humanas.\nDesagregado por componente: Se separa en partes para analizar cada una individualmente.\nEn pocas palabras: El texto habla sobre cómo los seres humanos han hecho que el calentamiento del planeta sea más fuerte, dividiendo el efecto en partes para estudiar cada una.",
+   "error": null,
+   "s": 9.26
+  }
+ ]
+}

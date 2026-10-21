@@ -1,0 +1,23 @@
+{
+ "descripcion": "Bloque de la página (identificador del registro, ver gaze.js elementId) al que corresponde cada pregunta de evaluation/prueba_comprension.md. Para cruzar aciertos con si ese bloque recibió ayuda.",
+ "preguntas": {
+  "F1": "main[0]>section[0]>p[0]",
+  "F2": "main[0]>article[2]>div[1]>svg[0]",
+  "F3": "main[0]>article[0]>ul[0]>li[2]",
+  "F4": "aside[0]>div[0]>p[0]",
+  "F5": "main[0]>article[2]>p[0]",
+  "F6": "aside[0]>div[1]>p[0]",
+  "I1": "main[0]>div[0]>div[0]>article[0]>p[0]",
+  "I2": "main[0]>div[0]>div[0]>article[0]>p[0]",
+  "I3": "main[0]>div[0]>div[0]>article[0]>p[1]",
+  "I4": "main[0]>div[0]>div[0]>article[1]>table[0]",
+  "I5": "main[0]>div[1]>div[0]>article[0]>p[0]",
+  "I6": "main[0]>div[1]>div[0]>article[0]>p[1]",
+  "A1": "main[0]>article[0]>p[0]",
+  "A2": "main[0]>div[1]>article[0]>p[0]",
+  "A3": "main[0]>div[0]>article[0]>table[0]",
+  "A4": "main[0]>div[1]>article[0]>p[0]",
+  "A5": "main[0]>div[2]>article[0]>p[0]",
+  "A6": "main[0]>div[2]>article[0]>p[1]"
+ }
+}
