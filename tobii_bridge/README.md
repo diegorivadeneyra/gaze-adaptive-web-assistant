@@ -89,7 +89,7 @@ conecte. Así que puedes arrancar cualquiera primero.
    ```
    Debería imprimir `[TOBII] Conectando a gaze_server.exe...` y luego `Conectado.`.
 
-3. Abre cualquier página (`facil.html`, `intermedio.html`, `avanzado.html`) y
+3. Abre cualquier página (`siteA.html`, `siteB.html`, `siteC.html`) y
    verifica en el panel de debug que diga "👁️ Tobii 5".
 
 ## Limitación conocida (pendiente de calibración)

@@ -40,6 +40,8 @@ from analyzers.llm_utils import (                   # noqa: E402
 )
 
 FRONTEND = ROOT / "frontend"
+# Archivo de cada página (nombres neutros desde el 2026-10-25, ver frontend/js/session.js).
+PAGE_FILES = {"facil": "siteA.html", "intermedio": "siteB.html", "avanzado": "siteC.html"}
 RESULTS = ROOT / "evaluation" / "results"
 ASSETS = ROOT / "evaluation" / "assets"
 NOW = datetime.datetime.now()
@@ -96,7 +98,7 @@ class BlockParser(HTMLParser):
 
 def load_page(name):
     p = BlockParser()
-    p.feed((FRONTEND / f"{name}.html").read_text(encoding="utf-8"))
+    p.feed((FRONTEND / PAGE_FILES.get(name, f"{name}.html")).read_text(encoding="utf-8"))
     return p
 
 
@@ -321,7 +323,7 @@ def chart_text(page):
     """Textos de la primera gráfica SVG de la página, igual que getChartText()
     en gaze.js: en orden del documento, sin repetidos, unidos con " · "."""
     import html as _html
-    source = (FRONTEND / f"{page}.html").read_text(encoding="utf-8")
+    source = (FRONTEND / PAGE_FILES.get(page, f"{page}.html")).read_text(encoding="utf-8")
     svg = re.search(r'<div class="mini-chart"[^>]*>\s*<svg.*?</svg>', source, re.S).group(0)
     seen, texts = set(), []
     for raw in re.findall(r"<text[^>]*>(.*?)</text>", svg, re.S):

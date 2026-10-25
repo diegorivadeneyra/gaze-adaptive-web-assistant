@@ -1,32 +1,22 @@
-"""Medida objetiva de dificultad de lectura para texto en español.
-
-Se usa el índice de legibilidad de Szigriszt-Pazos (1993) con la escala
-INFLESZ (Barrio-Cantalejo et al., 2008), que es una adaptación al español de
-la fórmula de Flesch:
+"""Dificultad de lectura de un texto en español: índice de Szigriszt-Pazos
+(1993) con la escala INFLESZ (Barrio-Cantalejo et al., 2008).
 
     INFLESZ = 206.835 - 62.3 * (sílabas / palabras) - (palabras / oraciones)
 
-Es determinista (mismo texto, mismo resultado), gratis y explicable, a
-diferencia de pedirle el nivel a un modelo de lenguaje. No aplica a tablas,
-gráficas ni imágenes, ni a textos muy cortos: en esos casos devuelve None y
-el sistema recurre al juicio del modelo.
+Determinista y explicable. Devuelve None en textos muy cortos (decide el modelo).
+Copia en el navegador: frontend/js/readability.js (tests/test_readability.js).
 """
 import re
 
 WORD_RE = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
 SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?…])\s+(?=[A-ZÁÉÍÓÚÑ¿¡(\[])")
 
-# Con menos palabras la fórmula es inestable, así que se deja al modelo. Se
-# empezó con 15, pero entonces las frases cortas de la página fácil (12-14
-# palabras) caían al juicio del modelo, que las calificaba "Medium" y daba
-# ayuda donde no corresponde; con 8, 8 de esas 9 frases salen "Low" (la novena
-# es 49.5, en el borde de "Medium"), que es lo esperado.
+# Con menos palabras la fórmula es inestable (con 15, las frases de la página
+# fácil caían al modelo y salían Medium).
 MIN_WORDS = 8
 
-# Cortes de la escala INFLESZ agrupados en los tres niveles del sistema:
-#   >= 55  "normal" o más fácil  -> Low    (no se ofrece ayuda)
-#   40-55  "algo difícil"        -> Medium
-#   < 40   "muy difícil"         -> High
+# Escala INFLESZ: >= 55 normal o más fácil (Low), 40–55 algo difícil (Medium),
+# < 40 muy difícil (High).
 INFLESZ_LOW_MIN = 55
 INFLESZ_MEDIUM_MIN = 40
 

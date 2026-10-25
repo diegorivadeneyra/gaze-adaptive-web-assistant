@@ -1,5 +1,12 @@
 # Prueba de comprensión (borrador )
 
+> **2026-10-25: YA NO SE APLICA en el piloto.** Por decisión del usuario, la
+> comprensión se mide por **recuerdo libre**: en el Excel hay un recuadro por
+> página para escribir lo que se entendió (ver `crear_cuestionarios_excel.py`).
+> Este documento queda como referencia: sus preguntas y respuestas ✓ señalan las
+> ideas importantes de cada página y pueden servir de pauta para calificar los
+> textos a mano.
+
 **Para qué sirve:** es la medida principal de la tesis. El registro de mirada dice
 *cómo* se leyó; esta prueba dice si se **entendió mejor con ayuda que sin ella**.
 
@@ -24,14 +31,27 @@ revisarla con la asesora y hacer el control de "¿se responde sin leer?" (§5).
 
 ## 2. Diseño de la prueba
 
-- **6 preguntas por página** (18 en total): **3 literales y 3 inferenciales**.
+- **4 preguntas por página** (12 en total): **2 literales y 2 inferenciales**.
+  Se escribieron 6 por página; el 2026-10-22, al pasar todos los cuestionarios
+  al final de la sesión, se dejaron 4 para no alargarlo. Las otras 6 quedan
+  marcadas **"reserva"** (no se aplican ni se puntúan) y se eligieron así:
+  F3 e I1 (candidatas a responderse sin leer, §5), F2 (pide un valor exacto
+  que solo está en la gráfica: al final de la sesión no es razonable
+  recordarlo; 2026-10-22 la reemplazó F5, cuyo dato dice el propio texto —"la
+  mitad que en 1980"—, por eso pasó de inferencial a literal y ya no menciona
+  la gráfica), I4 y A3 (bloques Low/Medium: la ayuda actúa poco; A3 además
+  pregunta "según la tabla") y A1 (el enunciado de A2 le da la respuesta, ahora
+  que van en la misma hoja). Ninguna pregunta que se aplica menciona gráficas o
+  tablas: con varias en cada página, no se puede esperar que se recuerde una
+  en particular.
 - **Opción múltiple** con 4 opciones y una sola correcta, más **"No lo sé"**
   (reduce las respuestas al azar).
 - **Opciones sin pistas** (Haladyna, Downing y Rodriguez, 2002): de **largo
   parecido** (diferencia de 2 a 8 caracteres; la correcta es la más larga solo
   en 4 de 18, lo esperable por azar), **todas plausibles** (errores comunes o
   datos de la propia página que no responden la pregunta) y con la correcta
-  **repartida** (a: 4, b: 5, c: 5, d: 4). Excepción: A3, cuyas opciones son
+  **repartida** (a: 4, b: 5, c: 5, d: 4; en las 12 que se aplican: a: 3,
+  b: 3, c: 4, d: 2). Excepción: A3, cuyas opciones son
   nombres de variables. Donde un distractor es cierto en el mundo real pero no
   lo dice el texto, la pregunta dice "según el texto".
 - **Cada pregunta está ligada a un bloque de la página.** La correspondencia
@@ -62,7 +82,7 @@ correcta va marcada con ✓ (no se le muestra al participante).
 - d) Las lluvias de verano lo van disolviendo.
 - e) No lo sé.
 
-**F2** · literal · gráfica (Low)
+**F2** · literal · gráfica (Low) · reserva
 Según la gráfica, ¿cuánto hielo había en el Ártico en septiembre de 2020?
 - a) Unos 7.7 millones de km².
 - b) Unos 3.9 millones de km². ✓
@@ -70,7 +90,7 @@ Según la gráfica, ¿cuánto hielo había en el Ártico en septiembre de 2020?
 - d) Unos 1.2 millones de km².
 - e) No lo sé.
 
-**F3** · literal · viñeta (Low)
+**F3** · literal · viñeta (Low) · reserva
 Según el texto, ¿qué pasa con el agua de los glaciares que se derriten?
 - a) Se evapora y vuelve a caer como lluvia.
 - b) Se filtra al suelo y forma ríos subterráneos.
@@ -86,8 +106,8 @@ Si un glaciar desaparece, ¿por qué es difícil recuperarlo?
 - d) Porque las montañas pierden altura con el tiempo.
 - e) No lo sé.
 
-**F5** · inferencial · párrafo y gráfica (Low)
-Comparando 1980 con 2020, el hielo del Ártico en septiembre…
+**F5** · literal · párrafo de la gráfica (Low)
+Según el texto, comparado con 1980, el hielo del Ártico en septiembre…
 - a) aumentó en una cuarta parte.
 - b) se mantuvo prácticamente igual.
 - c) se redujo más o menos a la mitad. ✓
@@ -104,7 +124,7 @@ Comparando 1980 con 2020, el hielo del Ártico en septiembre…
 
 ### Página intermedia
 
-**I1** · literal · "Causas" (**Medium**)
+**I1** · literal · "Causas" (**Medium**) · reserva
 Según el texto, ¿qué libera principalmente los gases de efecto invernadero?
 - a) La quema de combustibles fósiles. ✓
 - b) Las erupciones de los volcanes activos.
@@ -128,7 +148,7 @@ Según el texto, ¿de dónde vienen los registros que muestran el aumento de la 
 - d) De estaciones, boyas oceánicas y satélites. ✓
 - e) No lo sé.
 
-**I4** · inferencial · tabla y Fig. 1 (Low/Medium)
+**I4** · inferencial · tabla y Fig. 1 (Low/Medium) · reserva
 ¿Qué muestran los datos sobre la velocidad del calentamiento?
 - a) Que la temperatura subió al mismo ritmo todo el siglo.
 - b) Que el aumento se aceleró en las décadas recientes. ✓
@@ -154,7 +174,7 @@ Un caracol marino podría verse perjudicado por la acidificación porque…
 
 ### Página avanzada
 
-**A1** · literal · Resumen (**High**)
+**A1** · literal · Resumen (**High**) · reserva
 ¿Qué estima principalmente el estudio?
 - a) El aumento futuro del nivel del mar.
 - b) Las emisiones de cada sector económico.
@@ -170,7 +190,7 @@ Una sensibilidad climática de equilibrio de ≈ 3.0 °C significa que…
 - d) con el doble de CO₂, se calentaría unos 3 °C. ✓
 - e) No lo sé.
 
-**A3** · inferencial · Tabla 1 (Medium)
+**A3** · inferencial · Tabla 1 (Medium) · reserva
 Según la tabla, ¿qué variable **no** tuvo un efecto estadísticamente significativo?
 - a) CO₂-eq.
 - b) Aerosoles.
@@ -202,8 +222,8 @@ Según el texto, ¿qué refuerza el calentamiento en latitudes altas?
 - d) No incluye los aerosoles entre las variables.
 - e) No lo sé.
 
-**Resumen por página:** fácil 1 pregunta sobre bloque Medium (5 Low, de control);
-intermedio 5 Medium/High; avanzado 6 Medium/High.
+**Resumen por página (sin las de reserva):** fácil 1 pregunta sobre bloque
+Medium (3 Low, de control); intermedio 4 Medium/High; avanzado 4 High.
 
 ---
 
@@ -215,9 +235,14 @@ intermedio 5 Medium/High; avanzado 6 Medium/High.
    final de cada una responderás unas preguntas". Como saber que habrá
    preguntas hace leer más lento (Brysbaert, 2019), la instrucción debe ser
    idéntica en ambas condiciones.
-3. Por cada página: **leer → preguntas (página oculta) → marcar lo que costó**.
-   Las preguntas van **antes** del marcado: el marcado vuelve a mostrar la
-   página y permitiría releerla antes de responder.
+3. Por cada página: **leer → pausa (página oculta, sin cuestionario) → marcar
+   lo que costó**. **Todas las preguntas van al final** de la sesión, seguidas,
+   en una sola hoja del Excel (cambio del 2026-10-22: en la pausa no se puede
+   aplicar ningún cuestionario). Costo: entre leer una página y responder pasan
+   las otras lecturas (más olvido, sobre todo en la primera página leída), y el
+   marcado vuelve a mostrar la página antes de las preguntas. Como el orden de
+   páginas es aleatorio, ese efecto se reparte entre métodos; la posición de la
+   página (`posicion` en `paginas.csv`) puede entrar como covariable.
 4. Las preguntas no tienen límite de tiempo, pero el tiempo se registra.
 
 ## 5. Antes de usarla: validar las preguntas

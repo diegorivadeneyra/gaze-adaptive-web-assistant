@@ -1,15 +1,8 @@
-"""Registro de sesiones experimentales (logging).
-
-Cada sesión (un participante) genera dos archivos en data/sessions/:
-  - <sesion>_events.jsonl : un evento por línea (inicio, páginas, elementos
-                            mirados, análisis, ayudas mostradas/suprimidas).
-  - <sesion>_gaze.csv     : muestras crudas de la mirada (o del mouse), para
-                            poder recalcular después dwell, fijaciones y
-                            umbrales sin repetir participantes.
-JSONL y CSV se escriben solo agregando al final: si el sistema se cae a mitad
-de la sesión, lo ya escrito no se pierde. data/ está en .gitignore (son datos
-de participantes; solo se usan códigos como P01, nunca nombres).
-El resumen para el análisis lo arma evaluation/analyze_sessions.py.
+"""Registro de sesiones en data/sessions/ (fuera de git; solo códigos, sin nombres):
+  <sesion>_events.jsonl  un evento por línea (páginas, elementos, análisis, ayudas)
+  <sesion>_gaze.csv      muestras crudas de la mirada, para recalcular después
+Solo se agrega al final: si el sistema se cae, lo escrito no se pierde.
+Resumen para el análisis: evaluation/analyze_sessions.py.
 """
 import csv
 import datetime

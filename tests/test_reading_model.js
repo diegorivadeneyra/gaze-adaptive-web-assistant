@@ -1,19 +1,10 @@
-// Pruebas del modelo de lectura (frontend/js/reading_model.js).
-//
-// 1) Pruebas unitarias de cada regla (atascado y su tope, relectura al
-//    volver, relectura dentro del párrafo, salida corta, reinicio, ritmo).
-// 2) Simulación con los párrafos reales de las 3 páginas
-//    (evaluation/assets/bloques_lectura.json) y lectores SIMULADOS. Compara:
-//      - la regla anterior (solo contenido + tiempo fijo),
-//      - la regla por conducta con los tiempos actuales (v2) y con la
-//        propuesta para acortarlos (v3).
-//    (Resultados de versiones anteriores, v1, en REGLAS_DEL_SISTEMA.md §8.)
-//    Mide ayudas innecesarias (a quien no se trabó), cobertura (a quien sí) y
-//    demora. Es una prueba del MECANISMO con lectores inventados, no de
-//    personas reales: eso lo mide el piloto (marcado → acierto y cobertura).
-//
+// Pruebas del modelo de lectura (frontend/js/reading_model.js):
+// 1) unitarias de cada regla y del ritmo;
+// 2) simulación con los párrafos reales y lectores simulados, comparando reglas
+//    (ayudas innecesarias, cobertura, demora y ritmo). Prueba el mecanismo, no
+//    a personas reales. Resultado: evaluation/results/simulacion_conducta.json.
+// Parámetros: backend/analyzers/decision_engine.py.
 // Uso: node tests/test_reading_model.js
-// Los parámetros se leen de backend/analyzers/decision_engine.py.
 
 const assert = require("assert");
 const path = require("path");
@@ -165,6 +156,75 @@ test("el ritmo no aprende de hojeos ni de párrafos con señal", () => {
     assert.strictEqual(m.pace, RP.base_ms_per_syllable);
 });
 
+// Ritmo desde cualquier párrafo (2026-10-25).
+function readAndLeave(m, key, info, readMs, now, hadSignal = false) {
+    m.enter(key, now);
+    read(m, key, readMs, info);
+    m.leave(key, now + readMs, info, hadSignal);
+    return now + readMs + 1000;
+}
+
+test("ritmo: también aprende de párrafos Medium y High (normalizado por el factor del nivel)", () => {
+    const m = createReadingModel(RP);
+    const high = { syllables: 150, level: "High" };
+    let now = 0;
+    for (let i = 0; i < 5; i++) {
+        now = readAndLeave(m, `h${i}`, high, 150 * RP.base_ms_per_syllable * RP.level_factor.High * 0.7, now);
+    }
+    const real = RP.base_ms_per_syllable * 0.7;
+    assert.ok(Math.abs(m.pace - real) / real < 0.05, `ritmo ${m.pace.toFixed(0)} vs real ${real}`);
+});
+
+test("ritmo: la regla anterior (solo Low) no aprende de párrafos High", () => {
+    const m = createReadingModel({ ...RP, pace_from_all_levels: false });
+    const high = { syllables: 150, level: "High" };
+    readAndLeave(m, "h", high, 150 * RP.base_ms_per_syllable * RP.level_factor.High * 0.7, 0);
+    assert.strictEqual(m.pace, RP.base_ms_per_syllable);
+});
+
+test("ritmo: subir está limitado a pace_max_increase por lectura; bajar, no", () => {
+    const m = createReadingModel(RP);
+    const low = { syllables: 60, level: "Low" };
+    readAndLeave(m, "lento", low, 60 * RP.base_ms_per_syllable * 1.9, 0);
+    assert.ok(m.pace <= RP.base_ms_per_syllable * (1 + RP.pace_max_increase) + 1e-9, `ritmo ${m.pace}`);
+    const m2 = createReadingModel(RP);
+    readAndLeave(m2, "a", low, 60 * RP.base_ms_per_syllable * 0.7, 0);
+    assert.ok(m2.pace < RP.base_ms_per_syllable * 0.9, "bajar es inmediato (con el promedio como medida previa)");
+});
+
+test("ritmo: una lectura rara no arrastra el ritmo (mediana)", () => {
+    const m = createReadingModel(RP);
+    const low = { syllables: 60, level: "Low" };
+    let now = 0;
+    for (let i = 0; i < 4; i++) now = readAndLeave(m, `n${i}`, low, 60 * RP.base_ms_per_syllable * 0.8, now);
+    const before = m.pace;
+    now = readAndLeave(m, "rara", low, 60 * RP.base_ms_per_syllable * 0.42, now);   // casi hojeo
+    assert.ok(Math.abs(m.pace - before) < 0.01 * before, `${before.toFixed(0)} -> ${m.pace.toFixed(0)}`);
+});
+
+test("ritmo: un párrafo que tuvo señal no enseña aunque se relea después sin señal", () => {
+    const m = createReadingModel(RP);
+    const med = { syllables: 100, level: "Medium" };
+    m.enter("p", 0);
+    read(m, "p", 100 * RP.base_ms_per_syllable * RP.level_factor.Medium * 0.6, med);
+    m.leave("p", 20000, med, true);                          // con señal
+    m.enter("p", 40000);
+    read(m, "p", 2000, med);
+    m.leave("p", 42000, med, false);                         // vuelve sin señal
+    assert.strictEqual(m.pace, RP.base_ms_per_syllable);
+});
+
+test("ritmo: el estado (ritmo y medidas) pasa a la página siguiente", () => {
+    const m = createReadingModel(RP);
+    const low = { syllables: 60, level: "Low" };
+    let now = 0;
+    for (let i = 0; i < 3; i++) now = readAndLeave(m, `l${i}`, low, 60 * RP.base_ms_per_syllable * 0.7, now);
+    const next = createReadingModel(RP, JSON.parse(JSON.stringify(m.paceState)));
+    assert.strictEqual(next.pace, m.pace);
+    assert.deepStrictEqual(next.paceState.samples, m.paceState.samples);
+    assert.strictEqual(createReadingModel(RP, 120).pace, 120, "acepta el formato anterior (solo el número)");
+});
+
 test("llegar al final hojeando (poco tiempo) no cuenta como leído", () => {
     const m = createReadingModel(RP);
     m.enter("p", 0);
@@ -263,13 +323,19 @@ const PROFILES = [
     { name: "se traba, lento (1.4×)",     pace: 1.4, struggles: true },
     { name: "rápido sin pasar por fácil, se traba", pace: 0.7, struggles: true, skipFacil: true },
     { name: "rápido sin pasar por fácil, entiende", pace: 0.7, struggles: false, skipFacil: true },
+    // Orden avanzado → intermedio → fácil (2026-10-25: el ritmo debe aprenderse en cualquier página).
+    { name: "rápido, empieza en avanzado, entiende", pace: 0.7, struggles: false, order: ["avanzado", "intermedio", "facil"] },
+    { name: "rápido, empieza en avanzado, se traba", pace: 0.7, struggles: true, order: ["avanzado", "intermedio", "facil"] },
+    { name: "lento, empieza en avanzado, entiende",  pace: 1.4, struggles: false, order: ["avanzado", "intermedio", "facil"] },
+    { name: "lento, empieza en avanzado, se traba",  pace: 1.4, struggles: true, order: ["avanzado", "intermedio", "facil"] },
 ];
 
 // Propuesta del 2026-10-11 para acortar los tiempos, separada en partes.
 const PROPOSED = { ...RP, read_fraction: 0.4, level_factor: { Low: 1.0, Medium: 1.15, High: 1.3 }, stuck_ratio: 1.3 };
 const RULES = [
     ["contenido", "Regla anterior (solo contenido, tiempo fijo)", null],
-    ["v2", "Conducta v2 (tiempos actuales)", RP],
+    ["ritmo_low", "Conducta, ritmo ANTERIOR (solo párrafos Low)", { ...RP, pace_from_all_levels: false }],
+    ["v2", "Conducta v2 (tiempos actuales, ritmo de cualquier párrafo)", RP],
     ["v3a", "v3a: solo 'leído' al 40 %", { ...RP, read_fraction: 0.4 }],
     ["v3b", "v3b: 'leído' 40 % + factores 1.15/1.3", { ...RP, read_fraction: 0.4, level_factor: PROPOSED.level_factor }],
     ["v3", "v3: propuesta completa (+ atascado 1.3×)", PROPOSED],
@@ -277,10 +343,16 @@ const RULES = [
 
 function simulate(profile, rule, policy, seed, scenario) {
     const rand = rng(seed);
-    const m = createReadingModel(policy || RP);
-    let now = 0, k = 0, c = 0;
-    const out = { innecesarias: 0, noTrabados: 0, cubiertas: 0, trabados: 0, demoras: [], lecturas: [] };
-    for (const b of BLOCKS) {
+    const pol = policy || RP;
+    const m = createReadingModel(pol);
+    let now = 0, k = 0, c = 0, n = 0;
+    const realPace = RP.base_ms_per_syllable * profile.pace;
+    const out = { innecesarias: 0, noTrabados: 0, cubiertas: 0, trabados: 0, demoras: [], lecturas: [],
+                  convergeAt: null, finalPace: null };
+    const blocks = profile.order
+        ? profile.order.flatMap(pg => BLOCKS.filter(b => b.page === pg))
+        : BLOCKS;
+    for (const b of blocks) {
         if (profile.skipFacil && b.page === "facil") continue;
         const key = `${b.page}:${b.el}`;
         const eligible = b.level !== "Low";
@@ -320,7 +392,16 @@ function simulate(profile, rule, policy, seed, scenario) {
             gaze(readMs, zoneAt);
             if (mode === "revisa") gaze(1000, () => "inicio");
         }
-        m.leave(key, now, info, helpedAt !== null);
+        // Como gaze.js: en Low no hay ayuda; una señal de relectura no deja
+        // aprender el ritmo y "atascado" sí (con la regla anterior, ninguna).
+        let hadSignal = helpedAt !== null;
+        if (!eligible) {
+            const sig = m.signal(key, info);
+            hadSignal = Boolean(sig) && (!pol.pace_from_all_levels || sig.type !== "atascado");
+        }
+        m.leave(key, now, info, hadSignal);
+        n++;
+        if (out.convergeAt === null && Math.abs(m.pace - realPace) / realPace <= 0.15) out.convergeAt = n;
         if (mode === "relee_fuera") {
             now += 8000;
             visitT = 0;
@@ -328,6 +409,7 @@ function simulate(profile, rule, policy, seed, scenario) {
             gaze(readMs * 0.5, zoneAt);
             m.leave(key, now, info, true);
         }
+        out.finalPace = m.pace;
         if (helpedAt !== null && struggles) {
             out.demoras.push(helpedAt - blockStart);
             if (mode === "relee_dentro") out.lecturas.push((helpedAt - blockStart) / readMs);
@@ -341,12 +423,15 @@ function simulate(profile, rule, policy, seed, scenario) {
 }
 
 function aggregate(profile, rule, policy, scenario) {
-    const acc = { innecesarias: 0, noTrabados: 0, cubiertas: 0, trabados: 0, demoras: [], lecturas: [] };
+    const acc = { innecesarias: 0, noTrabados: 0, cubiertas: 0, trabados: 0, demoras: [], lecturas: [],
+                  converge: [], noConverge: 0, finalPace: [] };
     for (let seed = 1; seed <= 20; seed++) {
         const r = simulate(profile, rule, policy, seed * 7919, scenario);
         for (const key of ["innecesarias", "noTrabados", "cubiertas", "trabados"]) acc[key] += r[key];
         acc.demoras.push(...r.demoras);
         acc.lecturas.push(...r.lecturas);
+        if (r.convergeAt === null) acc.noConverge++; else acc.converge.push(r.convergeAt);
+        acc.finalPace.push(r.finalPace);
     }
     return acc;
 }
@@ -361,14 +446,19 @@ for (const [scName, scenario] of Object.entries(SCENARIOS)) {
         for (const prof of PROFILES) {
             const acc = aggregate(prof, rule, policy, scenario);
             const d = mean(acc.demoras), l = mean(acc.lecturas);
+            const conv = acc.converge.length ? mean(acc.converge) : null;
             summary[`${scName}|${rule}|${prof.name}`] = {
                 innecesarias: acc.noTrabados ? acc.innecesarias / acc.noTrabados : null,
                 cobertura: acc.trabados ? acc.cubiertas / acc.trabados : null,
-                demora_s: d === null ? null : d / 1000, lecturas_hasta_ayuda: l };
+                demora_s: d === null ? null : d / 1000, lecturas_hasta_ayuda: l,
+                parrafos_hasta_ritmo_15pct: conv, sin_llegar_al_ritmo: acc.noConverge / 20,
+                ritmo_final: mean(acc.finalPace), ritmo_real: RP.base_ms_per_syllable * prof.pace };
             console.log(`    ${prof.name.padEnd(38)} innecesaria ${pct(acc.innecesarias, acc.noTrabados).padStart(5)}`
                 + ` | cobertura ${pct(acc.cubiertas, acc.trabados).padStart(5)}`
                 + ` | demora ${d === null ? "   —  " : (d / 1000).toFixed(1).padStart(5) + " s"}`
-                + ` | lecturas hasta la ayuda (relee dentro) ${l === null ? "—" : l.toFixed(2)}`);
+                + ` | lecturas hasta la ayuda (relee dentro) ${l === null ? "—" : l.toFixed(2)}`
+                + ` | ritmo final ${mean(acc.finalPace).toFixed(0)}/${(RP.base_ms_per_syllable * prof.pace).toFixed(0)}`
+                + ` (±15 % en ${conv === null ? "nunca" : conv.toFixed(1) + " párr."}${acc.noConverge ? `, ${acc.noConverge}/20 no llega` : ""})`);
         }
     }
 }

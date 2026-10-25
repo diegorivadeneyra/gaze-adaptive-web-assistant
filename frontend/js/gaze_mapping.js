@@ -1,24 +1,9 @@
 // ═══════════════════════════════════════════════════════════════
-// De la mirada del Tobii a un punto de la página (2026-10-20).
-//
-// Problema que resuelve: el Tobii mide la mirada sobre la PANTALLA, pero el
-// sistema necesita el punto dentro de la PÁGINA. Antes se usaban los píxeles
-// de pantalla tal cual: con la barra del navegador arriba (pestañas,
-// dirección), el punto caía ~100 px más abajo de donde se miraba (por eso
-// existía una corrección manual de −40 px).
-//
-// Ahora se adapta sola al equipo (PC o laptop):
-//  1. El servidor envía la mirada como proporción de la pantalla (nx, ny de
-//     0 a 1), independiente de la resolución y de la escala de Windows.
-//  2. Aquí se pasa a la pantalla en píxeles del navegador (screen.width/height)
-//     y se resta dónde empieza la página (posición de la ventana y altura de
-//     las barras del navegador). Con o sin pantalla completa (F11).
-//  3. Lo que quede de error (calibración, zoom, bordes) lo corrige la
-//     comprobación de 5 puntos al inicio de la sesión (calibracion.html):
-//     una recta por eje, x' = ax·x + bx, guardada por persona.
-//
-// Módulo puro (sin DOM en las funciones de cálculo): lo usan gaze.js,
-// calibracion.js y tests/test_gaze_mapping.js.
+// De la mirada del Tobii (proporción de pantalla, 0–1) a un punto de la página:
+// se pasa a píxeles del navegador y se resta dónde empieza la página (ventana y
+// barras). El error restante lo corrige la comprobación de 5 puntos
+// (calibracion.html): una recta por eje, x' = ax·x + bx, por persona.
+// Módulo puro: lo usan gaze.js, calibracion.js y tests/test_gaze_mapping.js.
 // ═══════════════════════════════════════════════════════════════
 (function (root) {
     const CORRECTION_KEY = "gazeCorrection";
@@ -70,9 +55,7 @@
         return { correction, errorBeforePx: Math.round(before), errorAfterPx: Math.round(after) };
     }
 
-    // Suavizado (2026-10-20): mediana de los puntos de los últimos windowMs.
-    // El Tobii "tiembla" 20–40 px aunque se mire fijo; la mediana quita ese
-    // temblor y los saltos sueltos con ~100 ms de retraso.
+    // Mediana de los últimos windowMs: quita el temblor del Tobii (20–40 px).
     function smoothPoint(points, now, windowMs) {
         const recent = points.filter(p => p.timestamp >= now - windowMs);
         if (!recent.length) return null;

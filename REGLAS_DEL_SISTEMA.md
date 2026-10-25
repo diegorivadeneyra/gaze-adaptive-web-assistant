@@ -88,11 +88,30 @@ fijo de tablas, gráficas e imágenes, y el **tiempo acumulado del párrafo**
   (2019, Tabla 5) da **278 palabras/min** de lectura silenciosa en español
   (≈ 108 ms/sílaba), así que 140 es **conservador** (más lento). Quien sabe que
   le harán preguntas lee más lento (Brysbaert, 2019). A calibrar con el piloto.
-- Cada vez que lee un **párrafo fácil (Low) completo y sin señales**, el ritmo
-  se acerca al suyo (30 % del camino). Solo cuenta si el tiempo observado está
-  entre 0.4 y 2 veces el esperado (fuera de eso: hojeo o distracción).
+- **Aprende en cualquier página y con párrafos de cualquier nivel**
+  (2026-10-25; antes solo con párrafos Low, casi todos en la página fácil, y en
+  los pilotos no aprendió ni una vez). Cada **párrafo leído completo y sin
+  señales** da una medida: tiempo ÷ sílabas ÷ factor del nivel (lo que le
+  habría tomado si fuera Low). Solo cuenta si el tiempo está entre 0.4 y 2
+  veces el esperado (fuera de eso: hojeo o distracción) y el párrafo tiene ≥ 20
+  sílabas. Los títulos no cuentan.
+- El ritmo es la **mediana de las últimas 5 medidas** (una distracción no lo
+  arrastra). Mientras haya menos de 3, el promedio general cuenta como una
+  medida más: arranca rápido, pero no por una sola lectura.
+- **Asimétrico:** bajar (leer más rápido) es inmediato; **subir** está limitado a
+  **10 % por lectura**, porque leer más lento puede ser dificultad y no ritmo
+  (si lo aprendiera de golpe, dejaría de dar ayuda a quien le cuesta).
+- Un párrafo que tuvo señal o ayuda nunca enseña el ritmo, aunque se relea
+  después. Excepción: en Low (sin ayuda) quedarse más de lo esperado
+  ("atascado") **sí** enseña, porque es la única forma de que un lector lento
+  muestre que lo es; las relecturas, no.
+- Las **sílabas y el nivel INFLESZ se calculan en el navegador** al entrar al
+  párrafo (`frontend/js/readability.js`, copia exacta del backend; lo comprueba
+  `node tests/test_readability.js`). Antes llegaban con el análisis (~4 s) y en
+  los pilotos casi todas las lecturas terminaban antes.
 - Queda entre 0.6 y 1.8 veces el promedio. Se conserva entre páginas de la
-  misma visita y se borra al iniciar o finalizar una sesión.
+  misma visita (ritmo y últimas medidas) y se borra al iniciar o finalizar una
+  sesión. `pace_from_all_levels = False` vuelve a la regla anterior.
 
 **Nivel Low:** nunca muestra ayuda, pero si la conducta la habría pedido se
 registra (`help_would_trigger_low`) para estudiarlo.
@@ -106,7 +125,7 @@ registra (`help_would_trigger_low`) para estudiarlo.
 | "Lo leyó" | en el último tercio con ≥ 40 % del esperado acumulado | Inicial (con 70 %, un lector rápido sin ritmo adaptado necesitaba ~2 lecturas) |
 | Relectura en el párrafo: solo tiempo con fijación | sí (`reread_requires_fixation`) | Diseño (poner `False` si el piloto muestra pocas fijaciones al leer con el Tobii) |
 | Salida que corta la lectura | > 5 s | Inicial |
-| Adaptación del ritmo | peso 0.3; límites 0.6–1.8 × base | Inicial |
+| Adaptación del ritmo | mediana de las últimas 5 medidas (cualquier nivel); subir ≤ 10 % por lectura; límites 0.6–1.8 × base | Inicial (2026-10-25; antes: solo Low, peso 0.3) |
 
 Todos están en **un solo lugar**: `backend/analyzers/decision_engine.py`
 (`READING_POLICY`). El navegador los recibe de `/config`. La lógica está en
@@ -175,8 +194,9 @@ Medium tras **2 s**, High tras **0.5 s**, y **0.5 s** si es una relectura
 ayuda a pedido; orden de páginas aleatorio** por participante; la página fácil
 siempre "a pedido" e intermedia/avanzada al azar, una con cada método (cada
 persona prueba ambos). "Sin ayuda" ya no se usa en
-las pruebas. Cuestionarios: comprensión y NASA-TLX (Anexo 3, ponderado) por
-página; SUS y post-experimento (Anexo 4) al final.
+las pruebas. Cuestionarios, todos al final (desde el 2026-10-22): comprensión
+(recuerdo libre: un recuadro por página), un NASA-TLX (Anexo 3, ponderado) sobre toda
+la tarea, SUS y post-experimento (Anexo 4).
 
 *Antes* (2026-10-17): **diseño intra-sujeto, 3 condiciones**: cada persona lee
 cada página una vez, con una condición distinta en cada una: **sin ayuda**,

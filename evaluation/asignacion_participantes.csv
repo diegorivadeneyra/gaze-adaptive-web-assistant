@@ -1,0 +1,7 @@
+﻿participante,bloque,posicion_1,posicion_2,posicion_3,metodo_facil,metodo_intermedio,metodo_avanzado,automatica_se_lee
+P01,1,facil,intermedio,avanzado,a_pedido,a_pedido,ayuda,despues
+P02,1,avanzado,intermedio,facil,a_pedido,ayuda,a_pedido,despues
+P03,1,intermedio,facil,avanzado,a_pedido,a_pedido,ayuda,despues
+P04,1,avanzado,facil,intermedio,a_pedido,a_pedido,ayuda,antes
+P05,1,facil,avanzado,intermedio,a_pedido,ayuda,a_pedido,despues
+P06,1,intermedio,avanzado,facil,a_pedido,ayuda,a_pedido,antes

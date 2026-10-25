@@ -1,5 +1,5 @@
 {
- "fecha": "2026-10-21T02:39:24.780Z",
+ "fecha": "2026-10-25T16:37:44.592Z",
  "politica": {
   "base_ms_per_syllable": 140,
   "level_factor": {
@@ -17,6 +17,10 @@
   "end_region": 0.3333333333333333,
   "end_min_height_px": 60,
   "revisit_gap_ms": 5000,
+  "pace_from_all_levels": true,
+  "pace_window": 5,
+  "pace_prior_until": 3,
+  "pace_max_increase": 0.1,
   "pace_alpha": 0.3,
   "pace_min_fraction": 0.4,
   "pace_max_fraction": 2,
@@ -43,6 +47,10 @@
   "end_region": 0.3333333333333333,
   "end_min_height_px": 60,
   "revisit_gap_ms": 5000,
+  "pace_from_all_levels": true,
+  "pace_window": 5,
+  "pace_prior_until": 3,
+  "pace_max_increase": 0.1,
   "pace_alpha": 0.3,
   "pace_min_fraction": 0.4,
   "pace_max_fraction": 2,
@@ -57,601 +65,1681 @@
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.76795373085697,
+   "ritmo_real": 98
   },
   "base|contenido|entiende, promedio": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 142.09079504724667,
+   "ritmo_real": 140
   },
   "base|contenido|entiende, lento (1.4×)": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 198.1266373411535,
+   "ritmo_real": 196
   },
   "base|contenido|entiende pero revisa": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 142.09079504724667,
+   "ritmo_real": 140
   },
   "base|contenido|entiende, hojea y luego lee": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 142.09079504724667,
+   "ritmo_real": 140
   },
   "base|contenido|se traba, rápido (0.7×)": {
    "innecesarias": null,
    "cobertura": 1,
    "demora_s": 3,
-   "lecturas_hasta_ayuda": 0.2606693442949643
+   "lecturas_hasta_ayuda": 0.2606693442949643,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.76795373085697,
+   "ritmo_real": 98
   },
   "base|contenido|se traba, promedio": {
    "innecesarias": null,
    "cobertura": 1,
    "demora_s": 3,
-   "lecturas_hasta_ayuda": 0.1824685410064751
+   "lecturas_hasta_ayuda": 0.1824685410064751,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 142.09079504724667,
+   "ritmo_real": 140
   },
   "base|contenido|se traba, lento (1.4×)": {
    "innecesarias": null,
    "cobertura": 1,
    "demora_s": 3,
-   "lecturas_hasta_ayuda": 0.13033467214748215
+   "lecturas_hasta_ayuda": 0.13033467214748215,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 198.1266373411535,
+   "ritmo_real": 196
   },
   "base|contenido|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
    "cobertura": 1,
    "demora_s": 3,
-   "lecturas_hasta_ayuda": 0.3405480439683645
+   "lecturas_hasta_ayuda": 0.3405480439683645,
+   "parrafos_hasta_ritmo_15pct": 9,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 98.73279569892473,
+   "ritmo_real": 98
   },
   "base|contenido|rápido sin pasar por fácil, entiende": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 9,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 98.73279569892473,
+   "ritmo_real": 98
+  },
+  "base|contenido|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 1,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 15.75,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "base|contenido|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 3,
+   "lecturas_hasta_ayuda": 0.4102343433730779,
+   "parrafos_hasta_ritmo_15pct": 15.75,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "base|contenido|lento, empieza en avanzado, entiende": {
+   "innecesarias": 1,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 16,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
+  },
+  "base|contenido|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 3,
+   "lecturas_hasta_ayuda": 0.20511717168653895,
+   "parrafos_hasta_ritmo_15pct": 16,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
+  },
+  "base|ritmo_low|entiende, rápido (0.7×)": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 3.8,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.85988788086331,
+   "ritmo_real": 98
+  },
+  "base|ritmo_low|entiende, promedio": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 141.77906174012045,
+   "ritmo_real": 140
+  },
+  "base|ritmo_low|entiende, lento (1.4×)": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.6,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 197.6176119589499,
+   "ritmo_real": 196
+  },
+  "base|ritmo_low|entiende pero revisa": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 141.77906174012045,
+   "ritmo_real": 140
+  },
+  "base|ritmo_low|entiende, hojea y luego lee": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 141.77906174012045,
+   "ritmo_real": 140
+  },
+  "base|ritmo_low|se traba, rápido (0.7×)": {
+   "innecesarias": null,
+   "cobertura": 0.875,
+   "demora_s": 18.466785714285713,
+   "lecturas_hasta_ayuda": 1.1344497491657697,
+   "parrafos_hasta_ritmo_15pct": 3.8,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.85988788086331,
+   "ritmo_real": 98
+  },
+  "base|ritmo_low|se traba, promedio": {
+   "innecesarias": null,
+   "cobertura": 0.95,
+   "demora_s": 24.457236842105264,
+   "lecturas_hasta_ayuda": 1.0939538088845557,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 141.77906174012045,
+   "ritmo_real": 140
+  },
+  "base|ritmo_low|se traba, lento (1.4×)": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 31.6640625,
+   "lecturas_hasta_ayuda": 1.0671756485051909,
+   "parrafos_hasta_ritmo_15pct": 2.6,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 197.6176119589499,
+   "ritmo_real": 196
+  },
+  "base|ritmo_low|rápido sin pasar por fácil, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.8633333333333333,
+   "demora_s": 21.350193050193052,
+   "lecturas_hasta_ayuda": 1.1757242379509794,
+   "parrafos_hasta_ritmo_15pct": 20,
+   "sin_llegar_al_ritmo": 0.5,
+   "ritmo_final": 113.12865591397849,
+   "ritmo_real": 98
+  },
+  "base|ritmo_low|rápido sin pasar por fácil, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 20,
+   "sin_llegar_al_ritmo": 0.5,
+   "ritmo_final": 113.12865591397849,
+   "ritmo_real": 98
+  },
+  "base|ritmo_low|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 20.95,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 100.86952990888389,
+   "ritmo_real": 98
+  },
+  "base|ritmo_low|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.8375,
+   "demora_s": 19.301492537313433,
+   "lecturas_hasta_ayuda": 1.3646426121168904,
+   "parrafos_hasta_ritmo_15pct": 20.95,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 100.86952990888389,
+   "ritmo_real": 98
+  },
+  "base|ritmo_low|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.071875,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 18.1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 199.27350277225898,
+   "ritmo_real": 196
+  },
+  "base|ritmo_low|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 29.600625,
+   "lecturas_hasta_ayuda": 1.0786885650494145,
+   "parrafos_hasta_ritmo_15pct": 18.1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 199.27350277225898,
+   "ritmo_real": 196
   },
   "base|v2|entiende, rápido (0.7×)": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 92.50093587616676,
+   "ritmo_real": 98
   },
   "base|v2|entiende, promedio": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 131.72336636712757,
+   "ritmo_real": 140
   },
   "base|v2|entiende, lento (1.4×)": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 183.86963693853164,
+   "ritmo_real": 196
   },
   "base|v2|entiende pero revisa": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 136.6474380374181,
+   "ritmo_real": 140
   },
   "base|v2|entiende, hojea y luego lee": {
-   "innecesarias": 0,
+   "innecesarias": 0.00625,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 139.6909840879742,
+   "ritmo_real": 140
   },
   "base|v2|se traba, rápido (0.7×)": {
    "innecesarias": null,
    "cobertura": 0.875,
-   "demora_s": 18.466785714285713,
-   "lecturas_hasta_ayuda": 1.1344497491657697
+   "demora_s": 18.295357142857142,
+   "lecturas_hasta_ayuda": 1.1344497491657697,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 94.75659091170316,
+   "ritmo_real": 98
   },
   "base|v2|se traba, promedio": {
    "innecesarias": null,
    "cobertura": 0.95,
-   "demora_s": 24.457236842105264,
-   "lecturas_hasta_ayuda": 1.0939538088845557
+   "demora_s": 24.27565789473684,
+   "lecturas_hasta_ayuda": 1.0939538088845557,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 134.8265835194695,
+   "ritmo_real": 140
   },
   "base|v2|se traba, lento (1.4×)": {
    "innecesarias": null,
    "cobertura": 1,
-   "demora_s": 31.6646875,
-   "lecturas_hasta_ayuda": 1.0671756485051909
+   "demora_s": 31.463125,
+   "lecturas_hasta_ayuda": 1.0671756485051909,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 188.443447972198,
+   "ritmo_real": 196
   },
   "base|v2|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
-   "cobertura": 0.8633333333333333,
-   "demora_s": 21.350193050193052,
-   "lecturas_hasta_ayuda": 1.1757242379509794
+   "cobertura": 0.9066666666666666,
+   "demora_s": 19.65919117647059,
+   "lecturas_hasta_ayuda": 1.1757242379509794,
+   "parrafos_hasta_ritmo_15pct": 4.4,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 94.74519661552371,
+   "ritmo_real": 98
   },
   "base|v2|rápido sin pasar por fácil, entiende": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1.9,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 94.69740869914376,
+   "ritmo_real": 98
+  },
+  "base|v2|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1.85,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.98484848484847,
+   "ritmo_real": 98
+  },
+  "base|v2|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.940625,
+   "demora_s": 19.383388704318936,
+   "lecturas_hasta_ayuda": 1.3004845306302146,
+   "parrafos_hasta_ritmo_15pct": 4.4,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "base|v2|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.003125,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.4,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 197.37487512487513,
+   "ritmo_real": 196
+  },
+  "base|v2|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 31.195625,
+   "lecturas_hasta_ayuda": 1.1010286884800602,
+   "parrafos_hasta_ritmo_15pct": 6.5,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
   },
   "base|v3a|entiende, rápido (0.7×)": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 92.50093587616676,
+   "ritmo_real": 98
   },
   "base|v3a|entiende, promedio": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 131.72336636712757,
+   "ritmo_real": 140
   },
   "base|v3a|entiende, lento (1.4×)": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 183.86963693853164,
+   "ritmo_real": 196
   },
   "base|v3a|entiende pero revisa": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 136.6474380374181,
+   "ritmo_real": 140
   },
   "base|v3a|entiende, hojea y luego lee": {
-   "innecesarias": 0,
+   "innecesarias": 0.00625,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 139.6909840879742,
+   "ritmo_real": 140
   },
   "base|v3a|se traba, rápido (0.7×)": {
    "innecesarias": null,
    "cobertura": 0.875,
-   "demora_s": 18.466785714285713,
-   "lecturas_hasta_ayuda": 1.1344497491657697
+   "demora_s": 18.295357142857142,
+   "lecturas_hasta_ayuda": 1.1344497491657697,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 94.75659091170316,
+   "ritmo_real": 98
   },
   "base|v3a|se traba, promedio": {
    "innecesarias": null,
    "cobertura": 0.95,
-   "demora_s": 24.457236842105264,
-   "lecturas_hasta_ayuda": 1.0939538088845557
+   "demora_s": 24.27565789473684,
+   "lecturas_hasta_ayuda": 1.0939538088845557,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 134.8265835194695,
+   "ritmo_real": 140
   },
   "base|v3a|se traba, lento (1.4×)": {
    "innecesarias": null,
    "cobertura": 1,
-   "demora_s": 31.6646875,
-   "lecturas_hasta_ayuda": 1.0671756485051909
+   "demora_s": 31.463125,
+   "lecturas_hasta_ayuda": 1.0671756485051909,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 188.443447972198,
+   "ritmo_real": 196
   },
   "base|v3a|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
-   "cobertura": 0.8633333333333333,
-   "demora_s": 21.350193050193052,
-   "lecturas_hasta_ayuda": 1.1757242379509794
+   "cobertura": 0.9066666666666666,
+   "demora_s": 19.65919117647059,
+   "lecturas_hasta_ayuda": 1.1757242379509794,
+   "parrafos_hasta_ritmo_15pct": 4.4,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 94.74519661552371,
+   "ritmo_real": 98
   },
   "base|v3a|rápido sin pasar por fácil, entiende": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1.9,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 94.69740869914376,
+   "ritmo_real": 98
+  },
+  "base|v3a|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1.85,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.98484848484847,
+   "ritmo_real": 98
+  },
+  "base|v3a|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.940625,
+   "demora_s": 19.383388704318936,
+   "lecturas_hasta_ayuda": 1.3004845306302146,
+   "parrafos_hasta_ritmo_15pct": 4.4,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "base|v3a|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.003125,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.4,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 197.37487512487513,
+   "ritmo_real": 196
+  },
+  "base|v3a|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 31.195625,
+   "lecturas_hasta_ayuda": 1.1010286884800602,
+   "parrafos_hasta_ritmo_15pct": 6.5,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
   },
   "base|v3b|entiende, rápido (0.7×)": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 110.61638742670235,
+   "ritmo_real": 98
   },
   "base|v3b|entiende, promedio": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 157.83926198996994,
+   "ritmo_real": 140
   },
   "base|v3b|entiende, lento (1.4×)": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 220.5527997388912,
+   "ritmo_real": 196
   },
   "base|v3b|entiende pero revisa": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 162.5513363349717,
+   "ritmo_real": 140
   },
   "base|v3b|entiende, hojea y luego lee": {
-   "innecesarias": 0.0875,
+   "innecesarias": 0.025,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 164.7549970470949,
+   "ritmo_real": 140
   },
   "base|v3b|se traba, rápido (0.7×)": {
    "innecesarias": null,
    "cobertura": 0.875,
-   "demora_s": 17.416071428571428,
-   "lecturas_hasta_ayuda": 1.1305712220369326
+   "demora_s": 17.701071428571428,
+   "lecturas_hasta_ayuda": 1.1334367527624298,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 102.6405415926532,
+   "ritmo_real": 98
   },
   "base|v3b|se traba, promedio": {
    "innecesarias": null,
    "cobertura": 0.95,
-   "demora_s": 23.133552631578947,
-   "lecturas_hasta_ayuda": 1.09321471838462
+   "demora_s": 23.530592105263157,
+   "lecturas_hasta_ayuda": 1.0939538088845557,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 146.29511820358601,
+   "ritmo_real": 140
   },
   "base|v3b|se traba, lento (1.4×)": {
    "innecesarias": null,
    "cobertura": 1,
-   "demora_s": 30.1171875,
-   "lecturas_hasta_ayuda": 1.0671756485051909
+   "demora_s": 30.5740625,
+   "lecturas_hasta_ayuda": 1.0671756485051909,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 204.47908767120583,
+   "ritmo_real": 196
   },
   "base|v3b|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
    "cobertura": 0.9366666666666666,
-   "demora_s": 19.962633451957295,
-   "lecturas_hasta_ayuda": 1.1757242379509794
+   "demora_s": 19.377580071174375,
+   "lecturas_hasta_ayuda": 1.1755863606688828,
+   "parrafos_hasta_ritmo_15pct": 6.55,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 108.97894217680448,
+   "ritmo_real": 98
   },
   "base|v3b|rápido sin pasar por fácil, entiende": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 4.55,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 112.71844686829604,
+   "ritmo_real": 98
+  },
+  "base|v3b|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 5.5,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 101.54390175042349,
+   "ritmo_real": 98
+  },
+  "base|v3b|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.984375,
+   "demora_s": 19.43111111111111,
+   "lecturas_hasta_ayuda": 1.289279315108287,
+   "parrafos_hasta_ritmo_15pct": 13.4,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "base|v3b|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.25625,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 6.15,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 201.24964944475815,
+   "ritmo_real": 196
+  },
+  "base|v3b|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 25.2890625,
+   "lecturas_hasta_ayuda": 1.0299082062667437,
+   "parrafos_hasta_ritmo_15pct": 12.9,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
   },
   "base|v3|entiende, rápido (0.7×)": {
-   "innecesarias": 0.025,
+   "innecesarias": 0.003125,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 110.61638742670235,
+   "ritmo_real": 98
   },
   "base|v3|entiende, promedio": {
-   "innecesarias": 0.028125,
+   "innecesarias": 0.003125,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 157.83926198996994,
+   "ritmo_real": 140
   },
   "base|v3|entiende, lento (1.4×)": {
-   "innecesarias": 0.03125,
+   "innecesarias": 0.003125,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 220.5527997388912,
+   "ritmo_real": 196
   },
   "base|v3|entiende pero revisa": {
-   "innecesarias": 0.121875,
+   "innecesarias": 0.046875,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 161.6519647861858,
+   "ritmo_real": 140
   },
   "base|v3|entiende, hojea y luego lee": {
-   "innecesarias": 0.271875,
+   "innecesarias": 0.190625,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 155.74208375541673,
+   "ritmo_real": 140
   },
   "base|v3|se traba, rápido (0.7×)": {
    "innecesarias": null,
-   "cobertura": 0.878125,
-   "demora_s": 16.543416370106762,
-   "lecturas_hasta_ayuda": 1.0973654533048303
+   "cobertura": 0.875,
+   "demora_s": 16.877142857142857,
+   "lecturas_hasta_ayuda": 1.111901522149737,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 102.6405415926532,
+   "ritmo_real": 98
   },
   "base|v3|se traba, promedio": {
    "innecesarias": null,
    "cobertura": 0.95,
-   "demora_s": 22.063157894736843,
-   "lecturas_hasta_ayuda": 1.0737581993776557
+   "demora_s": 22.49013157894737,
+   "lecturas_hasta_ayuda": 1.0837631375913372,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 146.29511820358601,
+   "ritmo_real": 140
   },
   "base|v3|se traba, lento (1.4×)": {
    "innecesarias": null,
    "cobertura": 1,
-   "demora_s": 28.9128125,
-   "lecturas_hasta_ayuda": 1.054717098616489
+   "demora_s": 29.466875,
+   "lecturas_hasta_ayuda": 1.062184756043685,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 204.47908767120583,
+   "ritmo_real": 196
   },
   "base|v3|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
    "cobertura": 0.9433333333333334,
-   "demora_s": 19.034982332155476,
-   "lecturas_hasta_ayuda": 1.174884439880633
+   "demora_s": 18.467844522968196,
+   "lecturas_hasta_ayuda": 1.163403879243141,
+   "parrafos_hasta_ritmo_15pct": 6.55,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 108.97894217680448,
+   "ritmo_real": 98
   },
   "base|v3|rápido sin pasar por fácil, entiende": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 4.55,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 112.71844686829604,
+   "ritmo_real": 98
+  },
+  "base|v3|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 5.5,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 101.54390175042349,
+   "ritmo_real": 98
+  },
+  "base|v3|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.984375,
+   "demora_s": 18.263809523809524,
+   "lecturas_hasta_ayuda": 1.2387334083165975,
+   "parrafos_hasta_ritmo_15pct": 13.4,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "base|v3|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.665625,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 13.75,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 201.24964944475815,
+   "ritmo_real": 196
+  },
+  "base|v3|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 21.339375,
+   "lecturas_hasta_ayuda": 0.9193718848006907,
+   "parrafos_hasta_ritmo_15pct": 15.6,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
   },
   "exigente|contenido|entiende, rápido (0.7×)": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.76795373085697,
+   "ritmo_real": 98
   },
   "exigente|contenido|entiende, promedio": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 142.09079504724667,
+   "ritmo_real": 140
   },
   "exigente|contenido|entiende, lento (1.4×)": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 198.1266373411535,
+   "ritmo_real": 196
   },
   "exigente|contenido|entiende pero revisa": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 142.09079504724667,
+   "ritmo_real": 140
   },
   "exigente|contenido|entiende, hojea y luego lee": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 142.09079504724667,
+   "ritmo_real": 140
   },
   "exigente|contenido|se traba, rápido (0.7×)": {
    "innecesarias": null,
    "cobertura": 1,
    "demora_s": 3,
-   "lecturas_hasta_ayuda": 0.20579158760128763
+   "lecturas_hasta_ayuda": 0.20579158760128763,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.76795373085697,
+   "ritmo_real": 98
   },
   "exigente|contenido|se traba, promedio": {
    "innecesarias": null,
    "cobertura": 1,
    "demora_s": 3,
-   "lecturas_hasta_ayuda": 0.14405411132090143
+   "lecturas_hasta_ayuda": 0.14405411132090143,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 142.09079504724667,
+   "ritmo_real": 140
   },
   "exigente|contenido|se traba, lento (1.4×)": {
    "innecesarias": null,
    "cobertura": 1,
    "demora_s": 3,
-   "lecturas_hasta_ayuda": 0.10289579380064381
+   "lecturas_hasta_ayuda": 0.10289579380064381,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 198.1266373411535,
+   "ritmo_real": 196
   },
   "exigente|contenido|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
    "cobertura": 1,
    "demora_s": 3,
-   "lecturas_hasta_ayuda": 0.2836103601145366
+   "lecturas_hasta_ayuda": 0.2836103601145366,
+   "parrafos_hasta_ritmo_15pct": 9,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 98.73279569892473,
+   "ritmo_real": 98
   },
   "exigente|contenido|rápido sin pasar por fácil, entiende": {
    "innecesarias": 1,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 9,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 98.73279569892473,
+   "ritmo_real": 98
+  },
+  "exigente|contenido|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 1,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 15.75,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "exigente|contenido|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 3,
+   "lecturas_hasta_ayuda": 0.351531455953146,
+   "parrafos_hasta_ritmo_15pct": 15.75,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "exigente|contenido|lento, empieza en avanzado, entiende": {
+   "innecesarias": 1,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 16,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
+  },
+  "exigente|contenido|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 3,
+   "lecturas_hasta_ayuda": 0.175765727976573,
+   "parrafos_hasta_ritmo_15pct": 16,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
+  },
+  "exigente|ritmo_low|entiende, rápido (0.7×)": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 3.8,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.85988788086331,
+   "ritmo_real": 98
+  },
+  "exigente|ritmo_low|entiende, promedio": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 141.77906174012045,
+   "ritmo_real": 140
+  },
+  "exigente|ritmo_low|entiende, lento (1.4×)": {
+   "innecesarias": 0.0125,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.6,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 197.6176119589499,
+   "ritmo_real": 196
+  },
+  "exigente|ritmo_low|entiende pero revisa": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 141.77906174012045,
+   "ritmo_real": 140
+  },
+  "exigente|ritmo_low|entiende, hojea y luego lee": {
+   "innecesarias": 0.121875,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 141.77906174012045,
+   "ritmo_real": 140
+  },
+  "exigente|ritmo_low|se traba, rápido (0.7×)": {
+   "innecesarias": null,
+   "cobertura": 0.909375,
+   "demora_s": 20.66941580756014,
+   "lecturas_hasta_ayuda": 1.1037333750949645,
+   "parrafos_hasta_ritmo_15pct": 3.8,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.85988788086331,
+   "ritmo_real": 98
+  },
+  "exigente|ritmo_low|se traba, promedio": {
+   "innecesarias": null,
+   "cobertura": 0.95,
+   "demora_s": 27.50986842105263,
+   "lecturas_hasta_ayuda": 1.0737319175941726,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 141.77906174012045,
+   "ritmo_real": 140
+  },
+  "exigente|ritmo_low|se traba, lento (1.4×)": {
+   "innecesarias": null,
+   "cobertura": 0.98125,
+   "demora_s": 35.93789808917197,
+   "lecturas_hasta_ayuda": 1.0527982336589148,
+   "parrafos_hasta_ritmo_15pct": 2.6,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 197.6176119589499,
+   "ritmo_real": 196
+  },
+  "exigente|ritmo_low|rápido sin pasar por fácil, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.77,
+   "demora_s": 24.066666666666666,
+   "lecturas_hasta_ayuda": 1.1466929149777927,
+   "parrafos_hasta_ritmo_15pct": 20,
+   "sin_llegar_al_ritmo": 0.5,
+   "ritmo_final": 113.12865591397849,
+   "ritmo_real": 98
+  },
+  "exigente|ritmo_low|rápido sin pasar por fácil, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 20,
+   "sin_llegar_al_ritmo": 0.5,
+   "ritmo_final": 113.12865591397849,
+   "ritmo_real": 98
+  },
+  "exigente|ritmo_low|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 20.95,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 100.86952990888389,
+   "ritmo_real": 98
+  },
+  "exigente|ritmo_low|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.765625,
+   "demora_s": 19.946938775510205,
+   "lecturas_hasta_ayuda": 1.2604504865661,
+   "parrafos_hasta_ritmo_15pct": 20.95,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 100.86952990888389,
+   "ritmo_real": 98
+  },
+  "exigente|ritmo_low|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.56875,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 18.1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 199.27350277225898,
+   "ritmo_real": 196
+  },
+  "exigente|ritmo_low|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.990625,
+   "demora_s": 28.974763406940063,
+   "lecturas_hasta_ayuda": 0.9734361659520896,
+   "parrafos_hasta_ritmo_15pct": 18.1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 199.27350277225898,
+   "ritmo_real": 196
   },
   "exigente|v2|entiende, rápido (0.7×)": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 113.76582226626063,
+   "ritmo_real": 98
   },
   "exigente|v2|entiende, promedio": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 162.16743545383116,
+   "ritmo_real": 140
   },
   "exigente|v2|entiende, lento (1.4×)": {
-   "innecesarias": 0.0125,
+   "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 226.89176959671232,
+   "ritmo_real": 196
   },
   "exigente|v2|entiende pero revisa": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 166.2869070898087,
+   "ritmo_real": 140
   },
   "exigente|v2|entiende, hojea y luego lee": {
-   "innecesarias": 0.121875,
+   "innecesarias": 0.04375,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 168.30832818825948,
+   "ritmo_real": 140
   },
   "exigente|v2|se traba, rápido (0.7×)": {
    "innecesarias": null,
-   "cobertura": 0.909375,
-   "demora_s": 20.66941580756014,
-   "lecturas_hasta_ayuda": 1.1037333750949645
+   "cobertura": 0.884375,
+   "demora_s": 21.113074204946994,
+   "lecturas_hasta_ayuda": 1.1057740422692317,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 103.11962854788548,
+   "ritmo_real": 98
   },
   "exigente|v2|se traba, promedio": {
    "innecesarias": null,
-   "cobertura": 0.95,
-   "demora_s": 27.50986842105263,
-   "lecturas_hasta_ayuda": 1.0737319175941726
+   "cobertura": 0.928125,
+   "demora_s": 28.01952861952862,
+   "lecturas_hasta_ayuda": 1.0743377458969348,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 147.08808295520768,
+   "ritmo_real": 140
   },
   "exigente|v2|se traba, lento (1.4×)": {
    "innecesarias": null,
-   "cobertura": 0.98125,
-   "demora_s": 35.939171974522296,
-   "lecturas_hasta_ayuda": 1.0528307766593559
+   "cobertura": 0.9625,
+   "demora_s": 36.50584415584416,
+   "lecturas_hasta_ayuda": 1.0533507920243235,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 204.5898389672243,
+   "ritmo_real": 196
   },
   "exigente|v2|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
-   "cobertura": 0.77,
-   "demora_s": 24.066666666666666,
-   "lecturas_hasta_ayuda": 1.1466929149777927
+   "cobertura": 0.8433333333333334,
+   "demora_s": 23.140711462450593,
+   "lecturas_hasta_ayuda": 1.1466929149777927,
+   "parrafos_hasta_ritmo_15pct": 7.1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 111.16418470862861,
+   "ritmo_real": 98
   },
   "exigente|v2|rápido sin pasar por fácil, entiende": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 4.7,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 115.70596617026561,
+   "ritmo_real": 98
+  },
+  "exigente|v2|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 6.7,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 101.4602897102897,
+   "ritmo_real": 98
+  },
+  "exigente|v2|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.84375,
+   "demora_s": 20.53851851851852,
+   "lecturas_hasta_ayuda": 1.243903058332812,
+   "parrafos_hasta_ritmo_15pct": 15.15,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "exigente|v2|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.325,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 7.45,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 200.93981435231433,
+   "ritmo_real": 196
+  },
+  "exigente|v2|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.9875,
+   "demora_s": 29.893037974683548,
+   "lecturas_hasta_ayuda": 1.007616371285843,
+   "parrafos_hasta_ritmo_15pct": 12.95,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
   },
   "exigente|v3a|entiende, rápido (0.7×)": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 113.76582226626063,
+   "ritmo_real": 98
   },
   "exigente|v3a|entiende, promedio": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 162.16743545383116,
+   "ritmo_real": 140
   },
   "exigente|v3a|entiende, lento (1.4×)": {
-   "innecesarias": 0.0125,
+   "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 226.89176959671232,
+   "ritmo_real": 196
   },
   "exigente|v3a|entiende pero revisa": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 166.2869070898087,
+   "ritmo_real": 140
   },
   "exigente|v3a|entiende, hojea y luego lee": {
-   "innecesarias": 0.121875,
+   "innecesarias": 0.04375,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 168.30832818825948,
+   "ritmo_real": 140
   },
   "exigente|v3a|se traba, rápido (0.7×)": {
    "innecesarias": null,
-   "cobertura": 0.909375,
-   "demora_s": 20.66941580756014,
-   "lecturas_hasta_ayuda": 1.1037333750949645
+   "cobertura": 0.884375,
+   "demora_s": 21.113074204946994,
+   "lecturas_hasta_ayuda": 1.1057740422692317,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 103.11962854788548,
+   "ritmo_real": 98
   },
   "exigente|v3a|se traba, promedio": {
    "innecesarias": null,
-   "cobertura": 0.95,
-   "demora_s": 27.50986842105263,
-   "lecturas_hasta_ayuda": 1.0737319175941726
+   "cobertura": 0.928125,
+   "demora_s": 28.01952861952862,
+   "lecturas_hasta_ayuda": 1.0743377458969348,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 147.08808295520768,
+   "ritmo_real": 140
   },
   "exigente|v3a|se traba, lento (1.4×)": {
    "innecesarias": null,
-   "cobertura": 0.98125,
-   "demora_s": 35.939171974522296,
-   "lecturas_hasta_ayuda": 1.0528307766593559
+   "cobertura": 0.9625,
+   "demora_s": 36.50584415584416,
+   "lecturas_hasta_ayuda": 1.0533507920243235,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 204.5898389672243,
+   "ritmo_real": 196
   },
   "exigente|v3a|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
-   "cobertura": 0.77,
-   "demora_s": 24.066666666666666,
-   "lecturas_hasta_ayuda": 1.1466929149777927
+   "cobertura": 0.8433333333333334,
+   "demora_s": 23.140711462450593,
+   "lecturas_hasta_ayuda": 1.1466929149777927,
+   "parrafos_hasta_ritmo_15pct": 7.1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 111.16418470862861,
+   "ritmo_real": 98
   },
   "exigente|v3a|rápido sin pasar por fácil, entiende": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 4.7,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 115.70596617026561,
+   "ritmo_real": 98
+  },
+  "exigente|v3a|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 6.7,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 101.4602897102897,
+   "ritmo_real": 98
+  },
+  "exigente|v3a|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.84375,
+   "demora_s": 20.53851851851852,
+   "lecturas_hasta_ayuda": 1.243903058332812,
+   "parrafos_hasta_ritmo_15pct": 15.15,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "exigente|v3a|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.325,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 7.45,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 200.93981435231433,
+   "ritmo_real": 196
+  },
+  "exigente|v3a|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.9875,
+   "demora_s": 29.893037974683548,
+   "lecturas_hasta_ayuda": 1.007616371285843,
+   "parrafos_hasta_ritmo_15pct": 12.95,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
   },
   "exigente|v3b|entiende, rápido (0.7×)": {
-   "innecesarias": 0.209375,
+   "innecesarias": 0.00625,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 139.98091949024933,
+   "ritmo_real": 98
   },
   "exigente|v3b|entiende, promedio": {
-   "innecesarias": 0.240625,
+   "innecesarias": 0.009375,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 199.5498224770119,
+   "ritmo_real": 140
   },
   "exigente|v3b|entiende, lento (1.4×)": {
-   "innecesarias": 0.2875,
+   "innecesarias": 0.021875,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 251.68363192979646,
+   "ritmo_real": 196
   },
   "exigente|v3b|entiende pero revisa": {
-   "innecesarias": 0.3,
+   "innecesarias": 0.034375,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 204.04621986650199,
+   "ritmo_real": 140
   },
   "exigente|v3b|entiende, hojea y luego lee": {
-   "innecesarias": 0.446875,
+   "innecesarias": 0.121875,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 204.4700988853753,
+   "ritmo_real": 140
   },
   "exigente|v3b|se traba, rápido (0.7×)": {
    "innecesarias": null,
    "cobertura": 0.928125,
-   "demora_s": 18.72895622895623,
-   "lecturas_hasta_ayuda": 1.0356047219004771
+   "demora_s": 19.662289562289562,
+   "lecturas_hasta_ayuda": 1.0681210942792576,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 114.9746255904306,
+   "ritmo_real": 98
   },
   "exigente|v3b|se traba, promedio": {
    "innecesarias": null,
    "cobertura": 0.96875,
-   "demora_s": 24.813225806451612,
-   "lecturas_hasta_ayuda": 1.0212708326262137
+   "demora_s": 26.30516129032258,
+   "lecturas_hasta_ayuda": 1.0489387471032214,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 163.22126114362172,
+   "ritmo_real": 140
   },
   "exigente|v3b|se traba, lento (1.4×)": {
    "innecesarias": null,
    "cobertura": 1,
-   "demora_s": 32.4725,
-   "lecturas_hasta_ayuda": 1.0006417984054816
+   "demora_s": 34.13625,
+   "lecturas_hasta_ayuda": 1.0306540547479834,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 220.41356794720917,
+   "ritmo_real": 196
   },
   "exigente|v3b|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
-   "cobertura": 0.89,
-   "demora_s": 22.505243445692884,
-   "lecturas_hasta_ayuda": 1.1419809781583619
+   "cobertura": 0.8433333333333334,
+   "demora_s": 23.129644268774705,
+   "lecturas_hasta_ayuda": 1.1466929149777927,
+   "parrafos_hasta_ritmo_15pct": 9,
+   "sin_llegar_al_ritmo": 0.85,
+   "ritmo_final": 134.85237043996955,
+   "ritmo_real": 98
   },
   "exigente|v3b|rápido sin pasar por fácil, entiende": {
    "innecesarias": 0,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 7,
+   "sin_llegar_al_ritmo": 0.6,
+   "ritmo_final": 141.87297724039632,
+   "ritmo_real": 98
+  },
+  "exigente|v3b|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 20.4,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 102.95450310559006,
+   "ritmo_real": 98
+  },
+  "exigente|v3b|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.921875,
+   "demora_s": 20.72915254237288,
+   "lecturas_hasta_ayuda": 1.23929607787924,
+   "parrafos_hasta_ritmo_15pct": 18.8,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "exigente|v3b|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.68125,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 13.1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 203.99046913231695,
+   "ritmo_real": 196
+  },
+  "exigente|v3b|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 24.469375,
+   "lecturas_hasta_ayuda": 0.8943123683300824,
+   "parrafos_hasta_ritmo_15pct": 15.3,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
   },
   "exigente|v3|entiende, rápido (0.7×)": {
-   "innecesarias": 0.53125,
+   "innecesarias": 0.234375,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 133.66458817819927,
+   "ritmo_real": 98
   },
   "exigente|v3|entiende, promedio": {
-   "innecesarias": 0.565625,
+   "innecesarias": 0.240625,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 190.65319617642018,
+   "ritmo_real": 140
   },
   "exigente|v3|entiende, lento (1.4×)": {
-   "innecesarias": 0.565625,
+   "innecesarias": 0.25625,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 246.85657276592207,
+   "ritmo_real": 196
   },
   "exigente|v3|entiende pero revisa": {
-   "innecesarias": 0.675,
+   "innecesarias": 0.3375,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 191.22683427933902,
+   "ritmo_real": 140
   },
   "exigente|v3|entiende, hojea y luego lee": {
-   "innecesarias": 0.746875,
+   "innecesarias": 0.528125,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 175.10707454078073,
+   "ritmo_real": 140
   },
   "exigente|v3|se traba, rápido (0.7×)": {
    "innecesarias": null,
-   "cobertura": 0.940625,
-   "demora_s": 16.131229235880397,
-   "lecturas_hasta_ayuda": 0.9259494106733199
+   "cobertura": 0.934375,
+   "demora_s": 16.930100334448163,
+   "lecturas_hasta_ayuda": 0.9691025072721549,
+   "parrafos_hasta_ritmo_15pct": 2.2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 110.39349572525566,
+   "ritmo_real": 98
   },
   "exigente|v3|se traba, promedio": {
    "innecesarias": null,
    "cobertura": 0.96875,
-   "demora_s": 21.95225806451613,
-   "lecturas_hasta_ayuda": 0.9174704376456934
+   "demora_s": 22.968064516129033,
+   "lecturas_hasta_ayuda": 0.9557848269661376,
+   "parrafos_hasta_ritmo_15pct": 1,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 155.53940839941708,
+   "ritmo_real": 140
   },
   "exigente|v3|se traba, lento (1.4×)": {
    "innecesarias": null,
    "cobertura": 1,
-   "demora_s": 29.5525,
-   "lecturas_hasta_ayuda": 0.9118800801174364
+   "demora_s": 30.8540625,
+   "lecturas_hasta_ayuda": 0.9501340516438109,
+   "parrafos_hasta_ritmo_15pct": 2,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 216.66642135921288,
+   "ritmo_real": 196
   },
   "exigente|v3|rápido sin pasar por fácil, se traba": {
    "innecesarias": null,
-   "cobertura": 0.97,
-   "demora_s": 20.403092783505155,
-   "lecturas_hasta_ayuda": 1.1016486890528163
+   "cobertura": 0.9566666666666667,
+   "demora_s": 21.066550522648082,
+   "lecturas_hasta_ayuda": 1.1257171090190523,
+   "parrafos_hasta_ritmo_15pct": 11.75,
+   "sin_llegar_al_ritmo": 0.8,
+   "ritmo_final": 128.29022911565585,
+   "ritmo_real": 98
   },
   "exigente|v3|rápido sin pasar por fácil, entiende": {
    "innecesarias": 0.10666666666666667,
    "cobertura": null,
    "demora_s": null,
-   "lecturas_hasta_ayuda": null
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 6.4,
+   "sin_llegar_al_ritmo": 0.5,
+   "ritmo_final": 137.02694131955528,
+   "ritmo_real": 98
+  },
+  "exigente|v3|rápido, empieza en avanzado, entiende": {
+   "innecesarias": 0.025,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 20.35,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 102.1469273480143,
+   "ritmo_real": 98
+  },
+  "exigente|v3|rápido, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 0.996875,
+   "demora_s": 20.530094043887146,
+   "lecturas_hasta_ayuda": 1.2051694076614263,
+   "parrafos_hasta_ritmo_15pct": 18.8,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 99.24545454545455,
+   "ritmo_real": 98
+  },
+  "exigente|v3|lento, empieza en avanzado, entiende": {
+   "innecesarias": 0.91875,
+   "cobertura": null,
+   "demora_s": null,
+   "lecturas_hasta_ayuda": null,
+   "parrafos_hasta_ritmo_15pct": 16,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 201.99009034443816,
+   "ritmo_real": 196
+  },
+  "exigente|v3|lento, empieza en avanzado, se traba": {
+   "innecesarias": null,
+   "cobertura": 1,
+   "demora_s": 20.9834375,
+   "lecturas_hasta_ayuda": 0.7851065796117421,
+   "parrafos_hasta_ritmo_15pct": 16,
+   "sin_llegar_al_ritmo": 0,
+   "ritmo_final": 196.2310606060606,
+   "ritmo_real": 196
   }
  }
 }

@@ -1,31 +1,12 @@
-"""Comparación sin / con contexto de página (título + sección) en el análisis.
+"""A/B del contexto de página que recibe el modelo (sin / con título y sección).
 
-Envía a /analyze (el sistema real: `python app.py` debe estar corriendo) el
-contenido exacto que el navegador manda por cada elemento analizable de las tres
-páginas (evaluation/assets/payloads_paginas.json: texto, gráficas ya
-rasterizadas, pie, nivel diseñado, textos SVG, título y sección). Para cada
-elemento se piden las dos variantes seguidas, alternando el orden, para que la
-variación del modelo afecte igual a ambas.
+Envía a /analyze (con `python app.py` corriendo) el contenido real de cada
+elemento (evaluation/assets/payloads_paginas.json), con las variantes seguidas
+y en orden alterno. Mide ayudas, bloqueadas, términos repetidos, términos del
+título y latencia; la corrección se revisa a mano en results/contexto_<fecha>.json.
 
-Métricas por variante (todas automáticas):
-  - ayudas: elementos con ayuda que se mostraría
-  - bloqueadas: término fuera del texto (concept_in_text)
-  - repetidas: ayudas de una página cuyo término ya se definió en otra ayuda
-    de la misma página
-  - termino_del_titulo: ayudas cuyo término está en el título de la página
-  - latencia_s: tiempo de análisis promedio (solo llamadas al modelo)
-La corrección de cada definición NO se mide aquí: se revisa a mano con el
-detalle guardado (evaluation/results/contexto_<fecha>.json).
-
-Variantes (--variantes):
-  sin                   sin contexto (como antes del 2026-10-06)
-  con                   título + sección, en todo (texto, tablas, imágenes)
-  seccion_texto         solo la sección, solo en texto y tablas
-  titulo_seccion_texto  título + sección, solo en texto y tablas
-Con --solo-texto se omiten las imágenes (en las variantes *_texto son iguales a "sin").
-
+Variantes: sin | con | seccion_texto | titulo_seccion_texto (--solo-texto omite imágenes).
 Uso: python evaluation/ab_contexto.py --reps 2
-     python evaluation/ab_contexto.py --reps 2 --solo-texto --variantes sin seccion_texto titulo_seccion_texto
 """
 import argparse
 import csv

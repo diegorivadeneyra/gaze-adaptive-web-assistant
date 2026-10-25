@@ -32,6 +32,13 @@ git clone https://github.com/diegorivadeneyra/gaze-adaptive-web-assistant.git
 cd gaze-adaptive-web-assistant
 ```
 
+Crear la carpeta donde se guardan los Excel respondidos (`data/` no viene con
+el proyecto: tiene datos de participantes y no se sube a GitHub):
+
+```bash
+mkdir dataespuestas
+```
+
 ### 1.3 Instalar las librerías de Python
 
 ```bash
@@ -102,10 +109,14 @@ para probar sin el Tobii.)
 
 ### 3.1 Iniciar (lo hace el investigador)
 
-1. En la página de inicio, escribir el **código del participante** (P01, P02…).
-2. Revisar el **orden sorteado**, por ejemplo: *1. Avanzado (automática) →
-   2. Fácil (a pedido) → 3. Intermedio (a pedido)*. La página fácil siempre va "a
-   pedido". Se puede volver a sortear.
+1. En la página de inicio, escribir el **código del participante** (P01 … P06,
+   **en orden**: el primero que viene es P01, el segundo P02…).
+2. Revisar que diga **"Sorteo previo: P0X tiene el orden y los métodos fijados"**
+   y el orden, por ejemplo: *1. Intermedio (automática) → 2. Avanzado (a pedido) →
+   3. Fácil (a pedido)*. No se puede cambiar: el sorteo se hizo antes del piloto
+   para que cada método tenga la misma cantidad de lecturas
+   (`evaluation/asignacion_participantes.csv`). Un código fuera de la lista (p. ej.
+   `PRUEBA`) se sortea al momento: úsalo solo para probar.
 3. Dejar marcado **"Ocultar panel de monitoreo"**.
 4. Pulsar **Iniciar sesión**. Aparece la **pantalla de bienvenida**, que tapa
    la configuración. Desde aquí, la computadora es del participante.
@@ -119,16 +130,15 @@ para probar sin el Tobii.)
      Experience. **Anotar el error** (queda guardado de todas formas).
 3. **Para cada una de las 3 páginas web:**
    1. Lee la página con calma.
-   2. Pulsa **"Terminé esta página"** → aparece la **pausa** (el texto queda
-      tapado y **no se registra nada**).
-   3. En el Excel, responde la hoja que indica la pantalla
-      (por ejemplo, «Lectura - Causas y evidencia»): **Parte A** (preguntas,
-      sin volver al texto) y **Parte B** (NASA-TLX, con sus 15 comparaciones).
-   4. Pulsa **"Listo, continuar"** y **marca** con clics los párrafos que le
-      costó entender (puede no marcar ninguno).
-   5. Pulsa **Continuar** → siguiente página.
+   2. Pulsa **"Terminé esta página"** y **marca** con clics los párrafos que le
+      costó entender (puede no marcar ninguno). Pulsa **Continuar**.
+   3. **Descanso de 1.5 minutos:** el texto queda tapado, hay una cuenta regresiva y
+      **no se le pide nada** (no hay botones; no se registra nada). Al terminar,
+      la siguiente página se abre sola. Tras la tercera página no hay descanso.
 4. **Cierre:** al terminar la tercera página aparece *"¡Gracias!"*. Responde en
-   el Excel las hojas **«SUS»** y **«Post-experimento»**.
+   el Excel, en orden, las hojas **«Comprensión»** (escribe lo que entendió de cada página, sin volver a
+   las páginas), **«NASA-TLX»** (una sola vez, sobre toda la tarea), **«SUS»** y
+   **«Post-experimento»**.
 
 ### 3.3 Terminar (lo hace el investigador)
 
@@ -162,7 +172,8 @@ Los resultados quedan en `data/sessions/resumen/`:
 | `paginas.csv` | Por participante y página: condición, orden, tiempo de lectura, pausa, ayudas, acierto y cobertura |
 | `visitas.csv` | Cada visita a un párrafo, tabla o figura (tiempo, relecturas, fijaciones) |
 | `ayudas.csv` | Cada ayuda: cuándo, por qué, si se pidió, cuánto se miró, texto (columna `calificacion` para calificar a mano) |
-| `cuestionarios_paginas.csv` | Comprensión (total, literal, inferencial) y NASA-TLX (bruto y ponderado) por página |
+| `comprension_textos.csv` | Lo que cada persona escribió de cada página; columnas `ideas_correctas`, `ideas_incorrectas` y `notas` para calificar a mano (se conservan al volver a correr el script) |
+| `nasa_tlx.csv` | NASA-TLX de toda la tarea (bruto y ponderado, con los pesos) |
 | `sus.csv`, `post_experimento.csv`, `post_metodos.csv` | SUS y cuestionario post-experimento |
 | `avisos.txt` | Respuestas vacías o incoherentes en los Excel: revisarlo después de cada participante |
 

@@ -1,51 +1,24 @@
 // ─── Configuración ───────────────────────────────────────────
-// Atención mínima para disparar el análisis. Debe coincidir con BASE_DWELL_MS
-// de backend/analyzers/decision_engine.py (ahí vive la política de ayuda).
+// Mirada mínima para analizar un elemento (= BASE_DWELL_MS de decision_engine.py).
 const DWELL_THRESHOLD_MS    = 500;
 const POLL_INTERVAL_MS      = 100;
 const BACKEND_URL           = "http://127.0.0.1:5000/analyze";
 
-// ─── Parámetros IDT ──────────────────────────────────────────
-// Con el mouse (dispersión casi 0 al estar quieto) 150ms/30px sobraba.
-// Con mirada real, leer un párrafo implica saltar de palabra en palabra
-// (fácil superar 30px aunque sí se esté leyendo ESE párrafo), y en modo
-// Tobii solo entra 1 punto nuevo por tick de polling (cada 100ms) — con
-// una ventana de 150ms rara vez se juntan los 3 puntos mínimos que pide
-// runIDT(). Se sube la ventana (para juntar puntos) y la dispersión
-// tolerada (para no confundir sacadas de lectura con "no hay fijación").
+// ─── Fijaciones (I-DT) ───────────────────────────────────────
+// Ventana y dispersión amplias: al leer, la mirada salta entre palabras.
 const IDT_WINDOW_MS         = 300;  // ventana de tiempo para analizar puntos
 const IDT_DISPERSION_PX     = 60;   // dispersión máxima para considerar fijación
 
-// Margen de tolerancia a un parpadeo (solo aplica en modo Tobii): mientras
-// el Tobii reporte datos inválidos por menos de esto, se asume que es un
-// parpadeo y se mantiene el elemento observado congelado en su última
-// posición válida. Si se supera, se asume que de verdad se dejó de mirar.
-// Subido de 300 a 450ms: un parpadeo normal puede durar hasta ~400ms: con
-// 300 se estaba cancelando la fijación en parpadeos lentos. Trade-off real:
-// cuanto más alto, más tarda el sistema en notar que SÍ dejaste de mirar
-// algo de verdad (no es gratis, se cambia tolerancia por reacción).
+// Tobii: datos inválidos por menos de esto = parpadeo (un parpadeo dura hasta ~400 ms).
 const BLINK_GRACE_MS        = 450;
 
-// Margen de histéresis para CONFIRMAR un cambio de elemento observado (solo
-// modo Tobii): absorbe el ruido normal del sensor ("miro algo y el punto
-// salta y vuelve") sin resetear dwell/tooltip por saltos que no duran.
-// Mismo trade-off que arriba: más alto = más tolerante al ruido, pero más
-// lento para reaccionar cuando el cambio de atención sí es real.
+// Tobii: un cambio de elemento se confirma si dura esto (absorbe saltos de ruido).
 const ELEMENT_SWITCH_GRACE_MS = 300;
 
-// Cuánto se mantiene visible el tooltip después de que la mirada SE
-// CONFIRMA fuera del elemento (ver más abajo), para dar tiempo real a
-// leerlo en vez de que desaparezca apenas la mirada se mueve. No afecta
-// la precisión de detección, solo cuánto dura en pantalla — es una mejora
-// "gratis" en ese sentido (no compite con nada del tracking).
-// 4 s (antes 2.5 s): en el piloto P01, 6 de 15 tooltips se ocultaban a los
-// ~3 s mientras la persona intentaba leerlos.
+// Tiempo visible del tooltip tras dejar el elemento (con 2.5 s se ocultaba
+// mientras se leía, piloto P01).
 const TOOLTIP_HOLD_MS       = 4000;
-// Estabilidad de la mirada del Tobii (2026-10-20): el punto temblaba en los
-// bordes de los párrafos y el sistema creía que la persona se había ido.
-// 100 ms (antes 150): con la sesión piloto real, 150 ms demoraba 0.41 s en
-// reconocer un cambio de elemento y 100 ms 0.36 s (antes del suavizado 0.34 s),
-// con la mitad de rebotes que sin suavizar (1.3 frente a 2.6 por minuto).
+// Estabilidad del punto del Tobii en los bordes de los elementos (medido con el piloto P00).
 const GAZE_SMOOTH_MS        = 100;   // mediana de los últimos 100 ms (~3 puntos a 33 Hz)
 const EDGE_MARGIN_PX        = 40;    // margen alrededor del elemento actual
 
@@ -62,18 +35,11 @@ let previousHighlighted     = null;
 let observationStartTime    = null;
 let analysisTriggered       = false;
 let hadFixationOnCurrentElement = false;
-// Cachea el resultado de /analyze por elemento del DOM: si vuelves a mirar
-// el mismo párrafo/imagen, se reutiliza en vez de volver a llamar al LLM —
-// esto es lo que más ayuda contra la lentitud acumulada en sesiones largas,
-// porque cada llamada real es una inferencia pesada (Qwen/phi3). Como el
-// contenido de las páginas no cambia en vivo, no hay riesgo de que quede
-// "vieja" — si algún día el contenido fuera dinámico, habría que invalidarla.
+// Resultado de /analyze por elemento: al volver a mirarlo no se llama al modelo.
 const analysisCache = new WeakMap();
 let activeRequestController = null;
 
-// ─── Visibilidad del panel de debug (?debug=0 lo oculta) ──────
-// En una sesión experimental se oculta si así se eligió al iniciarla
-// (los enlaces entre páginas no conservan el ?debug=0).
+// ─── Panel de monitoreo: ?debug=0 o la opción de la sesión lo ocultan ──
 if (new URLSearchParams(window.location.search).get("debug") === "0"
     || ExperimentSession.session?.hideDebug) {
     document.querySelector(".debug-panel")?.classList.add("is-hidden");
@@ -92,11 +58,7 @@ const statusDot         = document.getElementById("status-dot");
 const dwellBar          = document.getElementById("dwell-bar");
 
 // ─── IDT: Identificación de fijaciones ───────────────────────
-/**
- * Calcula la dispersión de un conjunto de puntos.
- * Fórmula IDT: (max_x - min_x) + (max_y - min_y)
- * Si dispersión < umbral → es una fijación
- */
+// Dispersión I-DT: (max_x - min_x) + (max_y - min_y).
 function calculateDispersion(points) {
     if (points.length < 2) return 0;
     const xs = points.map(p => p.x);
@@ -105,27 +67,17 @@ function calculateDispersion(points) {
            (Math.max(...ys) - Math.min(...ys));
 }
 
-/**
- * Calcula el centroide (centro promedio) de un conjunto de puntos.
- * Representa el punto central de la fijación.
- */
+// Centro de la fijación.
 function calculateCentroid(points) {
     const x = points.reduce((sum, p) => sum + p.x, 0) / points.length;
     const y = points.reduce((sum, p) => sum + p.y, 0) / points.length;
     return { x: Math.round(x), y: Math.round(y) };
 }
 
-/**
- * Algoritmo IDT principal.
- * Analiza el buffer de puntos recientes y determina
- * si constituyen una fijación o un movimiento.
- * 
- * Retorna: { isFixation, centroid } o null si no hay datos suficientes
- */
+// ¿Los puntos de la ventana forman una fijación? { isFixation, centroid, dispersion }
 function runIDT(points) {
     const now = Date.now();
 
-    // Filtrar solo los puntos dentro de la ventana temporal
     const windowPoints = points.filter(
         p => now - p.timestamp <= IDT_WINDOW_MS
     );
@@ -144,8 +96,7 @@ function runIDT(points) {
 }
 
 // ─── Clasificación de elementos ──────────────────────────────
-// TD/TH no aparecen aquí: getContentElement() los sube hasta la <table>
-// contenedora para analizarla como unidad completa, no celda por celda.
+// Las celdas no están: una tabla se analiza completa.
 const TEXT_TAGS = ["P","SPAN","H1","H2","H3","H4","H5","H6",
                    "LI","BUTTON","A"];
 
@@ -159,9 +110,8 @@ function classifyElement(element) {
 }
 
 // ─── Identificador de elementos para el registro ─────────────
-// Ruta calculada desde <body> (p. ej. "div[0]>main[0]>article[1]>p[0]"):
-// funciona en cualquier página sin anotarla. Si cambia el contenido de la
-// página cambian las rutas; por eso page_enter registra un hash del texto.
+// Ruta desde <body> (p. ej. "main[0]>article[1]>p[0]"); page_enter guarda un
+// hash del texto para detectar si la página cambió.
 const elementIds = new WeakMap();
 
 function elementId(element) {
@@ -197,9 +147,7 @@ function textHash(text) {
     return hash.toString(16);
 }
 
-// Posición (en coordenadas del documento) de cada elemento analizable:
-// junto con la mirada cruda y el scroll permite recalcular offline qué se
-// miraba y cuánto tiempo, con otros umbrales.
+// Posición de cada elemento analizable: con la mirada cruda permite recalcular después.
 function pageLayout() {
     const selector = "p,h1,h2,h3,h4,h5,h6,li,table,img,svg";
     return [...document.querySelectorAll(selector)]
@@ -219,8 +167,7 @@ function pageLayout() {
 }
 
 // ─── Extracción de contenido ─────────────────────────────────
-// Texto de contexto de una imagen/gráfica (alt + pie de figura): le da al
-// modelo de visión el tema del documento y fija el idioma de la respuesta.
+// Contexto de una figura (alt + pie): da el tema y el idioma al modelo de visión.
 function getVisualContext(element) {
     const parts = [];
     if (element.tagName === "IMG" && element.alt) parts.push(element.alt.trim());
@@ -231,11 +178,8 @@ function getVisualContext(element) {
     return parts.join(" — ").slice(0, 300);
 }
 
-// Textos escritos dentro de una gráfica SVG (título, ejes, valores y
-// etiquetas), en el orden del documento. Se mandan al modelo de visión como
-// texto: leyendo solo la imagen a 512 px, Qwen confundía el orden de barras
-// parecidas (dijo transporte > industria con 8.2 vs 10.4). Funciona con
-// cualquier gráfica SVG; las imágenes (fotos, PNG) no tienen estos textos.
+// Textos de una gráfica SVG (título, ejes, valores): leyendo solo la imagen,
+// Qwen confundía el orden de barras parecidas.
 function getChartText(svgElement) {
     const seen = new Set();
     return [...svgElement.querySelectorAll("text")]
@@ -245,11 +189,7 @@ function getChartText(svgElement) {
         .slice(0, 600);
 }
 
-// ─── Contexto de la página para el modelo ────────────────────
-// Título del contenido (primer <h1>; si no hay, el <title> sin el nombre del
-// sitio, que suele ir tras "|", "·" o "-") y el subtítulo de la sección donde
-// está el elemento. Le da al modelo el tema antes de leer el párrafo (p. ej.
-// que "residuos" es estadístico, no ambiental). Funciona en cualquier página.
+// ─── Contexto para el modelo: título de la página y subtítulo de la sección ──
 function cleanDocumentTitle() {
     return (document.title || "").split(/\s[|·–—-]\s/)[0].trim();
 }
@@ -269,16 +209,12 @@ function getSectionHeading(element) {
     return (last?.innerText || "").replace(/\s+/g, " ").trim().slice(0, 150);
 }
 
-// Nivel diseñado de una figura (atributo data-design-level en ella o en su
-// contenedor). Si existe, el backend lo usa en vez del juicio del modelo.
-// (No es data-level: ese ya lo usa <body> para el estilo de la página.)
+// Nivel diseñado de una figura (data-design-level); reemplaza al del modelo.
 function getDesignLevel(element) {
     return element.closest("[data-design-level]")?.dataset.designLevel || "";
 }
 
-// El resultado puede tener type: "text" | "image" | "chart".
-// "chart" se resuelve a una imagen (base64) solo al disparar el análisis,
-// para no re-renderizar el SVG en cada tick del polling.
+// Tipos: "text" | "table" | "image" | "chart" (el SVG se pasa a PNG solo al analizar).
 const NO_HELP_SELECTOR = ".footnote, footer, cite, small, [role='note'], [role='doc-footnote'], "
     + "[role='doc-endnotes'], [role='doc-bibliography']";
 
@@ -288,8 +224,7 @@ function extractContent(element) {
     if (element.tagName === "TABLE") {
         const text = element.innerText?.trim();
         if (!text || text.length < 10) return null;
-        // Tipo propio: el backend no le aplica la medida de legibilidad (que
-        // es para texto corrido) y deja que el modelo juzgue el nivel.
+        // Sin legibilidad: el nivel lo juzga el modelo.
         return { type: "table", value: text };
     }
 
@@ -298,15 +233,10 @@ function extractContent(element) {
                  designLevel: getDesignLevel(element), chartText: getChartText(element) };
     }
 
-    // Títulos (h1–h6): sin ayuda propia. Son cortos, el modelo los juzgaba
-    // sin contexto (definió mal "evidencia observacional") y sus términos se
-    // repiten en el texto de abajo. Revisión del 2026-10-05: 6 de 26 ayudas
-    // eran sobre títulos.
+    // Títulos sin ayuda (eran 6 de 26 ayudas y poco útiles).
     if (/^H[1-6]$/.test(element.tagName)) return null;
 
-    // Notas al pie y referencias bibliográficas: sin ayuda (la revisión del
-    // 2026-10-05 encontró 4 ayudas innecesarias ahí). Se reconocen por el
-    // marcado habitual de HTML para notas y bibliografía.
+    // Notas y referencias sin ayuda.
     if (element.closest(NO_HELP_SELECTOR)) return null;
 
     if (TEXT_TAGS.includes(element.tagName)) {
@@ -342,9 +272,7 @@ function getContentElement(element) {
 }
 
 // ─── Conversión de gráficas SVG a PNG/base64 ──────────────────
-// Los estilos inline del SVG usan var(--accent) etc.; al serializarlo fuera
-// del documento esas variables no se resuelven, así que se reemplazan por
-// su valor computado antes de rasterizar.
+// Las variables CSS (var(--accent)) se reemplazan por su valor antes de rasterizar.
 function resolveSvgColors(svgMarkup) {
     const rootStyles = getComputedStyle(document.documentElement);
     return svgMarkup.replace(/var\(--([a-zA-Z0-9-]+)\)/g, (match, name) => {
@@ -397,8 +325,7 @@ function svgToBase64Png(svgElement) {
     });
 }
 
-// Convierte el contenido detectado al payload final que se envía al backend.
-// Solo "chart" necesita trabajo async (rasterizar el SVG); el resto pasa igual.
+// Contenido → lo que se envía al backend (las gráficas como PNG base64).
 async function resolveContentPayload(content) {
     if (content.type !== "chart") return content;
     const base64 = await svgToBase64Png(content.value);
@@ -429,12 +356,8 @@ function clearHighlight() {
 // ─── Tooltip ─────────────────────────────────────────────────
 let tooltipHideTimer = null;
 
-// ─── Dónde se coloca el tooltip ───────────────────────────────
-// Antes iba siempre debajo del elemento y tapaba el inicio del párrafo
-// siguiente (y, mientras estaba visible, mirar ahí contaba como "leer el
-// tooltip"). Ahora se prueban, en orden, a la derecha, a la izquierda, debajo
-// y arriba del elemento, y se usa la primera posición que no tape otro
-// contenido; si ninguna está libre, la que menos tapa. Sirve en cualquier página.
+// ─── Lugar del tooltip: derecha, izquierda, debajo o arriba; la primera
+// posición que no tapa contenido (si ninguna, la que menos tapa). ─────
 const TOOLTIP_GAP_PX = 14;
 // Un roce de menos de ~1 % del tooltip (un borde que toca) no cuenta como tapar.
 const TOOLTIP_TOUCH_PX2 = 600;
@@ -453,8 +376,7 @@ function computeTooltipPlacement(element, width, height) {
     const sx = window.scrollX, sy = window.scrollY;
     const el = { left: r.left + sx, top: r.top + sy, right: r.right + sx, bottom: r.bottom + sy };
     const minX = sx + 8, maxX = sx + window.innerWidth - 8;
-    // A los costados se prueba alineado con el inicio y con el final del
-    // elemento (a la altura del inicio puede haber un recuadro lateral).
+    // A los costados, alineado con el inicio y con el final del elemento.
     const candidates = [
         { side: "derecha",   left: el.right + TOOLTIP_GAP_PX, top: el.top },
         { side: "derecha",   left: el.right + TOOLTIP_GAP_PX, top: el.bottom - height },
@@ -485,8 +407,7 @@ function computeTooltipPlacement(element, width, height) {
 
 function showTooltip(message, mode, element) {
     if (!message || !adaptiveTooltip) return;
-    // Si había un ocultamiento pendiente (de un hideTooltipSoon anterior),
-    // se cancela: este tooltip nuevo manda.
+    // Un tooltip nuevo cancela el ocultamiento pendiente.
     if (tooltipHideTimer) {
         clearTimeout(tooltipHideTimer);
         tooltipHideTimer = null;
@@ -514,10 +435,7 @@ function hideTooltip() {
         adaptiveTooltip.style.display = "none";
 }
 
-// En vez de ocultarlo de inmediato cuando se confirma que la mirada ya se
-// fue del elemento, se le da TOOLTIP_HOLD_MS para que alcances a leerlo.
-// Si mientras tanto aparece un tooltip nuevo, showTooltip() cancela este
-// timer, así que nunca se pisan entre sí.
+// Se oculta TOOLTIP_HOLD_MS después de dejar el elemento.
 function hideTooltipSoon() {
     if (tooltipHideTimer) clearTimeout(tooltipHideTimer);
     tooltipHideTimer = setTimeout(() => {
@@ -526,8 +444,7 @@ function hideTooltipSoon() {
     }, TOOLTIP_HOLD_MS);
 }
 
-// Con el Tobii, el tooltip también tiene margen (EDGE_MARGIN_PX): con ~40 px
-// de error, al leer cerca de sus bordes la mirada caía justo afuera.
+// Con el Tobii, el tooltip también tiene margen (EDGE_MARGIN_PX).
 function isPointInsideTooltip(point) {
     if (!adaptiveTooltip || adaptiveTooltip.style.display === "none") {
         return false;
@@ -572,8 +489,7 @@ function updateAnalysisPanel(diagnosis) {
         ? "Asistencia activada"
         : "Sin asistencia requerida";
 
-    // De dónde salió el nivel: legibilidad INFLESZ (texto), nivel diseñado
-    // (figuras con data-design-level) o juicio del modelo.
+    // Origen del nivel: INFLESZ, nivel diseñado o modelo.
     const source = document.createElement("div");
     source.className = "analysis-assistance";
     source.textContent = diagnosis.difficulty_source === "legibilidad"
@@ -586,11 +502,8 @@ function updateAnalysisPanel(diagnosis) {
     analysisResultBox.replaceChildren(concept, badge, assistance, source);
 }
 
-// Términos ya explicados en esta página (primer y segundo nivel): el backend
-// no los vuelve a elegir (text_analyzer.choose_terms). Medido con
-// evaluation/ab_terminos.py: sin esto se repetían 4 de 24 términos.
-// Se llena igual con y sin ayuda visible, para que el sistema funcione igual
-// en ambas condiciones.
+// Términos ya explicados en la página: el backend no los repite (sin esto se
+// repetían 4 de 24). Se llena igual con o sin ayuda visible.
 const definedTermsOnPage = [];
 
 function rememberDefinedTerms(terms) {
@@ -627,8 +540,7 @@ async function analyzeWithBackend(content, dwellTime) {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const result = await response.json();
 
-        // El backend descartó este análisis porque llegó uno más nuevo
-        // (ya cambió el elemento observado): no hay nada que mostrar ni cachear.
+        // Descartado por uno más nuevo: nada que mostrar ni guardar.
         if (result.stale) return null;
 
         if (backendStatus)
@@ -650,57 +562,64 @@ async function analyzeWithBackend(content, dwellTime) {
     }
 }
 
-// ─── Ayuda pendiente ──────────────────────────────────────────
-// Diagnóstico ya recibido para el elemento actual, esperando a que el dwell
-// llegue al umbral de su nivel (Medium: 2 s, High: 0.5 s; con relectura,
-// 0.5 s). Los umbrales vienen en la respuesta de /analyze.
+// ─── Ayuda pendiente: análisis recibido, esperando la señal de conducta
+// (texto) o el tiempo fijo de su nivel (tablas, gráficas, imágenes). ──
 let pendingHelp      = null;        // { element, diagnosis }
 let currentIsRevisit = false;
 const elementVisits  = new WeakMap();
 
-// ─── Modelo de lectura: ¿esta persona necesita la ayuda? ──────
-// Se crea con READING_POLICY (de /config). Solo aplica a texto corrido con
-// sílabas conocidas (llegan con el análisis); en tablas, gráficas e imágenes
-// sigue la regla de tiempo fijo. Si /config falla, todo usa tiempo fijo.
+// ─── Modelo de lectura (reading_model.js), solo en texto corrido. Si /config
+// falla, todo usa tiempo fijo. ─────────────────────────────────────
 let readingModel     = null;
 let readingPolicy    = null;
 let lastTickAt       = null;
 let visitHadSignal   = false;   // hubo señal en esta visita (no adapta el ritmo)
-// Fijaciones de la visita en curso (I-DT): cantidad, tiempo total y el punto
-// donde empezó la fijación actual (para saber cuándo empieza otra).
+// Fijaciones de la visita: cantidad, tiempo y dónde empezó la actual.
 let visitFix         = { count: 0, ms: 0, anchor: null };
 let lowSignalLogged  = false;   // ya se registró "se habría disparado" en Low
 
-// El ritmo aprendido sigue a la persona entre páginas (misma pestaña).
+// El ritmo aprendido ({pace, samples}) pasa a la página siguiente (misma pestaña).
 const PACE_STORAGE_KEY = "gazeReadingPace";
 
 function loadStoredPace() {
     try {
-        return parseFloat(sessionStorage.getItem(PACE_STORAGE_KEY));
+        const raw = sessionStorage.getItem(PACE_STORAGE_KEY);
+        if (!raw) return null;
+        return raw.trim().startsWith("{") ? JSON.parse(raw) : parseFloat(raw);
     } catch (error) {
-        return NaN;
+        return null;
     }
 }
 
-function storePace(pace) {
+function storePace(state) {
     try {
-        sessionStorage.setItem(PACE_STORAGE_KEY, String(pace));
+        sessionStorage.setItem(PACE_STORAGE_KEY, JSON.stringify(state));
     } catch (error) { /* sin almacenamiento: el ritmo se reinicia por página */ }
 }
 
+// Sílabas y nivel INFLESZ del párrafo, calculados al entrar (sin esperar al
+// análisis). En textos de < 8 palabras, el nivel del análisis. Sin títulos.
+const localReadability = new WeakMap();
+
 function readingInfo(element) {
-    const diagnosis = element ? analysisCache.get(element) : null;
-    if (!readingModel || !diagnosis || !diagnosis.syllables) return null;
-    return { syllables: diagnosis.syllables, level: diagnosis.complexity };
+    if (!readingModel || !isTextElement(element) || /^H[1-6]$/.test(element.tagName)) return null;
+    let local = localReadability.get(element);
+    if (!local) {
+        const text = extractContent(element).value;
+        local = { syllables: Readability.countTextSyllables(text),
+                  level: Readability.computeReadability(text)?.level ?? null };
+        localReadability.set(element, local);
+    }
+    const level = analysisCache.get(element)?.complexity || local.level;
+    if (!local.syllables || !level) return null;
+    return { syllables: local.syllables, level };
 }
 
 function isTextElement(element) {
     return Boolean(element) && extractContent(element)?.type === "text";
 }
 
-// Zona vertical de la mirada dentro del párrafo: "inicio" (primer tercio),
-// "medio" o "final" (último tercio). Un bloque de menos de ~3 líneas cuenta
-// siempre como "final" (no se distingue arriba de abajo con el Tobii).
+// Zona de la mirada en el párrafo: "inicio" | "medio" | "final" (bloques bajos: "final").
 function gazeZone(element, point) {
     const rect = element.getBoundingClientRect();
     if (rect.height < readingPolicy.end_min_height_px) return "final";
@@ -713,8 +632,7 @@ function gazeZone(element, point) {
 let helpCounter = 0;
 let helpState   = null;  // { id, el, shownAt, gazeInsideMs }
 let wasOnTooltip = false;   // la mirada estaba en el tooltip en el tick anterior
-// Última ayuda mostrada en cada elemento (primer o segundo nivel), para que
-// reaparezca si la persona sale un momento y vuelve (ver reshowHelpOnReturn).
+// Última ayuda de cada elemento, para que reaparezca si sale y vuelve rápido.
 const lastHelpShown = new WeakMap();   // elemento -> { id, el, message, mode }
 
 function tooltipRectOnPage() {
@@ -731,7 +649,6 @@ function closeHelpLog(reason) {
         reason,
         visible_ms: Date.now() - helpState.shownAt,
         gaze_inside_ms: helpState.gazeInsideMs,
-        // Dónde estaba el tooltip (px de la página), para revisar con la mirada cruda.
         tooltip_rect: tooltipRectOnPage()
     });
     helpState = null;
@@ -741,8 +658,7 @@ function offerPendingHelp(dwellTime) {
     if (!pendingHelp || pendingHelp.element !== currentObservedElement) return;
     const { diagnosis } = pendingHelp;
 
-    // Texto corrido: decide la conducta (atascado o relectura).
-    // Tablas, gráficas, imágenes: tiempo fijo según el nivel.
+    // Texto: conducta. Tablas, gráficas e imágenes: tiempo fijo por nivel.
     let decision;
     const info = readingInfo(currentObservedElement);
     if (info && helpLevelGiven.get(currentObservedElement)) {
@@ -766,7 +682,6 @@ function offerPendingHelp(dwellTime) {
 
     const helpEvent = {
         ...decision,
-        // Único en la sesión: el contador se reinicia en cada página.
         help_id: `${ExperimentSession.pageKey}-${++helpCounter}`,
         el: elementId(currentObservedElement),
         dwell_ms: dwellTime,
@@ -780,17 +695,14 @@ function offerPendingHelp(dwellTime) {
     pendingHelp = null;
     rememberDefinedTerms([diagnosis.concept]);
 
-    // Texto con regla por conducta: se rearma el modelo (las señales siguientes
-    // piden el segundo nivel) y se pide la ayuda ampliada en segundo plano.
+    // Las señales siguientes piden el segundo nivel; se prepara en segundo plano.
     if (decision.rule === "conducta") {
         readingModel.rearm(elementId(currentObservedElement));
         helpLevelGiven.set(currentObservedElement, 1);
         prefetchExpandedHelp(currentObservedElement, diagnosis.concept);
     }
 
-    // Condición "sin ayuda" (sesión intra-sujeto): todo el sistema funciona
-    // igual, pero el tooltip no se muestra; se registra la ayuda que se
-    // habría mostrado, para comparar los mismos elementos entre condiciones.
+    // Sin ayuda automática ("a pedido"): se registra la que habría salido.
     if (!ExperimentSession.helpEnabled) {
         ExperimentSession.log("help_suppressed", helpEvent);
         return;
@@ -804,12 +716,8 @@ function offerPendingHelp(dwellTime) {
                                                 message: diagnosis.explanation, mode: diagnosis.mode });
 }
 
-// Salida corta (< revisit_gap_ms, 5 s) y vuelta al mismo párrafo: es la misma
-// lectura (el tiempo sigue sumando), así que la ayuda que ya tenía vuelve a
-// aparecer en vez de esperar a que se trabe otra vez (decidido el 2026-10-11:
-// con el tooltip oculto, quien volvía enseguida quedaba sin ayuda hasta la
-// señal del segundo nivel). Se registra como "help_reshown" con el mismo
-// help_id: no cuenta como una ayuda nueva.
+// Salida corta (< 5 s) y vuelta: misma lectura, la ayuda reaparece
+// ("help_reshown", mismo help_id: no cuenta como ayuda nueva).
 function reshowHelpOnReturn(element, readingEvent) {
     const last = lastHelpShown.get(element);
     if (!last || readingEvent !== "continua" || !ExperimentSession.helpEnabled) return;
@@ -820,13 +728,8 @@ function reshowHelpOnReturn(element, readingEvent) {
     helpState = { id: last.id, el: last.el, shownAt: Date.now(), gazeInsideMs: 0 };
 }
 
-// ─── Condición "a pedido" ──────────────────────────────────────
-// En vez de esperar a la conducta, apenas el análisis dice que hay ayuda se
-// muestra (en el mismo lugar del tooltip) un botón "Ver ayuda". Si la persona
-// hace clic, ve la ayuda; debajo, "Más detalle" da la explicación ampliada.
-// La regla automática sigue corriendo en silencio y registra como
-// "help_suppressed" dónde habría dado la ayuda: así se compara lo que pide la
-// persona con lo que detecta el sistema.
+// ─── Condición "a pedido": botón "Ver ayuda" apenas hay ayuda disponible;
+// luego "Más detalle". La regla automática sigue en silencio (help_suppressed). ──
 let askState = null;   // { element, diagnosis, level }
 
 if (adaptiveTooltip && ExperimentSession.onDemand) {
@@ -898,12 +801,8 @@ function logRequestedHelp(element, data) {
     helpState = { id: helpEvent.help_id, el: helpEvent.el, shownAt: Date.now(), gazeInsideMs: 0 };
 }
 
-// ─── Segundo nivel de ayuda (explicación ampliada) ─────────────
-// Si la persona se vuelve a trabar en un párrafo después de la primera ayuda
-// (relectura o atascado otra vez), se muestra una explicación más completa:
-// 2–3 términos del párrafo y la idea en palabras simples
-// (backend/analyzers/expanded_help.py). Se pide en segundo plano apenas se da
-// la primera ayuda, para tenerla lista.
+// ─── Segundo nivel (expanded_help.py): si se vuelve a trabar tras la primera
+// ayuda. Se pide en segundo plano al dar la primera. ───────────────
 const EXPAND_URL = BACKEND_URL.replace("/analyze", "/expand");
 const helpLevelGiven = new WeakMap();   // elemento -> 1 o 2
 const expandedHelp   = new WeakMap();   // elemento -> promesa del resultado
@@ -968,20 +867,15 @@ async function processObservation() {
             ? `Fijación · (${idt.centroid?.x}, ${idt.centroid?.y})`
             : `Movimiento · dispersión: ${idt.dispersion?.toFixed(0)}px`;
 
-    // Obtener elemento actual independientemente de si hay fijación
-    // Si hay fijación usamos el centroide; si no, con el Tobii, el punto
-    // SUAVIZADO (mediana de los últimos GAZE_SMOOTH_MS: quita el temblor del
-    // sensor); con mouse, la última posición.
+    // Punto de referencia: centro de la fijación; si no hay, el punto suavizado
+    // (Tobii) o la última posición (mouse).
     const smoothed = inputSource === "tobii"
         ? GazeMapping.smoothPoint(gazePoints, Date.now(), GAZE_SMOOTH_MS) : null;
     const referencePoint = idt.isFixation
         ? idt.centroid
         : (smoothed || { x: mouseX, y: mouseY });
 
-    // Margen de parpadeo (solo en modo Tobii): si hace poco que llegó la
-    // última lectura VÁLIDA, un parpadeo en curso no debe resetear nada —
-    // se sigue usando la última posición conocida, tal cual. Si ya pasó
-    // el margen, se asume que de verdad se dejó de mirar la pantalla.
+    // Tobii: más de BLINK_GRACE_MS sin datos válidos = dejó de mirar.
     const msSinceValidGaze = lastValidGazeAt !== null ? Date.now() - lastValidGazeAt : null;
     const trackingLost = inputSource === "tobii"
         && msSinceValidGaze !== null
@@ -996,9 +890,7 @@ async function processObservation() {
     let candidateElement = isReadingTooltip
         ? currentObservedElement
         : getContentElement(rawElement);
-    // Margen en los bordes (solo Tobii, 2026-10-20): si la mirada sale un poco
-    // del elemento actual (hasta EDGE_MARGIN_PX) y cae en espacio en blanco,
-    // sigue contando como ese elemento. Si entra en OTRO elemento, cambia normal.
+    // Tobii: salir hasta EDGE_MARGIN_PX hacia espacio vacío sigue contando como el elemento.
     if (inputSource === "tobii" && !trackingLost && !candidateElement && currentObservedElement
         && GazeMapping.insideRect(currentObservedElement.getBoundingClientRect(), referencePoint, EDGE_MARGIN_PX)) {
         candidateElement = currentObservedElement;
@@ -1009,10 +901,8 @@ async function processObservation() {
     if (helpState && gazeOnTooltip) {
         helpState.gazeInsideMs += POLL_INTERVAL_MS;
     }
-    // Mientras se mira el tooltip, no se oculta (2026-10-20: si la mirada pasaba
-    // por otro elemento camino al tooltip, empezaba la cuenta para ocultarlo y
-    // leerlo ya no la detenía). Al dejar de mirarlo, vuelve a contar el tiempo
-    // de permanencia, salvo que la mirada esté en el elemento de esa ayuda.
+    // Mirar el tooltip cancela su ocultamiento; al dejarlo, vuelve a contar
+    // (salvo que la mirada esté en el elemento de esa ayuda).
     if (gazeOnTooltip) {
         if (tooltipHideTimer) { clearTimeout(tooltipHideTimer); tooltipHideTimer = null; }
         wasOnTooltip = true;
@@ -1023,15 +913,8 @@ async function processObservation() {
         if (!onHelpElement && adaptiveTooltip.style.display !== "none") hideTooltipSoon();
     }
 
-    // Histéresis de cambio de elemento (solo en modo Tobii): el Tobii 5 no es
-    // un tracker de precisión de laboratorio, tiene ruido esperado de varias
-    // decenas de píxeles — "miro un punto y salta a otro lado y vuelve" es
-    // justo ese ruido, no un problema de calibración. En vez de resetear el
-    // dwell/tooltip apenas el punto crudo se mueve, se exige que el nuevo
-    // candidato se mantenga por ELEMENT_SWITCH_GRACE_MS antes de confirmarlo;
-    // si la mirada vuelve al elemento original antes de eso, no pasó nada
-    // (el tooltip tampoco se oculta). En modo mouse el comportamiento es
-    // exactamente el de antes (sin histéresis).
+    // Tobii: el cambio de elemento se confirma tras ELEMENT_SWITCH_GRACE_MS
+    // (el ruido del sensor no reinicia la lectura). Con mouse, inmediato.
     let fixatedElement = currentObservedElement;
     if (inputSource === "tobii") {
         if (candidateElement === currentObservedElement) {
@@ -1052,21 +935,20 @@ async function processObservation() {
         fixatedElement = candidateElement;
     }
 
-    // Si cambió de elemento → resetear dwell time
+    // Cambió de elemento: se reinicia la visita.
     if (fixatedElement !== currentObservedElement) {
         logElementExit();
         activeRequestController?.abort();
         currentObservedElement      = fixatedElement;
         observationStartTime        = Date.now();
         analysisTriggered           = false;
-        hadFixationOnCurrentElement = false;  // ← línea nueva
+        hadFixationOnCurrentElement = false;
         pendingHelp                 = null;
         visitHadSignal              = false;
         visitFix                    = { count: 0, ms: 0, anchor: null };
         lowSignalLogged             = false;
 
-        // Relectura: volver a un elemento ya mirado (regresión) es una señal
-        // conocida de dificultad de lectura; adelanta la ayuda de nivel Medium.
+        // Volver a un elemento ya mirado (regresión) = relectura.
         let readingEvent = null;
         if (fixatedElement) {
             const visits = (elementVisits.get(fixatedElement) || 0) + 1;
@@ -1085,16 +967,8 @@ async function processObservation() {
         } else {
             currentIsRevisit = false;
         }
-        // En modo Tobii se da tiempo de lectura en vez de ocultar de golpe;
-        // en modo mouse se deja el comportamiento original (inmediato).
-        // Al apartar la mirada, el tooltip se mantiene TOOLTIP_HOLD_MS (2.5 s)
-        // en todas las condiciones y con mouse o Tobii (2026-10-20: antes, en
-        // "automática" con mouse se ocultaba al instante). Si la mirada vuelve
-        // al párrafo o al tooltip en ese lapso, sigue visible (reshowHelpOnReturn
-        // y showTooltip cancelan el ocultamiento pendiente).
+        // El tooltip se oculta TOOLTIP_HOLD_MS después, salvo que vuelva a él o a su elemento.
         hideTooltipSoon();
-        // Volvió al mismo elemento cuya ayuda (o botón "Ver ayuda") sigue a la
-        // vista: se cancela el ocultamiento (párrafos, tablas y gráficas).
         const backToShown = fixatedElement && ((helpState && helpState.el === elementId(fixatedElement))
             || (askState && askState.element === fixatedElement));
         if (backToShown && tooltipHideTimer && adaptiveTooltip.style.display !== "none") {
@@ -1110,10 +984,8 @@ async function processObservation() {
 
     if (!currentObservedElement) return;
 
-    // Calcular dwell time — corre siempre que el elemento no cambie
     const dwellTime = Date.now() - observationStartTime;
 
-    // Actualizar UI
     if (currentElementBox)
         currentElementBox.innerText = currentObservedElement.tagName || "—";
     if (contentTypeBox)
@@ -1135,7 +1007,6 @@ async function processObservation() {
         return;
     }
 
-    // Registrar si hubo fijación en este elemento
     if (idt.isFixation) {
         hadFixationOnCurrentElement = true;
     }
@@ -1144,11 +1015,8 @@ async function processObservation() {
     const dt = lastTickAt === null ? 0 : Math.min(now - lastTickAt, POLL_INTERVAL_MS * 2.5);
     lastTickAt = now;
 
-    // Métricas de fijaciones de la visita (se registran al salir): empieza
-    // una fijación nueva si antes no había o si la mirada se alejó más que la
-    // dispersión máxima del punto donde empezó la actual (criterio I-DT; si
-    // se compara con el tick anterior, un deslizamiento lento se contaría
-    // como una sola fijación larguísima).
+    // Fijación nueva si no había o si se alejó más que la dispersión I-DT del
+    // punto donde empezó la actual.
     if (idt.isFixation && !isReadingTooltip) {
         const moved = visitFix.anchor
             && Math.hypot(idt.centroid.x - visitFix.anchor.x, idt.centroid.y - visitFix.anchor.y) > IDT_DISPERSION_PX;
@@ -1161,14 +1029,11 @@ async function processObservation() {
         visitFix.anchor = null;
     }
 
-    // Modelo de lectura: suma el tiempo en el párrafo (no mientras lee el
-    // tooltip ni sin seguimiento) y marca en qué parte del párrafo está la mirada.
+    // Modelo de lectura: tiempo en el párrafo y zona de la mirada (no al leer el tooltip).
     if (readingModel && isTextElement(currentObservedElement) && !trackingLost && !isReadingTooltip) {
         const key = elementId(currentObservedElement);
         const info = readingInfo(currentObservedElement);
         readingModel.tick(key, dt, gazeZone(currentObservedElement, referencePoint), info, idt.isFixation);
-        // Nivel Low: no hay ayuda, pero se registra si la conducta la habría pedido.
-        // Segundo nivel: ya tuvo la primera ayuda y se vuelve a trabar.
         if (info && helpLevelGiven.get(currentObservedElement)) {
             const sig = readingModel.signal(key, info);
             if (sig) offerLevel2(currentObservedElement, sig, dwellTime);
@@ -1177,7 +1042,9 @@ async function processObservation() {
             const sig = readingModel.signal(key, info);
             if (sig) {
                 lowSignalLogged = true;
-                visitHadSignal = true;
+                // Low sin ayuda: se registra. "Atascado" en Low es ritmo lento y
+                // sí enseña el ritmo; una relectura no.
+                if (sig.type !== "atascado") visitHadSignal = true;
                 ExperimentSession.log("help_would_trigger_low", {
                     el: key, signal: sig.type, ratio: Math.round(sig.ratio * 100) / 100,
                     expected_ms: Math.round(sig.expected), acc_ms: Math.round(sig.accMs)
@@ -1192,19 +1059,12 @@ async function processObservation() {
         }
     }
 
-    // En modo mouse, exigir una fijación IDT evita que "pasar por encima"
-    // de un elemento grande cuente como leerlo. Con mirada real esa
-    // exigencia sobra: leer texto implica saltar de palabra en palabra
-    // (dispersión alta aunque sí se esté leyendo), y ya se exige que la
-    // mirada se quede en el MISMO elemento del DOM por 500ms seguidos —
-    // eso ya es la señal de atención; no hace falta además una fijación
-    // a nivel de píxel crudo.
+    // Con mouse se exige una fijación (pasar por encima no cuenta). Con el
+    // Tobii basta quedarse 500 ms en el mismo elemento.
     const fixationRequirementMet = inputSource === "tobii" || hadFixationOnCurrentElement;
 
-    // Si ya hay una ayuda analizada esperando su umbral de dwell, ofrecerla.
     offerPendingHelp(dwellTime);
 
-    // Disparar análisis si hubo fijación en algún momento Y se superó el umbral
     if (dwellTime >= DWELL_THRESHOLD_MS
         && fixationRequirementMet
         && !analysisTriggered) {
@@ -1222,20 +1082,15 @@ async function processObservation() {
                 const payload = await resolveContentPayload(content);
 
                 if (!payload || currentObservedElement !== elementAtTrigger) return;
-                // Contexto: solo el subtítulo de la sección, y solo para texto y
-                // tablas. Medido (evaluation/ab_contexto.py, 2026-10-06): con el
-                // título de la página el modelo elegía términos del título que no
-                // estaban en el párrafo (un párrafo High se quedaba sin ayuda), y
-                // en fotos y gráficas el contexto empeoraba la ayuda.
+                // Contexto: solo el subtítulo de la sección, en texto y tablas
+                // (medido con evaluation/ab_contexto.py).
                 if (payload.type === "text" || payload.type === "table") {
                     payload.section = getSectionHeading(elementAtTrigger);
                 }
 
                 diagnosis = await analyzeWithBackend(payload, dwellTime / 1000);
 
-                // No cachear errores transitorios de red/backend — si se
-                // cacheara, un glitch puntual dejaría ese elemento sin
-                // ayuda por el resto de la sesión.
+                // Los errores no se guardan (dejarían el elemento sin ayuda).
                 if (diagnosis && diagnosis.concept !== "Error") {
                     analysisCache.set(elementAtTrigger, diagnosis);
                 }
@@ -1263,9 +1118,6 @@ async function processObservation() {
                 offerHelpButton(elementAtTrigger, diagnosis);
             }
             if (diagnosis.action === "tooltip" && diagnosis.explanation) {
-                // El tooltip aparece cuando el dwell alcance el umbral que la
-                // política de ayuda (backend/decision_engine.py) fija para
-                // este nivel; puede ser ya mismo si ese tiempo ya pasó.
                 pendingHelp = { element: elementAtTrigger, diagnosis };
                 offerPendingHelp(Date.now() - observationStartTime);
             }
@@ -1277,13 +1129,7 @@ async function processObservation() {
     }
 }
 
-// ─── Fuente de coordenadas: mouse (pruebas) o Tobii 5 (real) ──
-// Se decide UNA SOLA VEZ al arrancar el backend (variable de entorno
-// GAZE_INPUT_SOURCE, ver app.py) y el frontend solo la lee de /config.
-// No cambia en vivo: para pruebas de laboratorio es más seguro fijarla
-// antes de correr la sesión que dejar un switch que alguien pueda tocar
-// a mitad de la prueba. La IDT/dwell no sabe ni le importa de dónde
-// vienen los puntos: solo consume gazePoints.
+// ─── Fuente de la mirada: mouse o Tobii, fijada al arrancar app.py (/config) ──
 let inputSource = "mouse";
 // Corrección de la mirada medida en calibracion.html (null = sin corregir).
 const gazeCorrection = window.GazeMapping ? GazeMapping.loadCorrection(sessionStorage) : null;
@@ -1313,11 +1159,7 @@ function sampleStationaryPointer() {
     gazePoints = gazePoints.filter(point => point.timestamp > cutoff);
 }
 
-// Conexión por push (WebSocket) al backend: cada punto que el Tobii
-// entrega (~90Hz) llega aquí en cuanto el bridge lo manda, en vez de que
-// el frontend tenga que ir a preguntar cada 100ms y perderse casi todas
-// las muestras entre una preguntada y la siguiente. Si el backend o el
-// bridge de C++ todavía no están arriba, reintenta solo cada 2s.
+// WebSocket con los puntos del Tobii; si no está disponible, reintenta cada 2 s.
 let tobiiSocket = null;
 
 function connectTobiiSocket() {
@@ -1333,16 +1175,14 @@ function connectTobiiSocket() {
             return;
         }
         if (data?.valid && typeof data.nx === "number" && typeof data.ny === "number") {
-            // Proporción de pantalla -> página (según este equipo y ventana) y
-            // corrección de la comprobación de 5 puntos (gaze_mapping.js).
+            // Proporción de pantalla → página, con la corrección de la comprobación de 5 puntos.
             const p = GazeMapping.applyCorrection(GazeMapping.normalizedToClient(data.nx, data.ny, window),
                                                   gazeCorrection);
             pushGazePoint(p.x, p.y, Date.now());
         } else if (data?.valid && typeof data.x === "number" && typeof data.y === "number") {
             pushGazePoint(data.x, data.y, Date.now());   // fuente sin proporción (simulate_gaze.py)
         } else {
-            // Muestra inválida (parpadeo o pérdida de seguimiento): se
-            // registra para medir la calidad del seguimiento por sesión.
+            // Muestra inválida (parpadeo o pérdida): se registra.
             ExperimentSession.logGaze(null, null, false);
         }
     };
@@ -1379,8 +1219,7 @@ function renderInputSourceIndicator() {
     }
 }
 
-// Lee la fuente configurada en el backend (fijada al arrancar app.py).
-// Si el backend no responde, se queda en "mouse" por defecto.
+// Fuente de la mirada y política de lectura desde /config (sin backend: mouse).
 async function loadInputSourceConfig() {
     try {
         const response = await fetch(CONFIG_URL);
@@ -1400,8 +1239,7 @@ async function loadInputSourceConfig() {
     renderInputSourceIndicator();
 }
 
-// ─── Arranque ───────────────────────────────────────────────────
-// ─── Registro de la página (solo con sesión experimental) ─────
+// ─── Registro de la página (solo con sesión) ──────────────────
 const pageEnteredAt = Date.now();
 
 function logElementExit() {
@@ -1410,9 +1248,6 @@ function logElementExit() {
     ExperimentSession.log("element_exit", {
         el: key,
         dwell_ms: Date.now() - observationStartTime,
-        // Fijaciones (I-DT) en la visita: con datos del Tobii se verá qué
-        // parte de la lectura detecta como fijación y si las fijaciones
-        // largas anticipan lo que la persona marca como difícil.
         fixation_count: visitFix.count,
         fixation_ms: Math.round(visitFix.ms),
         mean_fixation_ms: visitFix.count ? Math.round(visitFix.ms / visitFix.count) : null
@@ -1428,10 +1263,10 @@ function logElementExit() {
             pace_ms_per_syllable: Math.round(snapshot.pace)
         });
         if (paceUpdate) {
-            storePace(paceUpdate.new);
+            storePace(readingModel.paceState);
             ExperimentSession.log("pace_update", {
-                el: key, old: Math.round(paceUpdate.old), new: Math.round(paceUpdate.new),
-                observed: Math.round(paceUpdate.observed)
+                el: key, level: info.level, old: Math.round(paceUpdate.old), new: Math.round(paceUpdate.new),
+                observed: Math.round(paceUpdate.observed), samples: paceUpdate.samples
             });
         }
     }
@@ -1451,8 +1286,7 @@ function logPageEnter() {
             BLINK_GRACE_MS, ELEMENT_SWITCH_GRACE_MS, TOOLTIP_HOLD_MS
         }
     });
-    // El layout se toma con la página ya cargada (las imágenes cambian
-    // posiciones) y de nuevo si cambia el tamaño de la ventana.
+    // Layout con la página cargada y al cambiar el tamaño de la ventana.
     const logLayout = () => ExperimentSession.log("layout", {
         viewport: { w: window.innerWidth, h: window.innerHeight },
         elements: pageLayout()
@@ -1472,14 +1306,14 @@ function logPageEnter() {
     });
 }
 
-// Indicador de sesión y condición en el panel de debug (si está visible).
+// Sesión y condición en el panel de monitoreo.
 function renderSessionIndicator() {
     const debugHeader = document.querySelector(".debug-header");
     if (!debugHeader) return;
     const indicator = document.createElement("div");
     indicator.className = "debug-section";
     const label = ExperimentSession.active
-        ? `${ExperimentSession.session.participant} · ${ExperimentSession.condition === "sin_ayuda" ? "sin ayuda" : "con ayuda"}`
+        ? `${ExperimentSession.session.participant} · ${ExperimentSession.onDemand ? "a pedido" : "automática"}`
         : "Modo libre (sin registro)";
     indicator.innerHTML = `<span class="debug-label">Sesión</span><span class="debug-value"></span>`;
     indicator.querySelector(".debug-value").textContent = label;
@@ -1495,10 +1329,7 @@ function renderSessionIndicator() {
         connectTobiiSocket();
     }
 
-    // El loop ya NO mete datos cuando la fuente es Tobii: esos puntos
-    // llegan solos y de inmediato por el WebSocket (connectTobiiSocket).
-    // Este intervalo solo evalúa, cada 100ms, qué hacer con lo que ya
-    // se acumuló en gazePoints (igual que antes).
+    // Cada 100 ms se evalúa la mirada acumulada (con el Tobii llega por WebSocket).
     setInterval(() => {
         if (inputSource === "mouse") {
             sampleStationaryPointer();

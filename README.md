@@ -76,15 +76,47 @@ condiciones y con mouse o Tobii (antes, en "automática" con mouse se ocultaba a
 instante); si la mirada vuelve en ese lapso al mismo elemento (párrafo, tabla o
 gráfica), sigue visible. Probado con reloj controlado.
 
-**Pausa entre páginas (2026-10-20):** al pulsar "Terminé esta página" se cierra
-el tiempo de lectura (`reading_end`) y una pantalla de pausa **tapa el texto**
-para responder el cuestionario de esa página (la comprensión se responde sin ver
-el texto) y descansar; indica qué hoja del Excel responder. Durante la pausa **no
-se registra nada** (ni la mirada; medido: 0 muestras), solo su inicio y fin. Con
-"Listo" vuelve a la página para marcar lo que costó y luego pasa a la siguiente.
-`paginas.csv`: `duracion_ms` = solo la lectura; `pausa_ms` = la pausa. Las hojas
-del Excel tienen nombres neutros por tema ("Lectura - El hielo del planeta"…):
-"Página fácil" revelaba el nivel.
+**Pausa entre páginas (2026-10-20; descanso obligatorio desde el 2026-10-25):** al
+pulsar "Terminé esta página" se cierra el tiempo de lectura (`reading_end`), la
+persona **marca** lo que le costó entender y luego viene un **descanso de 1.5 minutos**
+que **tapa el texto** y **no pide nada**: ni botones ni cuestionarios (todo va al
+final, después de las 3 páginas). Una cuenta regresiva lo muestra y al terminar pasa
+**sola** a la siguiente página. Tras la última página no hay descanso: va al cierre.
+Por qué 1.5 min (era 2 min; el usuario lo bajó el 2026-10-25): cada lectura dura ~2–5 min (367 / 502 / 666 palabras a 150–200
+palabras por minuto, más el tiempo con la ayuda; la lectura NO tiene límite de
+tiempo, porque la ayuda depende de leer al ritmo natural). Sesión completa ≈ 25–30
+min sin los cuestionarios (comprobación de la mirada ~1 min, 3 lecturas, 2
+descansos). `PAUSE_MS` en `marking.js`. Durante el descanso **no se registra nada**
+(ni la mirada), solo su inicio y fin. `paginas.csv`: `duracion_ms` = solo la
+lectura; `pausa_ms` = el descanso. (Antes el marcado iba después de la pausa y la
+pausa terminaba con un botón "Listo".) En el
+Excel, las secciones de comprensión tienen títulos neutros por tema ("El hielo
+del planeta"…): "Página fácil" revelaba el nivel.
+
+**Nada en pantalla revela el nivel (2026-10-22/25):** los archivos se llaman
+**`siteA.html` (fácil), `siteB.html` (intermedia) y `siteC.html` (avanzada)**
+(`PAGE_URLS` en `session.js`), porque la barra de direcciones mostraba `facil.html`;
+en el registro y el análisis la página sigue siendo `facil`/`intermedio`/`avanzado`.
+La barra de navegación interna dice "Sitio A/B/C". Se
+quitaron los enlaces Fácil/Intermedio/Avanzado del pie de página (además dejaban saltar a
+otra página) y el nombre "EcoFácil" pasó a "EcoPlaneta". La barra de niveles de arriba
+sigue oculta en sesión. Probado en el navegador con una sesión completa (borrada).
+
+**Sorteo PREVIO y balanceado (2026-10-25):** el orden de páginas y el método de cada
+participante se fijan antes del piloto con `python evaluation/generar_asignacion.py`
+(semilla fija, reproducible) → `frontend/js/asignacion.js` y
+`evaluation/asignacion_participantes.csv`. Al escribir un código de la lista
+(P01…P06) en el inicio, el orden y los métodos quedan fijos (no editables); otro código
+(p. ej. una prueba) se sortea al momento, como antes. Fácil sigue siempre "a pedido" y
+**no entra en la comparación de métodos**; en intermedia y avanzada cada participante
+lee una con cada método. **Piloto con N = 6** (decidido el 2026-10-25): cada uno de
+los 6 órdenes de páginas se usa una vez (cada página cae 2 veces en cada posición) y
+cada método tiene **6 lecturas** (automática: 3 en intermedia + 3 en avanzada; igual a
+pedido). Además, la página automática se lee **antes** que la de "a pedido" en 2 de
+los 6 y **después** en 4 (con 6 no puede ser 3/3 a la vez que 3/3 por página; lo más
+parejo posible). Sin esa condición, la primera semilla dejaba la automática siempre
+primero: el método se habría confundido con el orden. Con 12 personas
+(`N_BLOCKS = 2`) todo queda en mitades exactas.
 
 Condiciones que existen en el sistema (desde el 2026-10-17):
 
@@ -101,16 +133,28 @@ columna `pedida`. Probado en el navegador con una sesión de prueba (borrada).
 
 **Cuestionarios (Excel, 2026-10-20 según el protocolo CIEI-UTEC):** cada
 participante responde una copia de `evaluation/cuestionarios_participante.xlsx`
-(se regenera con `python evaluation/crear_cuestionarios_excel.py`): por página,
-comprensión + **NASA-TLX del Anexo 3** (6 dimensiones, 15 comparaciones por pares
-y definiciones); al final, **SUS** y el **post-experimento del Anexo 4** adaptado
-a 2 métodos (Método 1 = automática, Método 2 = a pedido). Una hoja oculta `_mapa`
+(se regenera con `python evaluation/crear_cuestionarios_excel.py`). **Todo se
+responde al final**, después de las 3 páginas (cambio del 2026-10-22: en las
+pausas no se puede aplicar ningún cuestionario), en este orden: **Comprensión**
+por **recuerdo libre** (desde el 2026-10-25: un recuadro por página, con su título, para
+escribir con sus palabras lo que entendió; reemplaza a las 12 preguntas de opción
+múltiple de `prueba_comprension.md`), **un
+solo NASA-TLX del Anexo 3** sobre toda la tarea (6 dimensiones, 15 comparaciones
+por pares y definiciones), **SUS** y el **post-experimento del Anexo 4** adaptado
+a 2 métodos (Método 1 = automática, Método 2 = a pedido). Diseño: en las escalas
+de 1 a 5 (SUS, calificaciones y orden de métodos) se muestra al inicio qué significa
+cada número y las opciones lo incluyen ("4 = De acuerdo"; la puntuación lee el
+número); en el NASA-TLX las definiciones del Anexo 3 van junto a cada dimensión.
+Costo: el NASA-TLX ya no
+compara métodos ni páginas (la comparación de métodos queda en el post-experimento),
+y la comprensión de la primera página leída se responde más tarde (más olvido;
+el orden aleatorio lo reparte entre métodos). Una hoja oculta `_mapa`
 dice qué celda tiene cada respuesta. El archivo que se guarda como `data/respuestas/P01.xlsx` (el código igual
 al de la sesión; `data/` está fuera de git). `python evaluation/puntuar_cuestionarios.py`
-lee todos, corrige con las respuestas marcadas ✓ en `prueba_comprension.md` y
-genera en `data/sessions/resumen/`: `respuestas_detalle.csv` (por pregunta, con
-su bloque), `cuestionarios_paginas.csv` (comprensión total/literal/inferencial y
-NASA-TLX bruto y **ponderado** por página, con los pesos), `sus.csv`,
+lee todos y genera en `data/sessions/resumen/`: `comprension_textos.csv` (por
+participante y página: el texto escrito, su número de palabras y columnas para
+**calificarlo a mano**: `ideas_correctas`, `ideas_incorrectas`, `notas`; al volver a
+correr el script, lo ya calificado se conserva), `nasa_tlx.csv` (bruto y **ponderado**, con los pesos), `sus.csv`,
 `post_experimento.csv`, `post_metodos.csv` (una fila por método) y `avisos.txt`
 (respuestas vacías, empates en el orden de métodos, archivos de versiones
 anteriores). Probado con Excel de prueba: NASA ponderado calculado a mano 34.0 =
@@ -252,7 +296,8 @@ tardar esperado + 15 s) o **relee** un párrafo que ya había leído, sea al
 volver tras salir o **sin salir** (regresión: fijaciones en su primer tercio
 que suman ≥ 1.5 s). "Lo leyó" = en el último tercio con ≥ 40 % del tiempo esperado. El tiempo esperado usa sílabas, un factor por
 nivel y un **ritmo que arranca en el promedio general y se adapta a la persona**
-mientras lee párrafos fáciles. Reglas, parámetros y su origen:
+mientras lee, en cualquier página y con párrafos de cualquier nivel (desde el
+2026-10-25; antes solo con párrafos fáciles). Reglas, parámetros y su origen:
 [`REGLAS_DEL_SISTEMA.md`](REGLAS_DEL_SISTEMA.md) §4; código:
 `decision_engine.py` (`READING_POLICY`) y `frontend/js/reading_model.js`.
 La tabla de abajo (tiempo fijo por nivel) sigue aplicando a **tablas, gráficas
@@ -441,7 +486,7 @@ de pastel" para una tabla de coeficientes); con ellos explica los valores reales
 ### 5. Diseño de los estímulos (las tres páginas)
 
 **Aspecto visual (2026-10-17):** cada página tiene un tema claro propio que
-imita un tipo de sitio real: **fácil** = revista de divulgación (EcoFácil,
+imita un tipo de sitio real: **fácil** = revista de divulgación (EcoPlaneta,
 verde), **intermedio** = enciclopedia en línea (EcoWiki, estilo wiki) y
 **avanzado** = revista científica (J. Clim. Res., estilo artículo académico).
 Solo cambia el CSS (`frontend/css/temas.css`): el texto y la estructura HTML
@@ -456,13 +501,13 @@ Respaldo del diseño anterior y capturas: `respaldos/diseno_antes_2026-10-17/`
 Mismo tema (cambio climático) en los tres niveles, para no confundir dificultad
 con familiaridad del tema; cambian la estructura y la densidad:
 
-- **Fácil** (`facil.html`): divulgación; imagen grande, viñetas, cuadro comparativo,
+- **Fácil** (`siteA.html`): divulgación; imagen grande, viñetas, cuadro comparativo,
   gráfica de 3 barras (hielo del Ártico en septiembre), viñetas de acciones y foto
   de paneles solares.
-- **Intermedio** (`intermedio.html`): estilo enciclopedia; texto, tabla de 3 columnas,
+- **Intermedio** (`siteB.html`): estilo enciclopedia; texto, tabla de 3 columnas,
   gráfica de líneas, glosario, sección "El océano y el carbono" (2 párrafos,
   gráfica de CO₂ en Mauna Loa y foto de corales blanqueados).
-- **Avanzado** (`avanzado.html`): estilo artículo científico; resumen y metodología
+- **Avanzado** (`siteC.html`): estilo artículo científico; resumen y metodología
   densos, tabla de coeficientes, gráfica de barras con valores, referencias,
   sección "Retroalimentaciones y forzamiento efectivo" (2 párrafos, gráfica de ERF
   por componente con valores negativos, foto de una charca de deshielo).
@@ -580,6 +625,13 @@ reconstruida en el script, sobre el mismo contenido real de las páginas.
 | Prueba de punta a punta en el navegador (mouse, reloj controlado, backend y registro reales) | Ritmo adaptado leyendo rápido 5 párrafos fáciles | 140 ms/sílaba | **91** | 1 |
 | | "Recuerda" (Medium, esperado 3.3 s) con lector trabado: ayuda a los… | 2.0 s (regla anterior) | **4.9 s** (1.5 × esperado) | 1 |
 | | "Causas" (Medium) leído con fluidez en 11 s: ¿ayuda? | sí, a los 2 s | **no** | 1 |
+| Ritmo aprendido en **cualquier página y nivel** *(2026-10-25; el usuario: el sistema no debe depender de una página fácil ni de una calibración previa. `node tests/test_reading_model.js`, 20 semillas; base / exigente)* | Pilotos P00/P01/P03 reaplicados: veces que el ritmo aprendió | **0 / 0 / 0** (nivel solo con el análisis, y solo párrafos Low) | **4 / 7 / 2** | 3 |
+| | Lector rápido que no pasa por la fácil: párrafos hasta su ritmo (±15 %) | 20 (la mitad nunca llega) | **4.4** | 20 |
+| | Lector rápido que empieza en avanzado y se traba: cobertura | 84 % / 77 % | **94 % / 84 %** | 20 |
+| | Lector lento que empieza en avanzado y entiende: ayuda innecesaria | 7 % / ⚠ 57 % | **0 % / ⚠ 33 %** | 20 |
+| | Resto de perfiles (empiezan en fácil): innecesaria / cobertura | 0–1 % · 88–100 % / 0–12 % · 91–98 % | 0–1 % · 88–100 % / 0–4 % · 88–96 % | 20 × 8 |
+| | ⚠ Costo (escenario exigente: los textos difíciles se leen más lento de lo que suponen los factores 1.3/1.6): el ritmo aprendido queda ~15 % más lento que el real y la cobertura baja 2 puntos en algunos perfiles | — | ritmo 162 vs 140 ms/síl (promedio) | 20 |
+| | Navegador: sílabas y nivel disponibles al cargar la página, antes de cualquier análisis; ritmo aprendido en párrafos High/Medium y recuperado en la página siguiente | — | **sí** | 1 |
 | | …al volver tras 7 s fuera (relectura): ayuda a los… | 0.5 s | **0.6 s** | 1 |
 | | Marcado → acierto / cobertura calculados en `paginas.csv` | — | funciona | 1 |
 | Tooltip ubicado sin tapar contenido (`computeTooltipPlacement`: derecha, izquierda, debajo, arriba) *(2026-10-11)* | Elementos de las páginas cuyo tooltip tapa contenido | 45/51 | **16/51** | 51 |

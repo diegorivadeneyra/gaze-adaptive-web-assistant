@@ -1,23 +1,11 @@
-"""Resumen de las sesiones experimentales para el análisis.
+"""Resume las sesiones (data/sessions/*_events.jsonl y *_gaze.csv) en data/sessions/resumen/:
+  visitas.csv  una fila por visita a un elemento (tiempo, relectura, nivel, ayuda)
+  ayudas.csv   una fila por ayuda mostrada o suprimida (columna "calificacion" a mano)
+  paginas.csv  por participante y página: tiempos, ayudas, seguimiento, y frente a
+               lo marcado como difícil, ACIERTO (de las ayudas, cuántas marcó) y
+               COBERTURA (de lo marcado, a cuánto llegó la ayuda)
 
-Lee data/sessions/<sesion>_events.jsonl y <sesion>_gaze.csv (los escribe
-backend/session_log.py) y genera en data/sessions/resumen/:
-  - visitas.csv : una fila por visita a un elemento (cuánto se miró, si fue
-                  relectura, su nivel y si se mostró o se suprimió la ayuda).
-  - ayudas.csv  : una fila por ayuda mostrada o suprimida, con el texto exacto
-                  y una columna "calificacion" vacía para calificarla a mano
-                  (correcta / imprecisa / incorrecta).
-  - paginas.csv : una fila por participante y página: condición, tiempo en la
-                  página, relecturas, ayudas, calidad del seguimiento y, si el
-                  participante marcó lo que le costó (marking.js), el ACIERTO
-                  (de los elementos donde la regla dio ayuda, cuántos marcó) y
-                  la COBERTURA (de los que marcó, a cuántos llegó la ayuda).
-                  En "sin ayuda" cuenta la ayuda suprimida: la regla igual decidió.
-Reglas completas: REGLAS_DEL_SISTEMA.md.
-El plan de comparación (qué se compara y cómo) está en el README, sección 8.
-
-Uso (desde la raíz del proyecto):
-    python evaluation/analyze_sessions.py
+Uso: python evaluation/analyze_sessions.py
 """
 import csv
 import json

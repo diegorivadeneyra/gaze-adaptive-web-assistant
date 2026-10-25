@@ -1,14 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   Temas por página (2026-10-17)
-   Cada página imita un tipo de sitio real y distinto:
-     fácil      → revista de divulgación (EcoFácil): clara, verde, amable
-     intermedio → enciclopedia en línea (EcoWiki): estilo wiki
-     avanzado   → revista científica (J. Clim. Res.): artículo académico
-   SOLO cambia el aspecto (colores, tipografía, bordes, espacios): el HTML
-   y el texto no cambian, porque el sistema identifica cada bloque por su
-   posición en la página (preguntas ligadas a bloques, registro).
-   Para volver al diseño anterior: quitar el <link> a este archivo
-   (respaldo en respaldos/diseno_antes_2026-10-17/).
+   Tema de cada página: siteA divulgación (EcoPlaneta), siteB enciclopedia
+   (EcoWiki), siteC revista científica (J. Clim. Res.). Solo aspecto: no cambiar
+   la estructura HTML (los bloques se identifican por su posición).
    ═══════════════════════════════════════════════════════════════ */
 
 /* ─── Base clara común ───────────────────────────────────────── */
@@ -39,13 +32,10 @@ body[data-level] .debug-panel {
     color: var(--text-primary);
 }
 
-/* En sesión no se muestra el contorno que sigue la mirada: el participante lo
-   perseguía con la vista y le revelaba el seguimiento. Solo es un indicador:
-   el análisis depende del tiempo en el elemento, no del contorno. */
+/* En sesión, sin contorno de la mirada (el participante lo perseguía). */
 .in-session .gaze-highlight { outline: none !important; }
 
-/* En sesión no se muestra la barra "Fácil / Intermedio / Avanzado":
-   revelaba el nivel de dificultad al participante. */
+/* En sesión, sin la barra de navegación entre páginas. */
 .in-session .level-nav { display: none; }
 
 /* Botones sin función dentro del artículo (adorno): fuera de la vista. */
@@ -72,7 +62,7 @@ body[data-level] .footnote,
 body[data-level] .chart-caption,
 body[data-level] figcaption { color: var(--text-muted); }
 
-/* ═══ 1. FÁCIL · EcoFácil (revista de divulgación) ═══════════════ */
+/* ═══ 1. FÁCIL · EcoPlaneta (revista de divulgación) ═══════════════ */
 body[data-level="easy"] {
     --page-bg:   #f2f8f4;
     --nav-bg:    #ffffff;
@@ -345,6 +335,7 @@ body[data-level="advanced"] .page-footer a { color: #c9d6ea; }
 .pause-step { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280 !important; }
 .pause-note { font-size: 0.85rem; color: #6b7280 !important; }
 .pause-card .btn-primary { margin-top: 10px; padding: 10px 20px; font-size: 1rem; }
+.pause-countdown { font-size: 2.4rem; font-weight: 700; font-variant-numeric: tabular-nums; color: #1d2330 !important; margin: 8px 0 0 !important; }
 
 /* ─── Ajustes de orden y espacios (comunes) ──────────────────── */
 /* Una sola línea bajo el título y menos espacio vacío entre secciones. */

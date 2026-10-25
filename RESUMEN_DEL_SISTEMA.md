@@ -88,7 +88,7 @@ nivel** (Low 1.0 · Medium 1.3 · High 1.6).
 | **Relectura en el párrafo** | Ya lo leyó y vuelve al primer tercio con fijaciones ≥ 1.5 s | Igual; con 0.4 s daba ayuda a quien solo revisaba un dato |
 | "Lo leyó" | Llega al último tercio con ≥ 40 % del tiempo esperado | **Inicial** |
 | Salida corta con ayuda ya dada | Si sale < 5 s y vuelve, la misma ayuda reaparece (misma lectura) | Diseño; probado en el navegador |
-| **Ritmo de la persona** | Arranca en 140 ms/sílaba y se adapta leyendo párrafos fáciles (30 % del camino; límites 0.6–1.8 ×) | **Estándar como referencia:** 278 palabras/min en español (Brysbaert, 2019) ≈ 108 ms/sílaba, así que 140 es conservador |
+| **Ritmo de la persona** | Arranca en 140 ms/sílaba y se adapta en cualquier página con párrafos de cualquier nivel (mediana de las últimas 5 lecturas normalizadas por nivel; subir ≤ 10 % por lectura; límites 0.6–1.8 ×; sílabas y nivel calculados en el navegador) | **Estándar como referencia:** 278 palabras/min en español (Brysbaert, 2019) ≈ 108 ms/sílaba, así que 140 es conservador |
 
 **Prueba (simulación, `node tests/test_reading_model.js`, 17 pruebas OK):**
 35 párrafos reales × lectores **simulados** × 20 semillas.
@@ -155,7 +155,7 @@ los ya explicados en la página, y prefiere la palabra con más sílabas.
 |---|---|
 | Cada sesión: mirada cruda, visitas, fijaciones, ayudas mostradas o suprimidas, marcado de lo difícil | `data/sessions/` → `python evaluation/analyze_sessions.py` |
 | Diseño (2026-10-20): dos métodos (automática y a pedido) alternados entre páginas; **orden de páginas aleatorio** por participante | `index.html` + `session.js` + `marking.js` |
-| Cuestionarios: comprensión + NASA-TLX (Anexo 3, ponderado) por página; SUS y post-experimento (Anexo 4) al final | `evaluation/cuestionarios_participante.xlsx` → `puntuar_cuestionarios.py` |
+| Cuestionarios, todos al final: comprensión por recuerdo libre (un recuadro por página), un NASA-TLX (Anexo 3, ponderado), SUS y post-experimento (Anexo 4) | `evaluation/cuestionarios_participante.xlsx` → `puntuar_cuestionarios.py` |
 | "A pedido": botón "Ver ayuda" al estar lista; lo pedido se compara con lo que la regla habría detectado | `gaze.js` (`offerHelpButton`), `paginas.csv` |
 | Acierto (la ayuda fue a algo que costó) y cobertura (lo que costó recibió ayuda) | `paginas.csv` |
 | Prueba de comprensión (medida principal) | **Borrador:** `evaluation/prueba_comprension.md` |

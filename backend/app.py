@@ -25,16 +25,11 @@ import threading
 import time
 import websockets
 
-# Los print muestran términos del modelo (p. ej. "CO₂"). Si la consola no es
-# UTF-8 (salida redirigida en Windows = cp1252), el print lanzaba
-# UnicodeEncodeError y la ruta respondía 500 sin dar la ayuda.
+# Consola en UTF-8: imprimir "CO₂" en cp1252 hacía fallar la ruta con 500.
 for _stream in (sys.stdout, sys.stderr):
     _stream.reconfigure(encoding="utf-8", errors="replace")
 
-# ── Interruptor de fuente de coordenadas ────────────────────────────
-# Cambia esta variable a mano y reinicia el servidor. No cambia en vivo
-# a propósito (ver conversación previa: para pruebas de laboratorio es
-# más seguro fijarlo antes de correr que dejar un switch en caliente).
+# ── Fuente de la mirada: se fija al arrancar (no cambia en vivo) ─────
 INPUT_SOURCE_MOUSE = 1
 INPUT_SOURCE_TOBII = 2
 
@@ -47,30 +42,22 @@ _INPUT_SOURCE_NAMES = {INPUT_SOURCE_MOUSE: "mouse", INPUT_SOURCE_TOBII: "tobii"}
 if GAZE_INPUT_SOURCE not in _INPUT_SOURCE_NAMES:
     GAZE_INPUT_SOURCE = INPUT_SOURCE_MOUSE
 
-# Host/puerto donde tobii_bridge/gaze_server.cpp abre su socket TCP.
+# Socket TCP del puente (tobii_bridge/gaze_server.cpp).
 TOBII_BRIDGE_HOST = "127.0.0.1"
 TOBII_BRIDGE_PORT = 5555
 
-# Host/puerto donde este backend expone el socket de mirada al frontend
-# (reemplaza el polling por HTTP: el Tobii entrega datos a ~90Hz y
-# preguntar "¿hay algo nuevo?" cada 100ms descartaba ~90% de las muestras).
+# WebSocket hacia el navegador (cada punto llega apenas sale del Tobii).
 WS_HOST = "127.0.0.1"
 WS_PORT = 5600
 
-# Corrección manual de desfase sistemático (en píxeles), aplicada a cada
-# punto que llega del Tobii ANTES de mandarlo al frontend. Si el sistema
-# detecta consistentemente más abajo/arriba/a un lado de donde realmente
-# se mira (no ruido aleatorio, sino siempre en la misma dirección), ajusta
-# estos valores a mano y reinicia este script — no hace falta recompilar
-# gaze_server.cpp. Ej.: si detecta ~40px más abajo de lo real, usa -40.
+# Desfase manual en píxeles (normalmente 0: lo corrige la comprobación de 5 puntos).
 GAZE_OFFSET_X = 0
-GAZE_OFFSET_Y = 0   # antes −40 (manual); ahora lo corrige la comprobación de 5 puntos (calibracion.html)
+GAZE_OFFSET_Y = 0
 
 
 def _screen_size():
-    """Resolución de pantalla que usa gaze_server.cpp para pasar la mirada a
-    píxeles (GetSystemMetrics, igual que aquí). Sirve para volver a la
-    proporción de pantalla (0–1), que el navegador convierte según el equipo."""
+    """Resolución que usa gaze_server.cpp (GetSystemMetrics), para enviar la
+    mirada como proporción de pantalla (0–1)."""
     try:
         import ctypes
         user32 = ctypes.windll.user32
@@ -82,8 +69,7 @@ def _screen_size():
 TOBII_SCREEN = _screen_size()
 
 def _warmup_image_b64():
-    """Imagen en blanco de 64x64 usada solo para precalentar el modelo de
-    visión (evita depender de una descarga de red al iniciar el servidor)."""
+    """Imagen en blanco para precalentar el modelo de visión."""
     buffer = io.BytesIO()
     Image.new("RGB", (64, 64), "white").save(buffer, format="PNG")
     return base64.b64encode(buffer.getvalue()).decode("ascii")
@@ -94,12 +80,8 @@ FRONTEND_DIR = PROJECT_ROOT / "frontend"
 app = Flask(__name__, static_folder=str(FRONTEND_DIR), static_url_path="")
 CORS(app)
 
-# ── Puente de coordenadas del Tobii 5 (push por WebSocket) ─────────────
-# Cada punto que llega (del socket TCP de tobii_bridge/gaze_server.cpp, o de
-# un POST manual de prueba vía simulate_gaze.py) se reenvía de inmediato a
-# todos los navegadores conectados por WebSocket — ya no se guarda un
-# "último valor" para que el frontend lo vaya a buscar por polling, porque
-# eso era lo que tiraba al piso la frecuencia real de muestreo del Tobii.
+# ── Mirada → WebSocket: cada punto (del puente o de simulate_gaze.py) se
+# reenvía de inmediato a los navegadores conectados. ─────────────────
 _ws_clients = set()
 _ws_loop = None  # se asigna cuando arranca el hilo del servidor WS
 
@@ -165,7 +147,7 @@ def get_config():
 
 @app.route("/gaze-latest", methods=["POST"])
 def post_gaze_latest():
-    """Endpoint de prueba (ver simulate_gaze.py) para simular al Tobii sin
+    """Prueba sin hardware (simulate_gaze.py): simula un punto del Tobii sin
     el hardware conectado — empuja el punto por el mismo camino que usa
     el bridge real."""
     data = request.get_json(silent=True) or {}
@@ -258,9 +240,8 @@ def analyze():
             if isinstance(value, str) and value.strip()
         }
 
-        # Términos ya explicados en esta página (el navegador los lleva):
-        # el análisis de texto no vuelve a elegirlos. term_selection solo lo
-        # usan los scripts de evaluación para comparar variantes.
+        # Términos ya explicados en la página (no se repiten). term_selection
+        # solo lo usan los scripts de evaluación.
         defined_terms = data.get("defined_terms")
         defined_terms = [t.strip()[:120] for t in defined_terms[:30] if isinstance(t, str) and t.strip()]             if isinstance(defined_terms, list) else []
         term_selection = data.get("term_selection") if isinstance(data.get("term_selection"), str) else None
@@ -280,8 +261,7 @@ def analyze():
             return jsonify({"error": "dwell_time must be finite and non-negative"}), 400
 
         content = content.strip()
-        # Las imágenes base64 (gráficas/tablas renderizadas en el cliente) son más
-        # pesadas que texto plano, así que usan un límite propio más generoso.
+        # Las imágenes base64 tienen un límite de tamaño propio.
         max_length = 2_000_000 if content_type == "image_base64" else 12000
         if len(content) > max_length:
             return jsonify({"error": "Content is too long"}), 413
@@ -301,8 +281,7 @@ def analyze():
             analysis = analyze_text(content, page_context=page_context,
                                     defined_terms=defined_terms, term_selection=term_selection)
         elif content_type == "table":
-            # La legibilidad (INFLESZ) mide texto corrido; en una tabla el
-            # nivel lo juzga el modelo.
+            # En tablas el nivel lo juzga el modelo (INFLESZ es para texto corrido).
             analysis = analyze_text(content, use_readability=False, page_context=page_context)
         elif content_type == "image":
             analysis = analyze_image(content, context, design_level, page_context)
@@ -310,8 +289,7 @@ def analyze():
             analysis = analyze_image_data(content, context, design_level, chart_text, page_context)
         processing_time = round(time.time() - start_time, 2)
 
-        # Llegó una petición más nueva mientras esta esperaba/generaba: el
-        # frontend ya no la necesita, no hay nada útil que devolver.
+        # Llegó una petición más nueva: esta ya no sirve.
         if analysis.get("stale"):
             return jsonify({"stale": True, "action": "none", "processing_time": processing_time})
 
@@ -387,18 +365,15 @@ def _handle_tobii_line(line):
         pass
 
 
-# ── Puente del Tobii (gaze_server.exe) lanzado por este servidor ────
-# En modo Tobii, app.py abre el puente en OTRA ventana (no hace falta abrirlo
-# a mano) y lo cierra al terminar. El puente acepta UNA sola conexión: si se
-# desconecta, queda inútil, así que se cierra y se abre uno nuevo.
+# ── Puente del Tobii: app.py lo abre en otra ventana y lo cierra al salir.
+# Acepta una sola conexión: si se cae, se abre uno nuevo. ────────────
 BRIDGE_AUTOSTART = True
 _bridge_proc = None
 
 
 def _bridge_exe():
     base = PROJECT_ROOT / "tobii_bridge"
-    # bin/ = versión Release ya compilada que viene en el repositorio (corre sin
-    # Visual Studio, p. ej. en la laptop de las pruebas); luego, lo compilado aquí.
+    # bin/ = Release incluida en el repositorio (no necesita Visual Studio).
     for folder in ("bin", "Release", "Debug"):
         exe = base / folder / "gaze_server.exe"
         if exe.exists():
@@ -446,9 +421,7 @@ def _tobii_socket_bridge():
         try:
             print(f"[TOBII] Conectando a gaze_server.exe en {TOBII_BRIDGE_HOST}:{TOBII_BRIDGE_PORT}...")
             with socket.create_connection((TOBII_BRIDGE_HOST, TOBII_BRIDGE_PORT), timeout=5) as sock:
-                # Sin tiempo límite al RECIBIR: si la persona se aparta y el
-                # Tobii deja de enviar unos segundos, no se corta la conexión
-                # (el puente acepta una sola; cortarla obligaba a reiniciar).
+                # Sin tiempo límite al recibir: si la persona se aparta, no se corta.
                 sock.settimeout(None)
                 print("[TOBII] Conectado. Recibiendo coordenadas...")
                 while True:
@@ -468,17 +441,12 @@ def _tobii_socket_bridge():
 
 
 def _warmup_models():
-    """Descarga los modelos de Ollama que falten en esta computadora (solo
-    la primera vez) y los carga antes de la primera petición real, para que
-    la lentitud de la carga en frío no la sufra el primer usuario que mira la página."""
+    """Descarga los modelos que falten y los carga antes de la primera ayuda."""
     try:
         if not ensure_ollama_models([TEXT_MODEL, VISION_MODEL]):
             return
         print("\n[WARMUP] Precalentando modelos...")
-        # use_readability=False: con la legibilidad, esta frase es Low y no
-        # llegaba a phi3, así que phi3 NO se precalentaba (medido el
-        # 2026-10-17: la primera ayuda de la sesión salía con el mensaje
-        # genérico por exceder el tiempo límite mientras cargaba el modelo).
+        # Sin legibilidad: si no, la frase sale Low y phi3 no se carga.
         analyze_text("El cielo es azul y el pasto es verde.", use_readability=False)
         analyze_image_data(_warmup_image_b64(), "")
         print("[WARMUP] Modelos listos.\n")

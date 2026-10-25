@@ -1,15 +1,14 @@
 // ═══════════════════════════════════════════════════════════════
-// Sesión experimental y registro de eventos (logging).
-// La sesión se inicia en index.html (participante + condición por página)
-// y se guarda en sessionStorage, así sobrevive a la navegación entre las
-// páginas de la misma pestaña. Sin sesión activa ("modo libre") no se
-// registra nada y la ayuda está siempre activa.
-// Los eventos y las muestras de mirada se envían al backend por lotes
-// (backend/session_log.py los escribe en data/sessions/).
+// Sesión experimental: se inicia en index.html y vive en sessionStorage (pasa
+// entre páginas de la pestaña). Envía eventos y mirada por lotes al backend
+// (session_log.py). Sin sesión ("modo libre") no se registra nada.
 // ═══════════════════════════════════════════════════════════════
 const SESSION_STORAGE_KEY = "gazeExperimentSession";
 const SESSION_BACKEND     = "http://127.0.0.1:5000";
 const LOG_FLUSH_MS        = 2000;
+// Archivos con nombres neutros (no revelan el nivel); en el registro siguen
+// siendo facil / intermedio / avanzado.
+const PAGE_URLS = { facil: "siteA.html", intermedio: "siteB.html", avanzado: "siteC.html" };
 
 const ExperimentSession = (() => {
     function load() {
@@ -36,8 +35,10 @@ const ExperimentSession = (() => {
     }
 
     const session   = load();
-    const pageKey   = (window.location.pathname.split("/").pop() || "index.html").replace(".html", "");
-    // "ayuda" (automática) | "a_pedido" | "sin_ayuda" | null (fuera del plan o modo libre)
+    const fileName  = window.location.pathname.split("/").pop() || "index.html";
+    const pageKey   = Object.keys(PAGE_URLS).find(key => PAGE_URLS[key] === fileName) || fileName.replace(".html", "");
+    const pageUrl   = key => PAGE_URLS[key] || `${key}.html`;
+    // "ayuda" (automática) | "a_pedido" | null (modo libre)
     const condition = session?.plan?.[pageKey] || null;
 
     let events = [];
@@ -48,8 +49,7 @@ const ExperimentSession = (() => {
         events.push({ ...data, type, t: Date.now(), page: pageKey });
     }
 
-    // Muestra cruda: coordenadas de la ventana + desplazamiento de la página,
-    // para ubicar después la mirada sobre el contenido (layout del page_enter).
+    // Muestra cruda: coordenadas de la ventana + desplazamiento de la página.
     function logGaze(x, y, valid) {
         if (!session || window.recordingPaused) return;   // pausa entre páginas: nada se guarda
         gaze.push([
@@ -104,11 +104,10 @@ const ExperimentSession = (() => {
     return {
         session,
         pageKey,
+        pageUrl,
         condition,
         active: Boolean(session),
-        // helpEnabled: la ayuda aparece SOLA cuando la conducta lo pide.
-        // En "a_pedido" no: se ofrece un botón y la persona decide; la ayuda
-        // que habría salido sola se registra como suprimida (para comparar).
+        // helpEnabled: ayuda automática. onDemand: botón "Ver ayuda".
         helpEnabled: condition !== "sin_ayuda" && condition !== "a_pedido",
         onDemand: condition === "a_pedido",
         log,

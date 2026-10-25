@@ -29,18 +29,12 @@ GENERATION_TIMEOUT_S = 25
 CONTEXT_MAX_CHARS = 300
 CHART_TEXT_MAX_CHARS = 600
 
-# Nivel diseñado de la figura (atributo data-design-level en el HTML). Si viene, el
-# nivel deja de ser juicio del modelo: con temperatura 0 Qwen es estable, pero
-# su nivel cambió de Medium a Low en la gráfica de avanzado solo por pasar el
-# prompt a español (ver README, sección 7). Lo que dice el modelo se guarda en
-# llm_complexity para medir el acuerdo.
+# Nivel diseñado de la figura (data-design-level en el HTML): reemplaza al del
+# modelo, que cambiaba con el prompt. El del modelo queda en llm_complexity.
 VALID_DESIGN_LEVELS = {"Low", "Medium", "High"}
 
-# Una sola inferencia a la vez, y "el último gana": el frontend cancela su
-# petición al cambiar de elemento, pero el backend no se entera, así que sin
-# esto se acumulaban análisis ya inútiles y los vigentes se pasaban del
-# timeout. Cada petición toma un número de turno; si llega una más nueva, las
-# anteriores (en espera o ya generando) se descartan.
+# Una inferencia a la vez y "el último gana": cada petición toma un turno y las
+# anteriores (en espera o generando) se descartan.
 _ticket_lock = threading.Lock()
 _inference_lock = threading.Lock()
 _latest_ticket = 0
@@ -69,9 +63,7 @@ def _is_english(value):
 
 
 def _local_fallback(complexity):
-    """Si el modelo responde en inglés pese a que se esperaba español, se
-    reemplaza por un mensaje genérico en español en vez de dejarlo colar en el
-    idioma equivocado."""
+    """Mensaje genérico en español si el modelo respondió en otro idioma."""
     if complexity == "Low":
         return {
             "concept": "Contenido sencillo",
@@ -95,13 +87,8 @@ def _page_line(language, page_context):
 
 def _build_prompt(context, language, chart_text="", page_context=None):
     page = _page_line(language, page_context)
-    # El prompt va en el mismo idioma que se espera en la respuesta: con el
-    # prompt en inglés, el modelo contestaba en inglés aunque la página fuera
-    # en español. El pie de la figura da contexto del documento y fija el idioma.
-    # Con los textos de una gráfica (chart_text) se le dan los valores exactos
-    # y se le pide explicar qué mide (magnitud, unidad o referencia): antes
-    # describía la línea ("la línea azul muestra…") sin explicar, p. ej., qué
-    # es una variación "respecto a 1900". Las fotos usan el prompt de siempre.
+    # Prompt en el idioma de la respuesta. En gráficas se pasan sus textos
+    # (ejes, valores) y se pide explicar qué mide, no describir la línea.
     if language == "English":
         caption = f"Figure caption: {context}\n" if context else ""
         texts = (f"Text written in the chart, in document order (title, axes, values, labels): {chart_text}\n"
@@ -145,8 +132,7 @@ def _build_prompt(context, language, chart_text="", page_context=None):
 
 
 def _design_low_result():
-    """Figura diseñada como Low: no se llama al modelo (igual que el texto
-    fácil por legibilidad), respuesta instantánea y sin ayuda."""
+    """Figura diseñada como Low: sin ayuda, no se llama al modelo."""
     return {
         "concept": "",
         "complexity": "Low",
@@ -165,11 +151,7 @@ def apply_design_level(normalized, design_level):
     normalized["needs_assistance"] = design_level != "Low"
     normalized["difficulty_source"] = "diseño"
     if normalized["needs_assistance"] and not normalized["explanation"]:
-        # Red de seguridad: el prompt pide explicación vacía si el modelo juzga
-        # Low. En la práctica Qwen la escribe igual (medido, ver README), pero
-        # si llega vacía no se muestra un tooltip vacío.
-        # No se cambió el prompt a "explicación obligatoria": se probó y alargó
-        # la explicación de 19 a 46 palabras, hasta cortarse por tokens.
+        # Si el modelo dejó la explicación vacía, mensaje genérico (no tooltip vacío).
         normalized.update(_local_fallback(design_level))
     return normalized
 
@@ -183,7 +165,6 @@ def is_public_url(image_url):
         addresses = socket.getaddrinfo(parsed.hostname, None)
         for address in addresses:
             ip = ipaddress.ip_address(address[4][0])
-            print(f"[SSRF] IP resuelta: {ip} — privada:{ip.is_private} loopback:{ip.is_loopback}")
             if ip.is_private or ip.is_loopback or ip.is_link_local:
                 print(f"[SSRF] Bloqueada: {ip}")
                 return False
@@ -202,8 +183,6 @@ def analyze_image(image_url, context="", design_level=None, page_context=None):
     if design_level == "Low":
         return _design_low_result()
     ticket = _new_ticket()
-    print(f"\n===== ANALIZANDO IMAGEN (URL) =====")
-    print(f"URL: {image_url}")
 
     if not isinstance(image_url, str) or len(image_url) > 2048 or not is_public_url(image_url):
         return {
@@ -219,7 +198,6 @@ def analyze_image(image_url, context="", design_level=None, page_context=None):
             headers={"User-Agent": "Mozilla/5.0"},
             timeout=10
         )
-        print(f"[DEBUG] Imagen descargada: {len(http_response.content)} bytes")
         http_response.raise_for_status()
         image = Image.open(BytesIO(http_response.content)).convert("RGB")
     except Exception as e:
@@ -235,13 +213,11 @@ def analyze_image(image_url, context="", design_level=None, page_context=None):
 
 
 def analyze_image_data(base64_data, context="", design_level=None, chart_text="", page_context=None):
-    """Analiza una imagen generada en el cliente (gráficas/tablas renderizadas a PNG),
-    recibida como base64 sin pasar por una descarga de red (sin riesgo de SSRF)."""
+    """Imagen generada en el navegador (gráfica en PNG, base64): sin descarga."""
     design_level = _clean_design_level(design_level)
     if design_level == "Low":
         return _design_low_result()
     ticket = _new_ticket()
-    print(f"\n===== ANALIZANDO IMAGEN (base64) =====")
 
     if not isinstance(base64_data, str) or not base64_data:
         return {
@@ -254,7 +230,6 @@ def analyze_image_data(base64_data, context="", design_level=None, chart_text=""
     try:
         image_bytes = base64.b64decode(base64_data, validate=True)
         image = Image.open(BytesIO(image_bytes)).convert("RGB")
-        print(f"[DEBUG] Imagen decodificada: {len(image_bytes)} bytes, {image.size}")
     except (binascii.Error, UnidentifiedImageError, ValueError, OSError) as e:
         print(f"Error decodificando imagen base64: {e}")
         return {
@@ -279,10 +254,8 @@ def _generate(prompt, image_b64, ticket):
         "keep_alive": OLLAMA_KEEP_ALIVE,
         "options": {"temperature": 0, "num_predict": MAX_NEW_TOKENS, "num_ctx": 2048}
     }
-    # El reloj de GENERATION_TIMEOUT_S arranca con el primer fragmento de
-    # respuesta: si el modelo estaba descargado de la GPU, cargarlo (hasta
-    # ~30 s la primera vez) no debe contar como "generación lenta". Esa carga
-    # está acotada por el timeout de lectura de 60 s de la conexión.
+    # El límite de generación corre desde el primer fragmento: la carga del
+    # modelo (hasta ~30 s) no cuenta; la acota el timeout de 60 s.
     deadline = None
     parts = []
     with requests.post(OLLAMA_GENERATE_URL, json=payload, stream=True, timeout=(5, 60)) as response:
@@ -310,7 +283,6 @@ def _analyze_pil_image(image, ticket, context="", design_level=None, chart_text=
 
     if max(image.size) > MAX_IMAGE_SIDE:
         image.thumbnail((MAX_IMAGE_SIDE, MAX_IMAGE_SIDE), Image.LANCZOS)
-        print(f"[DEBUG] Imagen redimensionada a: {image.size}")
 
     buffer = BytesIO()
     image.save(buffer, format="PNG")

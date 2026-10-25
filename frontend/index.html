@@ -34,13 +34,13 @@
                 información distinta, para evaluar cómo responde el sistema de asistencia adaptativa.
             </p>
             <div class="difficulty-buttons" style="justify-content:center;">
-                <a class="difficulty-button" href="facil.html">Fácil</a>
-                <a class="difficulty-button" href="intermedio.html">Intermedio</a>
-                <a class="difficulty-button" href="avanzado.html">Avanzado</a>
+                <a class="difficulty-button" href="siteA.html">Fácil</a>
+                <a class="difficulty-button" href="siteB.html">Intermedio</a>
+                <a class="difficulty-button" href="siteC.html">Avanzado</a>
             </div>
         </div>
 
-        <!-- Panel del investigador: sesión experimental (intra-sujeto) -->
+        <!-- Panel del investigador -->
         <div class="article-card session-card">
             <h3>Sesión experimental</h3>
             <p class="hint">
@@ -55,9 +55,12 @@
                     <input type="text" id="participant" placeholder="P01" maxlength="20" autocomplete="off" />
                 </div>
                 <div class="session-row">
-                    <label>Orden de lectura (al azar)</label>
+                    <label>Orden de lectura</label>
                     <span id="order-label"></span>
                     <button class="btn-outline" id="reshuffle" type="button">Sortear de nuevo</button>
+                </div>
+                <div class="session-row">
+                    <span class="hint" id="assignment-note"></span>
                 </div>
                 <div class="session-row">
                     <label for="cond-facil">Fácil</label>
@@ -93,13 +96,11 @@
     </div>
 
     <script src="js/session.js"></script>
+    <script src="js/asignacion.js"></script>
     <script>
-        // Diseño (acordado con la asesora, 2026-10-20): se comparan DOS métodos,
-        // ayuda automática (por conducta) y ayuda a pedido. El ORDEN de las
-        // páginas es aleatorio para cada participante. Métodos (2026-10-20):
-        // fácil siempre a pedido; intermedia y avanzada al azar, una con cada
-        // método, así cada persona prueba los dos (necesario para el
-        // cuestionario post-experimento). Se puede volver a sortear o ajustar.
+        // Dos métodos: ayuda automática y a pedido. Con un código del sorteo previo
+        // (js/asignacion.js, de evaluation/generar_asignacion.py) el orden y los
+        // métodos quedan fijos; con otro código (pruebas) se sortean al momento.
         const PAGES = ["facil", "intermedio", "avanzado"];
         const PAGE_NAMES = { facil: "Fácil", intermedio: "Intermedio", avanzado: "Avanzado" };
         const METHOD_NAMES = { ayuda: "automática", a_pedido: "a pedido" };
@@ -111,9 +112,8 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [order[i], order[j]] = [order[j], order[i]];
             }
-            // Fácil SIEMPRE "a pedido": casi no tiene párrafos difíciles, así que
-            // con la ayuda automática nunca aparecería ayuda. Intermedia y
-            // avanzada: al azar, una con cada método (así todos prueban ambos).
+            // Fácil siempre "a pedido" (casi sin párrafos difíciles); intermedia y
+            // avanzada, una con cada método.
             const autoPage = Math.random() < 0.5 ? "intermedio" : "avanzado";
             document.getElementById("cond-facil").value = "a_pedido";
             document.getElementById("cond-intermedio").value = autoPage === "intermedio" ? "ayuda" : "a_pedido";
@@ -131,11 +131,9 @@
         const participantInput = document.getElementById("participant");
         const statusBox = document.getElementById("session-status");
 
-        // Cada participante empieza con el ritmo de lectura promedio: se borra
-        // el ritmo aprendido en la pestaña (gaze.js lo guarda entre páginas).
+        // Cada participante empieza sin ritmo aprendido ni corrección de la mirada.
         function resetLearnedPace() {
             try { sessionStorage.removeItem("gazeReadingPace"); } catch (error) { /* nada que borrar */ }
-            // La corrección de la mirada es de cada persona: se mide de nuevo.
             try { sessionStorage.removeItem("gazeCorrection"); } catch (error) { /* nada que borrar */ }
         }
 
@@ -144,8 +142,29 @@
             statusBox.classList.toggle("is-error", isError);
         }
 
+        // Código de la lista del sorteo previo: orden y métodos fijos (no editables).
+        function applyAssignment() {
+            const code = participantInput.value.trim().toUpperCase();
+            const fixed = (typeof ASIGNACION !== "undefined") ? ASIGNACION[code] : null;
+            const note = document.getElementById("assignment-note");
+            if (fixed) {
+                currentOrder = [...fixed.order];
+                PAGES.forEach(p => { document.getElementById(`cond-${p}`).value = fixed.plan[p]; });
+                note.textContent = `Sorteo previo: ${code} tiene el orden y los métodos fijados (evaluation/asignacion_participantes.csv).`;
+                renderOrder();
+            } else if (document.getElementById("reshuffle").disabled) {
+                note.textContent = "Código fuera del sorteo previo (prueba): orden y métodos al azar.";
+                shuffle();
+            } else {
+                note.textContent = code ? "Código fuera del sorteo previo (prueba): orden y métodos al azar." : "";
+            }
+            document.getElementById("reshuffle").disabled = Boolean(fixed);
+            PAGES.forEach(p => { document.getElementById(`cond-${p}`).disabled = Boolean(fixed); });
+        }
+
         document.getElementById("reshuffle").addEventListener("click", shuffle);
         PAGES.forEach(p => document.getElementById(`cond-${p}`).addEventListener("change", renderOrder));
+        participantInput.addEventListener("input", applyAssignment);
         shuffle();
 
         function renderSessionState() {
@@ -219,13 +238,9 @@
             window.location.reload();
         });
 
-        // Pantalla de bienvenida (2026-10-20): al iniciar la sesión, el
-        // investigador muestra esta pantalla (tapa los parámetros de la sesión)
-        // y el participante pulsa "Iniciar" cuando está listo. Las mismas
-        // instrucciones para todos, sin mencionar niveles ni métodos.
+        // Bienvenida: tapa los parámetros; mismas instrucciones para todos.
         function showWelcome() {
-            // Se lee la sesión recién guardada: ExperimentSession.session es la
-            // copia del momento en que cargó la página (aún sin sesión).
+            // La sesión recién guardada (ExperimentSession.session es de antes).
             let session = ExperimentSession.session;
             try { session = JSON.parse(sessionStorage.getItem(SESSION_STORAGE_KEY)) || session; } catch (error) { /* se usa la copia */ }
             const overlay = document.createElement("div");
@@ -236,8 +251,9 @@
                     <h2>Antes de empezar</h2>
                     <p>Vas a leer <strong>3 páginas web</strong>. Léelas con calma, para entenderlas.
                        Mientras lees, el sistema podría ofrecerte ayuda.</p>
-                    <p>Al terminar cada página web pulsa <strong>"Terminé esta página"</strong>: responderás unas
-                       preguntas en el Excel <strong>sin volver a la página web</strong> y podrás descansar.</p>
+                    <p>Al terminar cada página web pulsa <strong>"Terminé esta página"</strong>, marca lo que te costó
+                       entender y luego descansarás un minuto y medio (la siguiente página empieza sola).
+                       Al final de las 3 páginas web responderás unas preguntas en el Excel.</p>
                     <p class="pause-note">Cuando estés listo(a), pulsa Iniciar.</p>
                     <button type="button" class="btn-primary pause-done">Iniciar</button>
                 </div>`;
@@ -248,8 +264,7 @@
             });
         }
 
-        // Al volver de la última página: pantalla de cierre (cuestionarios
-        // finales). El enlace pequeño de abajo es para el investigador.
+        // Cierre tras la última página (el botón de abajo es para el investigador).
         function showFinished() {
             const overlay = document.createElement("div");
             overlay.className = "pause-overlay";
@@ -257,7 +272,8 @@
                 <div class="pause-card">
                     <p class="pause-step">Páginas web terminadas</p>
                     <h2>¡Gracias!</h2>
-                    <p>Por último, responde en el Excel las hojas <strong>«SUS»</strong> y
+                    <p>Por último, responde en el Excel las hojas en este orden:
+                       <strong>«Comprensión»</strong>, <strong>«NASA-TLX»</strong>, <strong>«SUS»</strong> y
                        <strong>«Post-experimento»</strong>.</p>
                     <p class="pause-note">Cuando termines, avisa al investigador.</p>
                     <button type="button" class="btn-outline pause-researcher">Investigador: ver sesión</button>

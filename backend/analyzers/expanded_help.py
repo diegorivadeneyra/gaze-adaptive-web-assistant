@@ -1,16 +1,7 @@
-"""Segundo nivel de ayuda (explicación ampliada).
-
-Se usa cuando la persona se vuelve a trabar en un párrafo DESPUÉS de haber
-visto la primera ayuda (la definición de un término). Da:
-  - 2 o 3 términos difíciles del párrafo con una definición breve (sin repetir
-    el término que ya se definió en el primer nivel);
-  - una frase que dice lo mismo que el párrafo en palabras simples.
-
-Cambio de criterio respecto del primer nivel: allí NO se resume el texto
-porque la persona ya lo leyó; aquí sí se reformula, porque ya mostró que no lo
-entendió ni con la definición. Los términos se eligen como en el primer nivel
-(text_analyzer.choose_terms): se descartan los que no aparecen en el párrafo,
-los símbolos o fórmulas sueltos y los ya explicados en la página.
+"""Segundo nivel de ayuda: cuando la persona se vuelve a trabar después de la
+primera. Da 2–3 términos con definición breve (sin repetir el ya definido) y una
+frase con lo mismo que el párrafo en palabras simples (aquí sí se reformula: no
+lo entendió ni con la definición). Términos filtrados con choose_terms.
 """
 import time
 
@@ -28,8 +19,7 @@ EXPANDED_SCHEMA = {
     "properties": {
         "terms": {
             "type": "array",
-            # Sin tope, phi3 a veces enumeraba 4-5 términos largos, se acababan
-            # los tokens y el JSON quedaba cortado (ayuda vacía).
+            # Sin tope, phi3 enumeraba 4–5 y el JSON se cortaba.
             "maxItems": MAX_TERMS,
             "items": {
                 "type": "object",
@@ -83,8 +73,7 @@ def expand_text(text, section="", already_defined="", defined_terms=()):
                 "format": EXPANDED_SCHEMA,
                 "keep_alive": OLLAMA_KEEP_ALIVE,
                 "options": {"temperature": 0.1, "top_p": 0.9, "num_predict": 320,
-                            # Mismo num_ctx que el primer nivel: si no, Ollama recarga phi3 (~6 s).
-                            # Peor caso medido: 735 tokens (prompt + respuesta).
+                            # Mismo num_ctx que el primer nivel (si no, recarga phi3).
                             "num_ctx": TEXT_NUM_CTX},
             },
             timeout=30,
@@ -96,9 +85,7 @@ def expand_text(text, section="", already_defined="", defined_terms=()):
     if not isinstance(data, dict) or not ("terms" in data or "simple" in data):
         return {"error": "respuesta sin JSON válido o incompleta"}
 
-    # Misma elección que el primer nivel (text_analyzer.choose_terms): fuera
-    # los que no están en el texto, símbolos o fórmulas ("CO₂") y los ya
-    # explicados; primero el de la palabra con más sílabas.
+    # Mismos filtros y orden que el primer nivel.
     valid, discarded = choose_terms(data.get("terms") or [], truncated, avoid_terms, "silabas")
     terms = [{"term": t["term"][0].upper() + t["term"][1:],
               "definition": trim_to_words(t["definition"], MAX_DEFINITION_WORDS)}

@@ -1,23 +1,12 @@
-// gaze_server.cpp
+// gaze_server.cpp: lee el Tobii 5 (SDK Stream Engine) y envía cada punto por
+// TCP (puerto 5555) a backend/app.py, que lo reenvía al navegador.
 //
-// Se conecta al Tobii 5 con el SDK oficial (igual que el ejemplo de prueba)
-// y reenvia cada punto de mirada por un socket TCP a Python (backend/app.py),
-// que lo lee y lo deja disponible en GET /gaze-latest para el frontend.
+// Protocolo: una línea por punto, "x_px,y_px,timestamp_us,valid\n" (valid 1/0),
+// en píxeles de pantalla. app.py lo pasa a proporción y el navegador lo ajusta
+// a la página (gaze_mapping.js + comprobación de 5 puntos).
 //
-// Protocolo (una linea de texto por punto, separada por coma):
-//   x_px,y_px,timestamp_us,valid\n
-// valid es 1 o 0. Las coordenadas se mandan ya convertidas a pixeles de
-// pantalla (no normalizadas 0-1 como las entrega el SDK), asumiendo que el
-// navegador corre en pantalla completa en el monitor principal — si no está
-// en pantalla completa, x/y quedaran desalineadas del contenido web (esto
-// queda como calibracion pendiente, no lo resuelve este bridge).
-//
-// Build (MinGW, mismo patron que tobiiCpp/leeme.txt):
-//   g++ gaze_server.cpp -o gaze_server.exe -Iinclude -Llib/x86 -ltobii_stream_engine -lws2_32
-//
-// Uso:
-//   1. .\gaze_server.exe                    (deja el Tobii listo y espera a Python)
-//   2. python app.py  (con GAZE_INPUT_SOURCE = INPUT_SOURCE_TOBII en app.py)
+// Compilar con Visual Studio 2022, x86 (gaze_server.sln); ver tobii_bridge/README.md.
+// app.py abre este puente solo en modo Tobii.
 
 #include <stdio.h>
 #include <assert.h>
@@ -121,7 +110,7 @@ int main()
     assert(g_client_socket != INVALID_SOCKET);
     printf("[gaze_server] Python conectado.\n");
 
-    // ── Tobii: exactamente el mismo flujo que main.cpp ──
+    // ── Tobii ──
     tobii_api_t* api = NULL;
     tobii_error_t result = tobii_api_create(&api, NULL, NULL);
     assert(result == TOBII_ERROR_NO_ERROR);
@@ -142,10 +131,8 @@ int main()
     result = tobii_gaze_point_subscribe(device, gaze_point_callback, NULL);
     assert(result == TOBII_ERROR_NO_ERROR);
 
-    // Bucle principal: mientras Python siga conectado, reenvia cada punto.
-    // Si Python se desconecta, este proceso sigue leyendo del Tobii pero
-    // deja de enviar (send_line no hace nada con socket invalido) — hay que
-    // reiniciar gaze_server.exe para que vuelva a aceptar una conexion.
+    // Reenvía cada punto mientras Python siga conectado. Acepta una sola
+    // conexión: si se cae, app.py abre un puente nuevo.
     while (true)
     {
         result = tobii_wait_for_callbacks(1, &device);

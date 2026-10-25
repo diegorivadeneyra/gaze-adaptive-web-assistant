@@ -14,14 +14,11 @@ from analyzers.readability import compute_readability, count_syllables
 
 OLLAMA_URL = f"{OLLAMA_BASE_URL}/api/generate"
 
-# Límite de caracteres del texto a analizar. Con 400 se cortaba lo técnico al
-# final de párrafos de ~450 caracteres; 900 no cambia la velocidad medida
-# (~3.1 s vs ~3.2 s) y cabe de sobra en num_ctx=1024 junto al prompt.
+# Caracteres del texto que se envían (con 400 se cortaba el final técnico).
 TEXT_CHAR_LIMIT = 900
 
-# Ventana de contexto de phi3, COMPARTIDA con la ayuda ampliada
-# (expanded_help.py): si cambia entre peticiones, Ollama recarga el modelo
-# (~6 s medido el 2026-10-11).
+# Ventana de contexto compartida con expanded_help.py: si cambia, Ollama
+# recarga phi3 (~6 s).
 TEXT_NUM_CTX = 1024
 
 ANALYSIS_SCHEMA = {
@@ -34,16 +31,11 @@ ANALYSIS_SCHEMA = {
     "required": ["concept", "complexity", "explanation"],
 }
 
-# ── Elección del término (2026-10-11) ──────────────────────────────
-# "modelo": el modelo elige UN término y lo define (versión anterior).
-# "candidatos": propone hasta 3 términos con su definición y el código elige
-#   el primero (en el orden del modelo) que pasa los filtros.
-# "silabas": mismos candidatos y filtros, pero elige el término con la palabra
-#   de más sílabas (misma idea que INFLESZ: más sílabas = más difícil).
-# Filtros: el término está en el texto, no es solo un símbolo o fórmula
-# ("CO₂", "pH") y no se explicó ya en la misma página (defined_terms).
-# Medido en evaluation/ab_terminos.py (2026-10-11): "silabas" cumplió el
-# criterio fijado antes de medir; "candidatos" no (más definiciones incorrectas).
+# Elección del término a definir. "modelo": el modelo elige uno. "candidatos":
+# propone 3 y se toma el primero que pasa los filtros. "silabas": el de más
+# sílabas entre los que pasan (elegido con evaluation/ab_terminos.py).
+# Filtros: está en el texto, no es solo un símbolo ("CO₂") y no se explicó ya
+# en la página.
 TERM_SELECTION = "silabas"
 TERM_SELECTION_MODES = ("modelo", "candidatos", "silabas")
 MAX_CANDIDATES = 3
@@ -67,12 +59,7 @@ CANDIDATES_SCHEMA = {
 
 
 def detect_language(text):
-    # Contenido corto/denso (sobre todo tablas extraídas como texto plano,
-    # ej. "CO2-eq 2.31 0.17 <0.001") puede no tener NINGÚN marcador de
-    # español ni de inglés — son solo números y siglas. Como esta app es
-    # 100% contenido en español, se asume español por defecto cuando no hay
-    # evidencia clara de inglés, en vez de caer a inglés por defecto (que
-    # era lo que hacía que el modelo respondiera en inglés para tablas).
+    # Sin marcadores claros (tablas de números y siglas) se asume español.
     lowered = f" {text.lower()} "
     spanish_markers = (
         " el ", " la ", " los ", " las ", " que ", " de ", " y ",
@@ -90,16 +77,11 @@ def detect_language(text):
 def _matches_language(value, language):
     if not value:
         return True
-    # "concept" son solo 3 palabras y muchas frases nominales válidas en español
-    # (p.ej. "Cambio climático") no contienen ningún artículo/preposición de la
-    # lista, así que exigir un marcador del idioma esperado descartaba respuestas
-    # correctas. En cambio, se busca un marcador claro del OTRO idioma: una señal
-    # mucho más confiable de que el modelo sí respondió en el idioma equivocado.
+    # Se busca un marcador del OTRO idioma: frases cortas válidas ("Cambio
+    # climático") no tienen marcadores del propio.
     lowered = f" {value.lower()} "
     spanish_markers = (" el ", " la ", " que ", " de ", " y ", " para ", " una ", " es ", " los ", " las ")
-    # " a "/" an " se excluyen a propósito: "a" es una preposición española muy
-    # común ("ayuda a entender"), así que como marcador de inglés daba muchos
-    # falsos positivos sobre explicaciones en español correctas.
+    # Sin " a ": también es preposición en español.
     english_markers = (" the ", " is ", " of ", " and ", " this ", " are ", " with ", " you ")
     other_markers = english_markers if language == "Spanish" else spanish_markers
     return not any(marker in lowered for marker in other_markers)
@@ -129,9 +111,7 @@ _COPULAS = {"es", "son", "se", "significa", "consiste", "indica", "describe", "m
 
 
 def _with_term(concept, explanation):
-    """La explicación ya no recapitula el texto, así que suele empezar con "Es
-    un método…" o "Son errores…": sin el término, el usuario no sabría a qué se
-    refiere. Se antepone el término como encabezado: "Término: es un …"."""
+    """Antepone el término a la definición: "Término: es un …"."""
     concept = concept.strip(" .:;")
     if not concept or not explanation:
         return explanation
@@ -142,8 +122,7 @@ def _with_term(concept, explanation):
 
 
 def _context_block(language, page_context):
-    """Título de la página y sección, como contexto (no como tema a definir):
-    si no, el modelo tiende a definir el término del título en cada párrafo."""
+    """Título y sección como contexto, no como tema a definir."""
     page_context = page_context or {}
     title, section = page_context.get("title"), page_context.get("section")
     if not title and not section:
@@ -165,11 +144,7 @@ def _context_block(language, page_context):
 
 def build_prompt(language, truncated, page_context=None):
     context = _context_block(language, page_context)
-    # La persona ya leyó el texto: la ayuda no debe recapitularlo (medido: la
-    # versión anterior, que pedía "qué dice el texto con eso", copiaba ~11 %
-    # de sus trigramas; esta ~3 %). "concept" pasa a ser el término técnico
-    # concreto que se explica: obliga al modelo a elegir uno antes de definirlo
-    # (si no, solía elegir el tema general en vez del término difícil).
+    # La persona ya leyó el texto: se define el término difícil, sin recapitular.
     if language == "Spanish":
         return f"""Eres un asistente de lectura. La persona YA LEYÓ este texto (está en español) y no lo terminó de entender, así que NO se lo repitas.
 
@@ -286,11 +261,9 @@ def _normalize_words(value):
 
 
 def concept_in_text(concept, text):
-    """¿El término que el modelo eligió definir aparece en el texto?
-    Cada palabra de 4+ letras del término debe estar en el texto (sin
-    mayúsculas ni tildes, tolerando la terminación: "promedios" ~ "promedio").
-    Medido en la revisión del 2026-10-05: phi3 definió "acumulación de
-    energía" para una frase que no la contiene, un término inventado."""
+    """¿El término aparece en el texto? Cada palabra de 4+ letras, sin tildes
+    y tolerando la terminación ("promedios" ~ "promedio"). Evita definir
+    términos inventados por phi3."""
     text_words = _normalize_words(text)
     joined = " " + " ".join(text_words)
     for word in _normalize_words(concept):
@@ -309,8 +282,7 @@ def _readability_fields(readability):
 
 
 def _fallback_result(language, readability):
-    """Si el modelo falla (timeout, JSON inválido...), se conserva el nivel
-    medido por legibilidad cuando existe; si no, se asume Medium."""
+    """Si el modelo falla: el nivel de legibilidad si existe; si no, Medium."""
     level = readability["level"] if readability else "Medium"
     fallback = _local_language_fallback(language, level)
     return {
@@ -332,14 +304,11 @@ def analyze_text(text, use_readability=True, page_context=None, defined_terms=()
             "explanation": ""
         }
 
-    # Nivel de dificultad: para texto corrido en español se usa la legibilidad
-    # (INFLESZ), una medida objetiva y determinista. Para tablas, textos muy
-    # cortos o cuando no hay medida, se usa el juicio del modelo.
+    # Nivel: INFLESZ en texto corrido; el modelo en tablas y textos cortos.
     readability = compute_readability(text) if use_readability else None
     extra = _readability_fields(readability)
 
-    # "Normal o más fácil" según INFLESZ: no se ofrece ayuda, así que ni
-    # siquiera se llama al modelo (respuesta instantánea y sin carga de GPU).
+    # Low: sin ayuda, no se llama al modelo.
     if readability and readability["level"] == "Low":
         return {
             "concept": "Contenido sencillo",
@@ -366,22 +335,13 @@ def analyze_text(text, use_readability=True, page_context=None, defined_terms=()
                 "model": TEXT_MODEL,
                 "prompt": prompt,
                 "stream": False,
-                # Esquema estricto: fija las claves y los tipos. Con "json" a
-                # secas phi3 a veces deformaba el nombre de la clave
-                # ("explande", "explanranza"), la explicación quedaba vacía y
-                # no salía tooltip; sin formato repetía el prompt o encadenaba
-                # varios objetos tras la respuesta.
+                # Esquema estricto: con "json" a secas phi3 deformaba las claves.
                 "format": CANDIDATES_SCHEMA if use_candidates else ANALYSIS_SCHEMA,
                 "keep_alive": OLLAMA_KEEP_ALIVE,
                 "options": {
                     "temperature": 0.1,
                     "top_p": 0.9,
-                    # 120 era muy justo: si phi3 se explaya un poco (pasa
-                    # seguido con modelos chicos pese a pedirle brevedad), la
-                    # respuesta se cortaba ANTES de cerrar el JSON, el parseo
-                    # fallaba, y eso también disparaba el mensaje genérico de
-                    # "conocimientos previos" — en texto normal, no solo tablas.
-                    # Candidatos: hasta 3 definiciones.
+                    # Con 120 el JSON se cortaba; los candidatos traen 3 definiciones.
                     "num_predict": 320 if use_candidates else 200,
                     "num_ctx": TEXT_NUM_CTX
                 }
@@ -409,8 +369,7 @@ def analyze_text(text, use_readability=True, page_context=None, defined_terms=()
                         "explanation": chosen["definition"]}
 
         if not analysis:
-            # Suele ser un JSON cortado por num_predict (el modelo se explayó):
-            # se rescata la explicación hasta la última oración completa.
+            # JSON cortado: se rescata hasta la última oración completa.
             analysis = extract_partial_analysis(response_text)
             if analysis:
                 print("[JSON] Respuesta de phi3 cortada; se recuperó parcialmente.")
@@ -421,9 +380,7 @@ def analyze_text(text, use_readability=True, page_context=None, defined_terms=()
 
         normalized = normalize_analysis(analysis, "Contenido analizado")
 
-        # El nivel final lo fija la legibilidad si existe; la complejidad que
-        # dijo el modelo se conserva aparte (llm_complexity) para poder medir
-        # cuánto coinciden ambas.
+        # Manda la legibilidad; lo que dijo el modelo queda en llm_complexity.
         normalized["llm_complexity"] = normalized["complexity"]
         if readability:
             normalized["complexity"] = readability["level"]
@@ -439,13 +396,11 @@ def analyze_text(text, use_readability=True, page_context=None, defined_terms=()
         ):
             normalized.update(_local_language_fallback(language, normalized["complexity"]))
         elif term_info and not normalized["concept"]:
-            # Ningún candidato pasó los filtros (fuera del texto, símbolo o
-            # ya explicado en la página): se conserva el nivel, sin ayuda.
+            # Ningún candidato pasó los filtros: sin ayuda.
             normalized["needs_assistance"] = False
             normalized["help_blocked"] = "sin_termino_valido"
         elif not concept_in_text(normalized["concept"], truncated):
-            # El término no está en el texto: la definición no ayuda a leerlo
-            # (y suele ser inventada). Se conserva el nivel, pero sin ayuda.
+            # Término fuera del texto (suele ser inventado): sin ayuda.
             print(f"[AYUDA] Bloqueada: '{normalized['concept']}' no aparece en el texto.")
             normalized["needs_assistance"] = False
             normalized["help_blocked"] = "termino_fuera_del_texto"

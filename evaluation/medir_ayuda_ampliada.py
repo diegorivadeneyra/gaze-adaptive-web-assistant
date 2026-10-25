@@ -1,17 +1,10 @@
-"""Mide el segundo nivel de ayuda (POST /expand) sobre los párrafos reales.
+"""Mide el segundo nivel de ayuda (/expand) sobre los párrafos Medium/High reales.
 
-Para cada párrafo de texto Medium/High de las tres páginas
-(evaluation/assets/payloads_paginas.json): pide la primera ayuda (/analyze,
-para saber qué término ya se definió) y luego la ampliada (/expand), como hace
-el navegador. Recorre cada página en orden y envía los términos ya
-explicados en ella (defined_terms), como el navegador desde el 2026-10-11.
-Omite las notas al pie (en el navegador no reciben ayuda). Requiere
-`python app.py` corriendo y la GPU libre.
-
-Métricas: respuestas válidas, términos válidos por respuesta, términos
-descartados por no estar en el texto, repetición del término del primer
-nivel, palabras de la explicación y latencia. El detalle (textos) queda en
-evaluation/results/ayuda_ampliada_<fecha>.json para revisarlo a mano.
+Pide la primera ayuda y luego la ampliada, en orden y con los términos ya
+explicados, como el navegador. Mide respuestas válidas, términos, descartados,
+repeticiones, palabras y latencia; los textos quedan en
+results/ayuda_ampliada_<fecha>.json para revisarlos a mano.
+Requiere `python app.py` y la GPU libre.
 
 Uso: python evaluation/medir_ayuda_ampliada.py --reps 2
 """

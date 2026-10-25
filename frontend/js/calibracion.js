@@ -1,11 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
-// Comprobación de la mirada (5 puntos) al inicio de la sesión (2026-10-20).
-// Después de la calibración del Tobii (Tobii Experience), la persona mira 5
-// puntos; se compara dónde estaba cada punto con dónde llegó la mirada y se
-// ajusta una corrección por eje (gaze_mapping.fitCorrection). La corrección
-// queda guardada para el resto de la sesión (gaze.js la aplica) y el error
-// medido se registra ("gaze_check") para el criterio de exclusión.
-// Con mouse no hace falta: pasa directo a la primera página.
+// Comprobación de la mirada (5 puntos) tras calibrar en Tobii Experience:
+// ajusta una corrección por eje (gaze_mapping.fitCorrection), la guarda para la
+// sesión y registra el error ("gaze_check"). Con mouse pasa directo.
 // ═══════════════════════════════════════════════════════════════
 (function () {
     const CONFIG_URL = "http://127.0.0.1:5000/config";
@@ -20,7 +16,7 @@
         try { return JSON.parse(sessionStorage.getItem(SESSION_STORAGE_KEY)); } catch (e) { return null; }
     })();
     const order = session?.order || ["facil", "intermedio", "avanzado"];
-    const nextUrl = `${order[0]}.html`;
+    const nextUrl = ExperimentSession.pageUrl(order[0]);
     const dot = document.getElementById("calib-dot");
     const text = document.getElementById("calib-text");
     const note = document.getElementById("calib-note");

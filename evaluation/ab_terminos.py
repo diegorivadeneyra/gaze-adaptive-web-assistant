@@ -1,22 +1,10 @@
-"""Comparación de cómo se elige el término que define la primera ayuda.
+"""A/B de cómo se elige el término de la primera ayuda: modelo | candidatos | silabas
+(text_analyzer.TERM_SELECTION).
 
-Variantes (text_analyzer.TERM_SELECTION):
-  modelo      el modelo elige UN término y lo define (versión anterior)
-  candidatos  propone hasta 3 términos con definición; el código descarta
-              símbolos/fórmulas, términos fuera del texto y términos ya
-              explicados en la página, y se queda con el primero del modelo
-  silabas     igual, pero elige el término con la palabra de más sílabas
-
-Recorre los párrafos de texto Medium/High de cada página EN ORDEN (como quien
-lee de arriba abajo) y le pasa a cada variante los términos que ella misma ya
-explicó en esa página (defined_terms), como hace el navegador. Las variantes
-se piden seguidas sobre cada párrafo, rotando el orden. Requiere
-`python app.py` corriendo y la GPU libre.
-
-Métricas automáticas: ayudas, bloqueadas, términos repetidos en la página,
-términos que son símbolos, sílabas del término, latencia. El juicio
-(¿término relevante?, ¿definición correcta?) se hace a mano con el detalle
-guardado en evaluation/results/terminos_<fecha>.json.
+Recorre los párrafos Medium/High en orden, pasando los términos ya explicados
+como el navegador. Mide ayudas, bloqueadas, repetidos, símbolos, sílabas y
+latencia; relevancia y corrección se juzgan a mano en results/terminos_<fecha>.json.
+Requiere `python app.py` y la GPU libre.
 
 Uso: python evaluation/ab_terminos.py --reps 2
 """

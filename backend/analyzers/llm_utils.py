@@ -6,21 +6,17 @@ import requests
 
 VALID_COMPLEXITIES = {"Low", "Medium", "High"}
 
-# Los dos modelos corren en Ollama, localmente: gratis, sin API key ni límites
-# de uso, y sin internet una vez descargados.
+# Modelos locales en Ollama: gratis y sin internet una vez descargados.
 OLLAMA_BASE_URL = "http://localhost:11434"
 TEXT_MODEL = "phi3"
 VISION_MODEL = "qwen2.5vl:3b"
-# Mantiene los modelos en memoria 30 min (por defecto Ollama los descarga a
-# los 5 min de inactividad, y la siguiente petición pagaba la recarga).
+# Modelos en memoria 30 min (por defecto 5 min y luego se recargan).
 OLLAMA_KEEP_ALIVE = "30m"
 
 
 def ensure_ollama_models(models):
-    """Descarga los modelos que falten en esta computadora (solo pasa la
-    primera vez en una máquina nueva). Los modelos de Ollama viven en la
-    instalación local de Ollama, no en el repositorio. Devuelve False si
-    Ollama no está disponible."""
+    """Descarga los modelos que falten (solo la primera vez en cada
+    computadora). Devuelve False si Ollama no está disponible."""
     try:
         tags = requests.get(f"{OLLAMA_BASE_URL}/api/tags", timeout=5).json()
     except (requests.RequestException, ValueError):
@@ -74,10 +70,8 @@ def extract_json(text):
 
 
 def extract_partial_analysis(text):
-    """Rescata una respuesta cuyo JSON llegó cortado (el modelo se explayó y
-    se acabaron los tokens antes de cerrar la llave). Si al menos se alcanzó
-    a escribir la explicación, se usa hasta la última oración completa en
-    vez de descartar todo y mostrar un mensaje genérico."""
+    """Rescata un JSON cortado por falta de tokens: usa la explicación hasta
+    su última oración completa."""
     concept = re.search(r'"concept"\s*:\s*"([^"]*)"', text)
     complexity = re.search(r'"complexity"\s*:\s*"([^"]*)"', text)
     explanation = re.search(r'"explanation"\s*:\s*"(.*)', text, re.DOTALL)
@@ -99,10 +93,8 @@ def extract_partial_analysis(text):
 
 
 def clean_explanation(value):
-    """phi3 a veces devuelve la explicación como lista (["1. ...", "2. ..."]) o
-    con numeración "1) ... 2) ..." aunque se le pida un párrafo. Se une todo en
-    un solo párrafo, sin los números de enumeración (un número pegado a un
-    decimal como 2.31 no se toca: la enumeración exige espacio después)."""
+    """Une en un párrafo las explicaciones que phi3 devuelve como lista o
+    numeradas ("1) ... 2) ..."); los decimales como 2.31 no se tocan."""
     if isinstance(value, (list, tuple)):
         value = " ".join(str(item) for item in value)
     text = str(value or "")
@@ -110,9 +102,8 @@ def clean_explanation(value):
     return re.sub(r"\s+", " ", text).strip()
 
 
-# phi3 no respeta los topes de palabras del prompt (medido: pedirle 40 daba
-# 50 en promedio y hasta 65-90; pedirle 30 no lo bajó), así que el límite que
-# garantiza que el tooltip no se desborde se aplica aquí, en código.
+# phi3 ignora el tope de palabras del prompt (pedirle 40 daba hasta 65–90):
+# el límite se aplica aquí.
 MAX_EXPLANATION_WORDS = 55
 
 
@@ -145,11 +136,7 @@ def normalize_analysis(value, default_concept):
     return {
         "concept": str(concept).strip()[:200],
         "complexity": complexity,
-        # No se le pide al modelo needs_assistance: la regla que se le da en el
-        # prompt es "true solo para Medium o High", así que se deriva directo de
-        # complexity en vez de confiar en que el modelo la calcule bien cada vez
-        # (a veces la contradecía, causando que "Medium" mostrara ayuda unas
-        # veces y otras no).
+        # Se deriva del nivel: el modelo a veces se contradecía.
         "needs_assistance": complexity != "Low",
         "explanation": trim_to_words(clean_explanation(explanation))
     }
