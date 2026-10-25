@@ -446,9 +446,11 @@ def _warmup_models():
         if not ensure_ollama_models([TEXT_MODEL, VISION_MODEL]):
             return
         print("\n[WARMUP] Precalentando modelos...")
+        # phi3 al final: si la GPU no tiene espacio para los dos (6 GB), queda
+        # cargado el que más se usa (Qwen solo analiza gráficas).
+        analyze_image_data(_warmup_image_b64(), "")
         # Sin legibilidad: si no, la frase sale Low y phi3 no se carga.
         analyze_text("El cielo es azul y el pasto es verde.", use_readability=False)
-        analyze_image_data(_warmup_image_b64(), "")
         print("[WARMUP] Modelos listos.\n")
     except Exception as e:
         print(f"[WARMUP] Falló el precalentado (no crítico): {e}")
