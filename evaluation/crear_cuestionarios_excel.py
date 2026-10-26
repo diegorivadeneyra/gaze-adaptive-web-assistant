@@ -1,13 +1,22 @@
-"""Genera evaluation/cuestionarios_participante.xlsx. Todo se responde al final,
-después de las 3 páginas. Hojas, en orden:
-  Comprensión       un recuadro por página para escribir lo que se entendió
+"""Genera el Excel de cuestionarios. Todo se responde al final, después de las 3
+páginas. Hojas, en orden:
+  Comprensión       un recuadro por página, numeradas en el orden en que la persona
+                    las leyó ("Página web 1 = la primera que leíste")
   NASA-TLX          una vez, sobre toda la tarea (Anexo 3, protocolo CIEI-UTEC)
   SUS               versión en español validada (Sevilla-González et al., 2020)
   Post-experimento  Anexo 4: Método 1 = ayuda automática, Método 2 = a pedido
   _mapa (oculta)    celda de cada respuesta (la lee puntuar_cuestionarios.py)
 
-Uso: python evaluation/crear_cuestionarios_excel.py
+Uso:
+  python evaluation/crear_cuestionarios_excel.py
+      un Excel por participante del sorteo (evaluation/asignacion_participantes.csv)
+      en data/respuestas/P01.xlsx…, con su orden; los que ya existen no se tocan.
+      También actualiza la plantilla evaluation/cuestionarios_participante.xlsx.
+  python evaluation/crear_cuestionarios_excel.py --codigo PRUEBA --orden avanzado,facil,intermedio
+      un código fuera del sorteo (el orden se ve en la pantalla de inicio de la sesión).
 """
+import argparse
+import csv
 import re
 from pathlib import Path
 
@@ -18,6 +27,8 @@ from openpyxl.worksheet.pagebreak import Break
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "evaluation" / "cuestionarios_participante.xlsx"
+ANSWERS_DIR = ROOT / "data" / "respuestas"
+ASSIGNMENT_CSV = ROOT / "evaluation" / "asignacion_participantes.csv"
 
 F = "Arial"
 BANNER = Font(name=F, size=16, bold=True, color="FFFFFF")
@@ -43,11 +54,8 @@ WRAP = Alignment(wrap_text=True, vertical="top")
 MIDDLE = Alignment(wrap_text=True, vertical="center")
 CENTER = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-# Secciones con el título de cada página tal como lo vio la persona (ayuda a
-# saber de cuál se habla); NO "Página fácil", que revelaba el nivel.
-PAGES = [("facil", "El hielo del planeta se está derritiendo"),
-         ("intermedio", "Cambio climático: causas y evidencia observacional"),
-         ("avanzado", "Forzamiento radiativo y sensibilidad climática")]
+PAGE_KEYS = ["facil", "intermedio", "avanzado"]
+ORDINALS = ["primera", "segunda", "tercera"]
 COMPRENSION_SHEET, NASA_SHEET = "Comprensión", "NASA-TLX"
 
 # ── NASA-TLX (Anexo 3) ──────────────────────────────────────────────
@@ -104,25 +112,28 @@ SUS = [
 # ── Post-experimento (Anexo 4), adaptado a 2 métodos ────────────────
 METHODS = [("m1", "Método 1", "Ayuda automática: la ayuda apareció sola cuando el sistema detectó que te costaba leer."),
            ("m2", "Método 2", "Ayuda a pedido: apareció el botón \"Ver ayuda\" y tú decidías si abrirla.")]
+# Anexo 4 adaptado a la lectura (2026-10-25): las preguntas de rapidez, errores,
+# precisión y "comunicarte" eran de una técnica de interacción con la mirada.
 RANKINGS = [
-    ("rapido", "Considerando los 2 métodos, ¿cuál te pareció el más rápido? Por favor, ordénalos."),
+    ("momento", "Considerando los 2 métodos, ¿con cuál la ayuda llegó en mejor momento? Por favor, ordénalos."),
     ("comodo", "¿Cuál te resultó más cómodo (en orden)?"),
-    ("errores", "¿Con cuál crees que cometiste menos errores (en orden)?"),
-    ("elegiria", "Si tuvieras que usar un solo método para comunicarte, ¿cuál elegirías? Por favor, ordena:"),
+    ("comprension", "¿Con cuál método entendiste mejor el contenido (en orden)?"),
+    ("elegiria", "Si tuvieras que leer textos difíciles con un solo método, ¿cuál elegirías? Por favor, ordena:"),
 ]
 LIKERT = [
-    ("rendimiento", "¿En qué medida la técnica te permitió mejorar tu rendimiento?"),
-    ("menos_errores", "¿Hasta qué punto la técnica ha permitido una reducción en el número de errores cometidos?"),
-    ("agradable", "¿En qué nivel resultaban más agradables de usar las interfaces con la técnica?"),
-    ("aprender", "¿Qué tan fácil fue aprender a utilizar esta técnica?"),
-    ("precision", "¿Qué tan precisa percibiste la técnica durante la interacción?"),
-    ("confianza", "¿Qué nivel de confianza sentiste al utilizar esta técnica?"),
-    ("vida_diaria", "¿Qué tan dispuesto(a) estarías a utilizar esta técnica en tu vida diaria?"),
+    ("entender", "¿En qué medida el método te ayudó a entender el texto?"),
+    ("utilidad", "¿Qué tan útiles fueron las explicaciones que recibiste?"),
+    ("agradable", "¿Qué tan agradable fue leer con este método?"),
+    ("aprender", "¿Qué tan fácil fue aprender a utilizar este método?"),
+    ("oportuna", "¿Con qué frecuencia la ayuda apareció cuando de verdad la necesitabas?"),
+    ("confianza", "¿Qué nivel de confianza sentiste al utilizar este método?"),
+    ("vida_diaria", "¿Qué tan dispuesto(a) estarías a utilizar este método en tu vida diaria al leer en internet?"),
+    ("distraccion", "¿Qué tanto te distrajo o interrumpió la ayuda?"),   # aquí un valor alto es negativo
 ]
 COMMENTS = [
-    ("positivos", "¿Qué aspectos positivos encontraste en cada técnica?"),
+    ("positivos", "¿Qué aspectos positivos encontraste en cada método?"),
     ("dificultades", "¿Qué dificultades encontraste?"),
-    ("sugerencias", "¿Tienes alguna sugerencia para mejorar las técnicas evaluadas?"),
+    ("sugerencias", "¿Tienes alguna sugerencia para mejorar los métodos evaluados?"),
 ]
 
 
@@ -252,22 +263,23 @@ class Sheet:
         self.mapa.append((self.title, key, ref))
 
 
-def comprehension_sheet(wb, mapa):
-    """Comprensión por recuerdo libre (2026-10-25): un recuadro por página web
-    donde la persona escribe lo que entendió. Clave en _mapa: resumen_<página>."""
+def comprehension_sheet(wb, mapa, order):
+    """Recuerdo libre: un recuadro por página, en el orden de lectura de la persona
+    (sin títulos). Clave en _mapa: resumen_<página>."""
     s = Sheet(wb, COMPRENSION_SHEET, mapa, {"A": 6, "B": 30, "C": 16, "D": 16, "E": 13, "F": 16})
     ws = s.ws
     s.banner("Lo que entendiste de cada página web", 1, "Comprensión")
     s.callout([("Sin volver a las páginas web, escribe en cada recuadro amarillo, con tus propias palabras, "
                 "lo que entendiste de esa página: las ideas principales y los detalles que recuerdes.", BOLD, 34),
-               ("No importa la redacción: puedes escribir oraciones o una lista de ideas. Si de una página no "
-                "recuerdas nada, escribe «No recuerdo».", NORMAL, 30),
+               ("Las páginas están en el orden en que las leíste: la página web 1 es la primera. No importa la "
+                "redacción: oraciones o una lista de ideas. Si de una página no recuerdas nada, escribe «No recuerdo».",
+                NORMAL, 44),
                ("Cómo escribir: haz clic en el recuadro y escribe. Para pasar a otra línea dentro del recuadro "
                 "usa Alt + Enter. Al terminar, pulsa Enter o haz clic fuera del recuadro.", NOTE, 30)])
-    for i, (key, title) in enumerate(PAGES):
+    for i, key in enumerate(order):
         if i:
             ws.row_breaks.append(Break(id=s.r - 1))   # al imprimir, cada página web empieza en hoja nueva
-        s.header(f"Página web: «{title}»")   # sin número: cada persona las leyó en otro orden
+        s.header(f"Página web {i + 1} (la {ORDINALS[i]} que leíste)")
         s.text("¿Qué entendiste de esta página web?", font=BOLD)
         s.answer(f"A{s.r}", f"resumen_{key}", None, font=NORMAL, to="F")
         ws[f"A{s.r}"].alignment = Alignment(wrap_text=True, vertical="top", indent=1)
@@ -350,7 +362,7 @@ def post_sheet(wb, mapa):
     s = Sheet(wb, "Post-experimento", mapa, {"A": 6, "B": 58, "C": 22, "D": 22}, last_col="D", tab_color="C55A11")
     ws = s.ws
     s.banner("Cuestionario post-experimento", 4, "Comparación de los dos métodos")
-    s.text("Versión 3.0 — 29/09/2026", font=SMALL)
+    s.text("Basado en el Anexo 4 del protocolo (v3.0, 29/09/2026), adaptado a la lectura", font=SMALL)
     s.callout([(HOW_TO + " En los comentarios, escribe directamente en el recuadro.", NORMAL, 30),
                ("Los dos métodos que usaste:", BOLD, 20)]
               + [(f"{name}: {description}", NORMAL, 22) for _, name, description in METHODS])
@@ -392,11 +404,11 @@ def post_sheet(wb, mapa):
         s.r += 2
 
 
-def main():
+def build_workbook(order, path):
     wb = Workbook()
     wb.remove(wb.active)
     mapa = []
-    comprehension_sheet(wb, mapa)
+    comprehension_sheet(wb, mapa, order)
     nasa_sheet(wb, mapa)
     sus_sheet(wb, mapa)
     post_sheet(wb, mapa)
@@ -405,8 +417,36 @@ def main():
     for row in mapa:
         m.append(list(row))
     m.sheet_state = "hidden"
-    wb.save(OUT)
-    print(f"Guardado {OUT.relative_to(ROOT)}: {len(mapa)} respuestas en {len(wb.sheetnames) - 1} hojas")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    wb.save(path)
+    return len(mapa)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--codigo", help="código fuera del sorteo (p. ej. PRUEBA)")
+    ap.add_argument("--orden", help="orden de lectura, p. ej. avanzado,facil,intermedio")
+    args = ap.parse_args()
+
+    if args.codigo:
+        order = [p.strip() for p in (args.orden or "").split(",")]
+        if sorted(order) != sorted(PAGE_KEYS):
+            ap.error("--orden debe tener facil, intermedio y avanzado separados por comas")
+        targets = [(args.codigo.strip().upper(), order)]
+    else:
+        n = build_workbook(PAGE_KEYS, OUT)
+        print(f"Plantilla {OUT.relative_to(ROOT)}: {n} respuestas")
+        with ASSIGNMENT_CSV.open(encoding="utf-8-sig") as f:
+            targets = [(r["participante"], [r["posicion_1"], r["posicion_2"], r["posicion_3"]])
+                       for r in csv.DictReader(f)]
+
+    for code, order in targets:
+        path = ANSWERS_DIR / f"{code}.xlsx"
+        if path.exists():
+            print(f"  {path.name} ya existe: no se toca")
+            continue
+        build_workbook(order, path)
+        print(f"  {path.name}: páginas en orden {' > '.join(order)}")
 
 
 if __name__ == "__main__":

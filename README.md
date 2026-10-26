@@ -132,16 +132,26 @@ Eventos nuevos: `help_offered` (botón mostrado) y `help_requested` (clic). En
 columna `pedida`. Probado en el navegador con una sesión de prueba (borrada).
 
 **Cuestionarios (Excel, 2026-10-20 según el protocolo CIEI-UTEC):** cada
-participante responde una copia de `evaluation/cuestionarios_participante.xlsx`
-(se regenera con `python evaluation/crear_cuestionarios_excel.py`). **Todo se
+participante responde su propio Excel, `data/respuestas/P01.xlsx`…, que crea
+`python evaluation/crear_cuestionarios_excel.py` a partir del sorteo (sin pisar los que
+ya existen; la plantilla queda en `evaluation/cuestionarios_participante.xlsx`). **Todo se
 responde al final**, después de las 3 páginas (cambio del 2026-10-22: en las
 pausas no se puede aplicar ningún cuestionario), en este orden: **Comprensión**
-por **recuerdo libre** (desde el 2026-10-25: un recuadro por página, con su título, para
+por **recuerdo libre** (desde el 2026-10-25: un recuadro por página, numeradas en el orden
+en que esa persona las leyó —"Página web 1 (la primera que leíste)"—, sin títulos, para
 escribir con sus palabras lo que entendió; reemplaza a las 12 preguntas de opción
 múltiple de `prueba_comprension.md`), **un
 solo NASA-TLX del Anexo 3** sobre toda la tarea (6 dimensiones, 15 comparaciones
 por pares y definiciones), **SUS** y el **post-experimento del Anexo 4** adaptado
-a 2 métodos (Método 1 = automática, Método 2 = a pedido). Diseño: en las escalas
+a 2 métodos (Método 1 = automática, Método 2 = a pedido). **Anexo 4 adaptado a la lectura
+(2026-10-25; avisar a la asesora/CIEI):** el original era de una técnica de interacción
+con la mirada. Orden de métodos: "más rápido" → ayuda en mejor momento; "menos errores"
+→ entendiste mejor; "para comunicarte" → para leer textos difíciles ("más cómodo" igual).
+Calificación 1–5: "rendimiento" → te ayudó a entender; "reducción de errores" → utilidad
+de las explicaciones; "precisa" → la ayuda apareció cuando la necesitabas; "agradables las
+interfaces" → agradable leer con el método; confianza, aprender y vida diaria iguales
+(esta última "al leer en internet"); nueva: **¿qué tanto te distrajo o interrumpió la
+ayuda?** (inversa: alto = negativo), el costo de interrupción que discute la tesis. Diseño: en las escalas
 de 1 a 5 (SUS, calificaciones y orden de métodos) se muestra al inicio qué significa
 cada número y las opciones lo incluyen ("4 = De acuerdo"; la puntuación lee el
 número); en el NASA-TLX las definiciones del Anexo 3 van junto a cada dimensión.
@@ -172,6 +182,16 @@ Medido en la laptop: phi3 cargado 3.9 s; Qwen tras phi3 7.9 s; phi3 tras Qwen 11
 deja cargado phi3 (el más usado; Qwen solo analiza 4 gráficas), phi3 se recarga en
 segundo plano después de cada análisis de gráfica (`reload_text_model`) y el límite
 de espera del texto subió de 15 a 25 s (`TEXT_TIMEOUT_S`). En la PC (8 GB) no cambia nada.
+
+**Gráficas: el análisis no se cancela al apartar la mirada (2026-10-25).** En la sesión
+de prueba en la laptop, una gráfica de la página avanzada se miró 8 veces (28 s en
+total, ~3.5 s cada vez) y nunca se analizó: en esa GPU el análisis visual tarda ~11 s
+y se cancelaba en cada salida. Ahora, en figuras (no en texto), el análisis sigue
+hasta terminar, queda guardado y, al volver, la ayuda aparece al instante; si se
+vuelve antes de que termine, se espera el mismo análisis (no se pide otro). El
+registro marca `background: true` en el evento `analysis` cuando terminó con la mirada
+en otro elemento. En texto se mantiene la cancelación (si no, al saltar entre
+párrafos se acumularían análisis). Probado en el navegador con mirada simulada.
 
 Cada sesión queda en `data/sessions/` (fuera de git: son datos de participantes):
 
@@ -640,6 +660,10 @@ reconstruida en el script, sobre el mismo contenido real de las páginas.
 | | Resto de perfiles (empiezan en fácil): innecesaria / cobertura | 0–1 % · 88–100 % / 0–12 % · 91–98 % | 0–1 % · 88–100 % / 0–4 % · 88–96 % | 20 × 8 |
 | | ⚠ Costo (escenario exigente: los textos difíciles se leen más lento de lo que suponen los factores 1.3/1.6): el ritmo aprendido queda ~15 % más lento que el real y la cobertura baja 2 puntos en algunos perfiles | — | ritmo 162 vs 140 ms/síl (promedio) | 20 |
 | | Navegador: sílabas y nivel disponibles al cargar la página, antes de cualquier análisis; ritmo aprendido en párrafos High/Medium y recuperado en la página siguiente | — | **sí** | 1 |
+| Mínimo de sílabas para aprender el ritmo 20 → **40** *(2026-10-25; sesión real en la laptop: textos de 21–33 sílabas dieron 48–180 ms/síl y el ritmo cayó de 130 a 84 en la página fácil; simulación con 14 perfiles × 20 semillas, con un escenario de ruido fijo de entrada/salida de −1 a +1.5 s)* | Ruido tipo Tobii: error del ritmo final (promedio / peor caso) | 5.7 % / 19 % | **2.2 % / 5 %** | 20 × 14 |
+| | Ruido tipo Tobii y escenario base: ayudas innecesarias / cobertura | 0.2 % / 94.5 % | **sin cambio** | 20 × 14 |
+| | ⚠ Escenario exigente (factores de nivel subestiman la dificultad real): innecesaria en el peor perfil / cobertura promedio | 32 % / 90.8 % | 46 % / 88.9 % | 20 × 14 |
+| | En la sesión real, las medidas de párrafos largos fueron parecidas entre niveles (Medium/High 86–117, Low 98–131): los factores parecen correctos (más cerca del escenario con ruido que del exigente; n = 1) | — | — | 1 |
 | | …al volver tras 7 s fuera (relectura): ayuda a los… | 0.5 s | **0.6 s** | 1 |
 | | Marcado → acierto / cobertura calculados en `paginas.csv` | — | funciona | 1 |
 | Tooltip ubicado sin tapar contenido (`computeTooltipPlacement`: derecha, izquierda, debajo, arriba) *(2026-10-11)* | Elementos de las páginas cuyo tooltip tapa contenido | 45/51 | **16/51** | 51 |

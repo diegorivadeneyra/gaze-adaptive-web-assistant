@@ -47,7 +47,9 @@ READING_POLICY = {
     "pace_alpha": 0.3,
     "pace_min_fraction": 0.4,    # medidas válidas: entre 0.4 y 2 × el esperado
     "pace_max_fraction": 2.0,
-    "pace_min_syllables": 20,
+    # Textos más cortos dan medidas muy dispares (Tobii: ~1 s de error al entrar/salir;
+    # en la sesión de la laptop, 48–180 ms/síl en textos de 21–33 sílabas).
+    "pace_min_syllables": 40,
     "pace_bounds": [0.6, 1.8],   # límites respecto al ritmo base
 }
 

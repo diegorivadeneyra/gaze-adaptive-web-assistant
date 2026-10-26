@@ -102,9 +102,18 @@ para probar sin el Tobii.)
    - Se abre **sola** otra ventana: el puente del Tobii (`gaze_server.exe`).
      **No cerrarla** durante la sesión.
    - Esperar **`[WARMUP] Modelos listos.`** (~20 s) y **`[TOBII] Conectado`**.
-3. **Preparar el Excel:** copiar `evaluation/cuestionarios_participante.xlsx` y
-   guardar la copia como **`data/respuestas/P01.xlsx`** (con el código del
-   participante). Dejarlo abierto, sin mostrarlo todavía.
+3. **Preparar el Excel** (una sola vez, antes de la primera sesión): crea un Excel
+   por participante (`data/respuestas/P01.xlsx` … `P06.xlsx`), con las páginas de
+   comprensión numeradas en el orden en que esa persona las leerá. Si ya existen,
+   no los toca:
+
+   ```bash
+   python evaluation/crear_cuestionarios_excel.py
+   ```
+
+   Para un código de prueba (fuera del sorteo), con el orden que muestra la
+   pantalla de inicio: `python evaluation/crear_cuestionarios_excel.py --codigo PRUEBA --orden avanzado,facil,intermedio`.
+   En cada sesión, abrir el Excel de ese participante y dejarlo listo, sin mostrarlo.
 4. Abrir Chrome en **`http://127.0.0.1:5000`**.
 
 ---

@@ -93,8 +93,10 @@ fijo de tablas, gráficas e imágenes, y el **tiempo acumulado del párrafo**
   los pilotos no aprendió ni una vez). Cada **párrafo leído completo y sin
   señales** da una medida: tiempo ÷ sílabas ÷ factor del nivel (lo que le
   habría tomado si fuera Low). Solo cuenta si el tiempo está entre 0.4 y 2
-  veces el esperado (fuera de eso: hojeo o distracción) y el párrafo tiene ≥ 20
-  sílabas. Los títulos no cuentan.
+  veces el esperado (fuera de eso: hojeo o distracción) y el párrafo tiene ≥ 40
+  sílabas (antes 20: en la sesión de la laptop, los textos de 21–33 sílabas dieron
+  medidas entre 48 y 180 ms/sílaba por el error de ~1 s del Tobii al entrar y salir).
+  Los títulos no cuentan.
 - El ritmo es la **mediana de las últimas 5 medidas** (una distracción no lo
   arrastra). Mientras haya menos de 3, el promedio general cuenta como una
   medida más: arranca rápido, pero no por una sola lectura.
@@ -125,7 +127,7 @@ registra (`help_would_trigger_low`) para estudiarlo.
 | "Lo leyó" | en el último tercio con ≥ 40 % del esperado acumulado | Inicial (con 70 %, un lector rápido sin ritmo adaptado necesitaba ~2 lecturas) |
 | Relectura en el párrafo: solo tiempo con fijación | sí (`reread_requires_fixation`) | Diseño (poner `False` si el piloto muestra pocas fijaciones al leer con el Tobii) |
 | Salida que corta la lectura | > 5 s | Inicial |
-| Adaptación del ritmo | mediana de las últimas 5 medidas (cualquier nivel); subir ≤ 10 % por lectura; límites 0.6–1.8 × base | Inicial (2026-10-25; antes: solo Low, peso 0.3) |
+| Adaptación del ritmo | mediana de las últimas 5 medidas (cualquier nivel, párrafos ≥ 40 sílabas); subir ≤ 10 % por lectura; límites 0.6–1.8 × base | Inicial (2026-10-25; antes: solo Low, peso 0.3, ≥ 20 sílabas). 40 elegido con simulación y la sesión de la laptop |
 
 Todos están en **un solo lugar**: `backend/analyzers/decision_engine.py`
 (`READING_POLICY`). El navegador los recibe de `/config`. La lógica está en

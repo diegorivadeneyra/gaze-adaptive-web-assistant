@@ -5,7 +5,8 @@ y calcula los puntajes en data/sessions/resumen/:
   nasa_tlx.csv            6 dimensiones 0–100 (Desempeño: 0 = Muy bueno); peso = veces
                           elegida en los 15 pares. bruto = promedio; ponderado = suma(nivel × peso) / 15
   sus.csv                 impares − 1, 5 − pares; suma × 2.5 (0–100)
-  post_experimento.csv    Anexo 4 (Método 1 = "ayuda", Método 2 = "a_pedido")
+  post_experimento.csv    Anexo 4 adaptado (Método 1 = "ayuda", Método 2 = "a_pedido");
+                          en "distraccion" un valor alto es negativo
   post_metodos.csv        una fila por participante y método
   avisos.txt              respuestas vacías o incoherentes
 
@@ -30,8 +31,9 @@ NASA_KEYS = ["mental", "fisica", "temporal", "desempeno", "esfuerzo", "frustraci
 NASA_NAME_TO_KEY = {"Exigencia mental": "mental", "Exigencia física": "fisica", "Exigencia temporal": "temporal",
                     "Desempeño": "desempeno", "Esfuerzo": "esfuerzo", "Frustración": "frustracion"}
 METHODS = {"m1": "ayuda", "m2": "a_pedido"}          # método del Anexo 4 -> condición del sistema
-RANKINGS = ["rapido", "comodo", "errores", "elegiria"]
-LIKERT = ["rendimiento", "menos_errores", "agradable", "aprender", "precision", "confianza", "vida_diaria"]
+RANKINGS = ["momento", "comodo", "comprension", "elegiria"]
+# "distraccion" es inversa: 5 = distrajo mucho (se guarda tal cual).
+LIKERT = ["entender", "utilidad", "agradable", "aprender", "oportuna", "confianza", "vida_diaria", "distraccion"]
 COMMENTS = ["positivos", "dificultades", "sugerencias"]
 
 

@@ -37,6 +37,7 @@ let analysisTriggered       = false;
 let hadFixationOnCurrentElement = false;
 // Resultado de /analyze por elemento: al volver a mirarlo no se llama al modelo.
 const analysisCache = new WeakMap();
+const pendingAnalyses = new WeakMap();   // figura -> análisis en curso (no se pide dos veces)
 let activeRequestController = null;
 
 // ─── Panel de monitoreo: ?debug=0 o la opción de la sesión lo ocultan ──
@@ -512,11 +513,33 @@ function rememberDefinedTerms(terms) {
     }
 }
 
+// background: terminó con la mirada en otro elemento (figuras).
+function logAnalysis(element, diagnosis, { fromCache = false, background = false } = {}) {
+    ExperimentSession.log("analysis", {
+        el: elementId(element),
+        from_cache: fromCache,
+        background,
+        complexity: diagnosis.complexity,
+        difficulty_source: diagnosis.difficulty_source,
+        inflesz: diagnosis.inflesz ?? null,
+        llm_complexity: diagnosis.llm_complexity ?? null,
+        action: diagnosis.action,
+        help_blocked: diagnosis.help_blocked ?? null,
+        section: getSectionHeading(element),
+        concept: diagnosis.concept,
+        explanation: diagnosis.explanation,
+        processing_time_s: fromCache ? 0 : diagnosis.processing_time ?? null
+    });
+}
+
 // ─── Comunicación con backend ─────────────────────────────────
-async function analyzeWithBackend(content, dwellTime) {
-    activeRequestController?.abort();
+// cancellable: se cancela al cambiar de elemento o con otra petición (texto).
+async function analyzeWithBackend(content, dwellTime, { cancellable = true } = {}) {
     const requestController = new AbortController();
-    activeRequestController = requestController;
+    if (cancellable) {
+        activeRequestController?.abort();
+        activeRequestController = requestController;
+    }
     try {
         if (backendStatus)
             backendStatus.innerText = "Analizando...";
@@ -1079,39 +1102,38 @@ async function processObservation() {
             const cachedBefore = diagnosis;
 
             if (!diagnosis) {
-                const payload = await resolveContentPayload(content);
-
-                if (!payload || currentObservedElement !== elementAtTrigger) return;
-                // Contexto: solo el subtítulo de la sección, en texto y tablas
-                // (medido con evaluation/ab_contexto.py).
-                if (payload.type === "text" || payload.type === "table") {
-                    payload.section = getSectionHeading(elementAtTrigger);
+                // Figuras: el análisis sigue aunque la mirada se vaya y queda
+                // guardado (en GPU de 6 GB tarda ~11 s y se cancelaba en cada salida).
+                const isVisual = content.type === "chart" || content.type === "image";
+                let pending = pendingAnalyses.get(elementAtTrigger);
+                if (!pending) {
+                    const payload = await resolveContentPayload(content);
+                    if (!payload || (!isVisual && currentObservedElement !== elementAtTrigger)) return;
+                    // Contexto: solo el subtítulo de la sección, en texto y tablas
+                    // (medido con evaluation/ab_contexto.py).
+                    if (payload.type === "text" || payload.type === "table") {
+                        payload.section = getSectionHeading(elementAtTrigger);
+                    }
+                    pending = analyzeWithBackend(payload, dwellTime / 1000, { cancellable: !isVisual })
+                        .then(result => {
+                            // Los errores no se guardan (dejarían el elemento sin ayuda).
+                            if (result && result.concept !== "Error") {
+                                analysisCache.set(elementAtTrigger, result);
+                                if (currentObservedElement !== elementAtTrigger) {
+                                    logAnalysis(elementAtTrigger, result, { background: true });
+                                }
+                            }
+                            return result;
+                        })
+                        .finally(() => pendingAnalyses.delete(elementAtTrigger));
+                    if (isVisual) pendingAnalyses.set(elementAtTrigger, pending);
                 }
-
-                diagnosis = await analyzeWithBackend(payload, dwellTime / 1000);
-
-                // Los errores no se guardan (dejarían el elemento sin ayuda).
-                if (diagnosis && diagnosis.concept !== "Error") {
-                    analysisCache.set(elementAtTrigger, diagnosis);
-                }
+                diagnosis = await pending;
             }
 
             if (!diagnosis || currentObservedElement !== elementAtTrigger) return;
 
-            ExperimentSession.log("analysis", {
-                el: elementId(elementAtTrigger),
-                from_cache: Boolean(cachedBefore),
-                complexity: diagnosis.complexity,
-                difficulty_source: diagnosis.difficulty_source,
-                inflesz: diagnosis.inflesz ?? null,
-                llm_complexity: diagnosis.llm_complexity ?? null,
-                action: diagnosis.action,
-                help_blocked: diagnosis.help_blocked ?? null,
-                section: getSectionHeading(elementAtTrigger),
-                concept: diagnosis.concept,
-                explanation: diagnosis.explanation,
-                processing_time_s: cachedBefore ? 0 : diagnosis.processing_time ?? null
-            });
+            logAnalysis(elementAtTrigger, diagnosis, { fromCache: Boolean(cachedBefore) });
             updateAnalysisPanel(diagnosis);
 
             if (ExperimentSession.onDemand && diagnosis.action === "tooltip" && diagnosis.explanation) {
