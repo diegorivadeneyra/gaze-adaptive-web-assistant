@@ -165,6 +165,14 @@ anteriores). Probado con Excel de prueba: NASA ponderado calculado a mano 34.0 =
 precalentamiento, la primera ayuda salía con el mensaje genérico mientras phi3
 cargaba (el precalentamiento de texto no llegaba a phi3; corregido).
 
+**Equipos con GPU de 6 GB (laptop de las pruebas, RTX 3050; 2026-10-25):** phi3
+(2.6 GB) y Qwen (2.7 GB) no caben juntos y Ollama descarga uno para cargar el otro.
+Medido en la laptop: phi3 cargado 3.9 s; Qwen tras phi3 7.9 s; phi3 tras Qwen 11.7 s
+(cerca del límite de 15 s, con riesgo de mensaje genérico). Ajustes: el arranque
+deja cargado phi3 (el más usado; Qwen solo analiza 4 gráficas), phi3 se recarga en
+segundo plano después de cada análisis de gráfica (`reload_text_model`) y el límite
+de espera del texto subió de 15 a 25 s (`TEXT_TIMEOUT_S`). En la PC (8 GB) no cambia nada.
+
 Cada sesión queda en `data/sessions/` (fuera de git: son datos de participantes):
 
 | Archivo | Contenido |

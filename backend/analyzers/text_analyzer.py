@@ -1,4 +1,5 @@
 import re
+import threading
 import unicodedata
 
 import requests
@@ -20,6 +21,10 @@ TEXT_CHAR_LIMIT = 900
 # Ventana de contexto compartida con expanded_help.py: si cambia, Ollama
 # recarga phi3 (~6 s).
 TEXT_NUM_CTX = 1024
+
+# Límite de espera de phi3. Con GPU de 6 GB los dos modelos no caben juntos y
+# recargar phi3 tras una gráfica tomó ~8 s (laptop RTX 3050, medido 2026-10-25).
+TEXT_TIMEOUT_S = 25
 
 ANALYSIS_SCHEMA = {
     "type": "object",
@@ -295,6 +300,25 @@ def _fallback_result(language, readability):
     }
 
 
+_reload_lock = threading.Lock()
+
+
+def reload_text_model():
+    """Vuelve a cargar phi3 en la GPU (con un prompt vacío Ollama solo lo carga).
+    Se llama en segundo plano tras usar el modelo de visión: si los dos no caben,
+    así la siguiente ayuda de texto no paga la recarga."""
+    if not _reload_lock.acquire(blocking=False):
+        return
+    try:
+        requests.post(OLLAMA_URL, json={"model": TEXT_MODEL, "prompt": "", "stream": False,
+                                        "keep_alive": OLLAMA_KEEP_ALIVE,
+                                        "options": {"num_ctx": TEXT_NUM_CTX}}, timeout=60)
+    except requests.RequestException:
+        pass
+    finally:
+        _reload_lock.release()
+
+
 def analyze_text(text, use_readability=True, page_context=None, defined_terms=(), term_selection=None):
     if len(text.strip()) < 20:
         return {
@@ -346,7 +370,7 @@ def analyze_text(text, use_readability=True, page_context=None, defined_terms=()
                     "num_ctx": TEXT_NUM_CTX
                 }
             },
-            timeout=15
+            timeout=TEXT_TIMEOUT_S
         )
         response.raise_for_status()
         response_text = response.json()["response"].strip()

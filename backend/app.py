@@ -3,7 +3,7 @@ from pathlib import Path
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from PIL import Image
-from analyzers.text_analyzer import analyze_text
+from analyzers.text_analyzer import analyze_text, reload_text_model
 from analyzers.decision_engine import decide_action
 from analyzers.image_analyzer import analyze_image, analyze_image_data
 from analyzers.llm_utils import TEXT_MODEL, VISION_MODEL, ensure_ollama_models
@@ -292,6 +292,10 @@ def analyze():
         # Llegó una petición más nueva: esta ya no sirve.
         if analysis.get("stale"):
             return jsonify({"stale": True, "action": "none", "processing_time": processing_time})
+
+        # Tras usar el modelo de visión, phi3 se recarga en segundo plano (GPU de 6 GB).
+        if content_type in ("image", "image_base64") and design_level != "Low":
+            threading.Thread(target=reload_text_model, daemon=True).start()
 
         decision = decide_action(
             analysis["complexity"],

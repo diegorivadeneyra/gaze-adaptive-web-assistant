@@ -60,6 +60,10 @@ python app.py
 - Descarga solo `phi3` y `qwen2.5vl:3b` (~5.5 GB en total). Puede tardar.
 - Cuando aparezca **`[WARMUP] Modelos listos.`** ya está. Cerrar con **Ctrl + C**.
 - Desde ahí funciona **sin internet**.
+- **GPU necesaria:** NVIDIA con 6 GB o más (probado: RTX 3070 Ti de 8 GB y RTX
+  3050 de 6 GB en laptop; una MX130 de 4 GB no alcanza). Con 6 GB los dos modelos
+  no caben juntos: es normal que `ollama ps` muestre solo `phi3` (Qwen se carga
+  solo al mirar una gráfica y luego phi3 vuelve a cargarse solo).
 
 ### 1.5 Activar el Tobii
 
