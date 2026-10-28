@@ -155,7 +155,7 @@ los ya explicados en la página, y prefiere la palabra con más sílabas.
 |---|---|
 | Cada sesión: mirada cruda, visitas, fijaciones, ayudas mostradas o suprimidas, marcado de lo difícil | `data/sessions/` → `python evaluation/analyze_sessions.py` |
 | Diseño (2026-10-20): dos métodos (automática y a pedido) alternados entre páginas; **orden de páginas aleatorio** por participante | `index.html` + `session.js` + `marking.js` |
-| Cuestionarios, todos al final: comprensión por recuerdo libre (un recuadro por página), un NASA-TLX (Anexo 3, ponderado), SUS y post-experimento (Anexo 4) | `evaluation/cuestionarios_participante.xlsx` → `puntuar_cuestionarios.py` |
+| Cuestionarios, todos al final: comprensión por recuerdo libre (un recuadro por página), un NASA-TLX por método (Anexo 3, ponderado) y post-experimento (Anexo 4) | `evaluation/cuestionarios_participante.xlsx` → `puntuar_cuestionarios.py` |
 | "A pedido": botón "Ver ayuda" al estar lista; lo pedido se compara con lo que la regla habría detectado | `gaze.js` (`offerHelpButton`), `paginas.csv` |
 | Acierto (la ayuda fue a algo que costó) y cobertura (lo que costó recibió ayuda) | `paginas.csv` |
 | Prueba de comprensión (medida principal) | **Borrador:** `evaluation/prueba_comprension.md` |

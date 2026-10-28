@@ -281,8 +281,9 @@ def analyze():
             analysis = analyze_text(content, page_context=page_context,
                                     defined_terms=defined_terms, term_selection=term_selection)
         elif content_type == "table":
-            # En tablas el nivel lo juzga el modelo (INFLESZ es para texto corrido).
-            analysis = analyze_text(content, use_readability=False, page_context=page_context)
+            # En tablas el nivel lo juzga el modelo (INFLESZ es para texto corrido)
+            # y la ayuda dice qué muestra la tabla, no define un término.
+            analysis = analyze_text(content, use_readability=False, page_context=page_context, kind="table")
         elif content_type == "image":
             analysis = analyze_image(content, context, design_level, page_context)
         elif content_type == "image_base64":

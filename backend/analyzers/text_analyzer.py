@@ -184,6 +184,29 @@ Rules:
 {context}Text: {truncated}"""
 
 
+def build_table_prompt(truncated, page_context=None):
+    # Con el prompt de párrafos, la ayuda de una tabla definía una columna o
+    # sigla ("Variación respecto a 1900: es…") y no decía qué muestra la tabla.
+    context = _context_block("Spanish", page_context)
+    return f"""Eres un asistente de lectura. La persona miró esta tabla y no entendió qué quiere decir.
+
+Devuelve SOLO este objeto JSON:
+{{
+"concept": "la idea principal de la tabla en 3 a 6 palabras",
+"complexity": "Low, Medium o High",
+"explanation": "máximo 35 palabras, en español, una o dos oraciones cortas"
+}}
+
+Reglas:
+- Responde siempre en español.
+- complexity: High = términos técnicos o especializados; Medium = requiere conocimientos previos; Low = simple y claro.
+- explanation: di qué quiere mostrar la tabla: qué compara y cuál es la conclusión principal que se ve en sus datos (qué aumenta, disminuye, es mayor o menor). NO te limites a definir un término, una sigla o una columna; si una es imprescindible para entender la conclusión, acláralo en pocas palabras dentro de la explicación.
+- Dilo con palabras, sin copiar los números de la tabla (como mucho uno que resuma la conclusión).
+- Usa solo los datos de la tabla; NO inventes cifras, nombres ni fechas. NO uses analogías.
+
+{context}Tabla (una fila por línea): {truncated}"""
+
+
 def build_candidates_prompt(truncated, page_context=None):
     context = _context_block("Spanish", page_context)
     return f"""Eres un asistente de lectura. La persona YA LEYÓ este texto (está en español) y no lo terminó de entender, así que NO se lo repitas.
@@ -319,7 +342,8 @@ def reload_text_model():
         _reload_lock.release()
 
 
-def analyze_text(text, use_readability=True, page_context=None, defined_terms=(), term_selection=None):
+def analyze_text(text, use_readability=True, page_context=None, defined_terms=(), term_selection=None, kind="text"):
+    # kind="table": se explica qué muestra la tabla, no un término (build_table_prompt).
     if len(text.strip()) < 20:
         return {
             "concept": "Contenido breve",
@@ -349,8 +373,12 @@ def analyze_text(text, use_readability=True, page_context=None, defined_terms=()
     mode = term_selection if term_selection in TERM_SELECTION_MODES else TERM_SELECTION
     # Solo texto corrido en español; tablas e inglés siguen con un término.
     use_candidates = mode != "modelo" and use_readability and language == "Spanish"
-    prompt = (build_candidates_prompt(truncated, page_context) if use_candidates
-              else build_prompt(language, truncated, page_context))
+    if kind == "table":
+        prompt = build_table_prompt(truncated, page_context)
+    elif use_candidates:
+        prompt = build_candidates_prompt(truncated, page_context)
+    else:
+        prompt = build_prompt(language, truncated, page_context)
 
     try:
         response = requests.post(
@@ -419,6 +447,8 @@ def analyze_text(text, use_readability=True, page_context=None, defined_terms=()
             or not _matches_language(normalized["explanation"], language)
         ):
             normalized.update(_local_language_fallback(language, normalized["complexity"]))
+        elif kind == "table":
+            pass   # concept es la idea de la tabla, no un término del texto
         elif term_info and not normalized["concept"]:
             # Ningún candidato pasó los filtros: sin ayuda.
             normalized["needs_assistance"] = False

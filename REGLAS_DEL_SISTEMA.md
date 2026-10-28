@@ -197,8 +197,8 @@ ayuda a pedido; orden de páginas aleatorio** por participante; la página fáci
 siempre "a pedido" e intermedia/avanzada al azar, una con cada método (cada
 persona prueba ambos). "Sin ayuda" ya no se usa en
 las pruebas. Cuestionarios, todos al final (desde el 2026-10-22): comprensión
-(recuerdo libre: un recuadro por página), un NASA-TLX (Anexo 3, ponderado) sobre toda
-la tarea, SUS y post-experimento (Anexo 4).
+(recuerdo libre: un recuadro por página), un NASA-TLX (Anexo 3, ponderado) por método
+y post-experimento (Anexo 4).
 
 *Antes* (2026-10-17): **diseño intra-sujeto, 3 condiciones**: cada persona lee
 cada página una vez, con una condición distinta en cada una: **sin ayuda**,

@@ -2,18 +2,24 @@
 páginas. Hojas, en orden:
   Comprensión       un recuadro por página, numeradas en el orden en que la persona
                     las leyó ("Página web 1 = la primera que leíste")
-  NASA-TLX          una vez, sobre toda la tarea (Anexo 3, protocolo CIEI-UTEC)
-  SUS               versión en español validada (Sevilla-González et al., 2020)
+  NASA-TLX Método 1 Anexo 3 (protocolo CIEI-UTEC), sobre la página leída con ayuda automática
+  NASA-TLX Método 2 lo mismo, sobre la página intermedia/avanzada leída con ayuda a pedido
+                    (la fácil, siempre "a pedido", no entra en la comparación de métodos)
   Post-experimento  Anexo 4: Método 1 = ayuda automática, Método 2 = a pedido
   _mapa (oculta)    celda de cada respuesta (la lee puntuar_cuestionarios.py)
+El SUS se quitó el 2026-10-27; el NASA-TLX pasó de uno (toda la tarea) a uno por método.
+VERSIÓN FINAL (2026-10-28): evaluation/cuestionarios_participante.xlsx se editó a mano
+(preguntas del post-experimento, pregunta 3 solo 1 o 5) y se entrega igual a todos por
+Drive; su _mapa se ajustó a mano. Este script ya NO la reescribe, y los Excel por
+participante que genera tienen el diseño anterior (no usarlos con puntuar_cuestionarios.py).
 
 Uso:
   python evaluation/crear_cuestionarios_excel.py
       un Excel por participante del sorteo (evaluation/asignacion_participantes.csv)
       en data/respuestas/P01.xlsx…, con su orden; los que ya existen no se tocan.
       También actualiza la plantilla evaluation/cuestionarios_participante.xlsx.
-  python evaluation/crear_cuestionarios_excel.py --codigo PRUEBA --orden avanzado,facil,intermedio
-      un código fuera del sorteo (el orden se ve en la pantalla de inicio de la sesión).
+  python evaluation/crear_cuestionarios_excel.py --codigo PRUEBA --orden avanzado,facil,intermedio --automatica intermedio
+      un código fuera del sorteo (orden y métodos se ven en la pantalla de inicio de la sesión).
 """
 import argparse
 import csv
@@ -55,8 +61,10 @@ MIDDLE = Alignment(wrap_text=True, vertical="center")
 CENTER = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
 PAGE_KEYS = ["facil", "intermedio", "avanzado"]
+COMPARED_PAGES = ["intermedio", "avanzado"]   # una con cada método; la fácil es siempre "a pedido"
 ORDINALS = ["primera", "segunda", "tercera"]
-COMPRENSION_SHEET, NASA_SHEET = "Comprensión", "NASA-TLX"
+COMPRENSION_SHEET = "Comprensión"
+NASA_SHEET = "NASA-TLX {}"   # "NASA-TLX Método 1" / "NASA-TLX Método 2"
 
 # ── NASA-TLX (Anexo 3) ──────────────────────────────────────────────
 NASA_INSTR = ("Por favor, lea cuidadosamente la descripción de cada dimensión y seleccione el nivel que mejor "
@@ -91,24 +99,6 @@ NASA_PAIRS = [
     ("Esfuerzo", "Exigencia física"),
 ]
 
-# ── SUS (Sevilla-González et al., 2020) ─────────────────────────────
-SUS_INSTR = ("Por favor seleccione de cada uno de los enunciados la opción que mejor describa su experiencia "
-             "con la herramienta electrónica. Un puntaje de 1 significa que usted se encuentra totalmente en "
-             "desacuerdo con el enunciado, mientras que un puntaje en 5 significa que está totalmente de acuerdo, "
-             "un puntaje de 3 significaría que usted se encuentra neutral con el enunciado.")
-SUS = [
-    "Me gustaría usar esta herramienta frecuentemente.",
-    "Considero que esta herramienta es innecesariamente compleja",
-    "Considero que la herramienta es fácil de usar.",
-    "Considero necesario el apoyo de personal experto para poder utilizar esta herramienta",
-    "Considero que las funciones de la herramienta están bien integradas",
-    "Considero que la herramienta presenta muchas contradicciones",
-    "Imagino que la mayoría de las personas aprenderían a usar esta herramienta rápidamente",
-    "Considero que el uso de esta herramienta es tedioso",
-    "Me sentí muy confiado al usar la herramienta",
-    "Necesité saber bastantes cosas antes de poder empezar a usar esta herramienta",
-]
-
 # ── Post-experimento (Anexo 4), adaptado a 2 métodos ────────────────
 METHODS = [("m1", "Método 1", "Ayuda automática: la ayuda apareció sola cuando el sistema detectó que te costaba leer."),
            ("m2", "Método 2", "Ayuda a pedido: apareció el botón \"Ver ayuda\" y tú decidías si abrirla.")]
@@ -138,9 +128,7 @@ COMMENTS = [
 
 
 # Opciones de las listas desplegables de 1 a 5: cada número lleva su
-# significado ("4 = De acuerdo"); puntuar_cuestionarios.py lee el número del inicio.
-SUS_SCALE = ["1 = Totalmente en desacuerdo", "2 = En desacuerdo", "3 = Neutral", "4 = De acuerdo",
-             "5 = Totalmente de acuerdo"]
+# significado ("4 = Alto"); puntuar_cuestionarios.py lee el número del inicio.
 LIKERT_SCALE = ["1 = Muy bajo", "2 = Bajo", "3 = Medio", "4 = Alto", "5 = Muy alto"]
 RANK_SCALE = ["1 = Primer lugar", "2 = Segundo lugar"]
 HOW_TO = "Cómo responder: haz clic en una celda amarilla y elige tu respuesta en la flecha ▼ que aparece a la derecha."
@@ -287,12 +275,19 @@ def comprehension_sheet(wb, mapa, order):
         s.r += 2
 
 
-def nasa_sheet(wb, mapa):
-    s = Sheet(wb, NASA_SHEET, mapa, {"A": 6, "B": 22, "C": 12, "D": 20, "E": 12, "F": 46}, tab_color="7030A0")
+def nasa_sheet(wb, mapa, method, step, page_number=None):
+    """Un NASA-TLX por método; page_number = posición (1–3) de la página que se
+    leyó con ese método, para que la persona sepa en cuál pensar."""
+    _, name, description = method
+    s = Sheet(wb, NASA_SHEET.format(name), mapa, {"A": 6, "B": 22, "C": 12, "D": 20, "E": 12, "F": 46},
+              tab_color="7030A0" if step == 2 else "B4A7D6")
     ws = s.ws
-    s.banner("Cuestionario NASA-TLX", 2, "Carga de trabajo")
+    s.banner(f"Cuestionario NASA-TLX · {name}", step, "Carga de trabajo")
+    page = (f"Fue la página web {page_number} (la {ORDINALS[page_number - 1]} que leíste). "
+            if page_number else "")
     s.callout([(HOW_TO, NORMAL, 30),
-               ("Responde pensando en TODA la tarea: la lectura de las 3 páginas web.", BOLD, 24)])
+               (f"Responde pensando SOLO en la lectura con el {name}: {description}", BOLD, 34),
+               (f"{page}No pienses en las otras páginas.", NORMAL, 22)])
     s.text("Cuestionario NASA-TLX aplicado al proyecto IRIS · Versión 3.0 — 29/09/2026", font=SMALL)
 
     s.header("Parte 1 · ¿Cuánto te exigió la tarea?")
@@ -335,26 +330,6 @@ def nasa_sheet(wb, mapa):
                 c.fill = fill
         s.answer(f"E{s.r}", f"par_{n:02d}", [a, b], font=NORMAL, to="F")
         ws.row_dimensions[s.r].height = 22
-        s.r += 1
-
-
-def sus_sheet(wb, mapa):
-    s = Sheet(wb, "SUS", mapa, {"A": 6, "B": 62, "C": 32}, last_col="C", tab_color="00B050")
-    ws = s.ws
-    s.banner("Opinión sobre el sistema", 3, "SUS")
-    s.callout([(HOW_TO, NORMAL, 30), (SUS_INSTR, NORMAL, 64)])
-    s.legend("Qué significa cada número:", SUS_SCALE)
-    s.table_head({"A": "N.º", "B": "Enunciado", "C": "Tu respuesta"})
-    for n, text in enumerate(SUS, start=1):
-        fill = ZEBRA_FILL if n % 2 == 0 else None
-        for col, value in ((1, n), (2, text)):
-            c = ws.cell(s.r, col, value)
-            c.font = BOLD if col == 1 else NORMAL
-            c.alignment, c.border = (CENTER if col == 1 else Alignment(wrap_text=True, vertical="center", indent=1)), BOX
-            if fill:
-                c.fill = fill
-        s.answer(f"C{s.r}", f"sus_{n}", SUS_SCALE, font=NORMAL)
-        ws.row_dimensions[s.r].height = 34
         s.r += 1
 
 
@@ -404,13 +379,16 @@ def post_sheet(wb, mapa):
         s.r += 2
 
 
-def build_workbook(order, path):
+def build_workbook(order, path, auto_page=None):
+    """auto_page: página (intermedio/avanzado) leída con ayuda automática; la otra
+    se leyó a pedido. Sin ella (plantilla), las hojas NASA no dicen el número de página."""
     wb = Workbook()
     wb.remove(wb.active)
     mapa = []
     comprehension_sheet(wb, mapa, order)
-    nasa_sheet(wb, mapa)
-    sus_sheet(wb, mapa)
+    method_pages = ([auto_page] + [p for p in COMPARED_PAGES if p != auto_page]) if auto_page else [None, None]
+    for step, (method, page) in enumerate(zip(METHODS, method_pages), start=2):
+        nasa_sheet(wb, mapa, method, step, order.index(page) + 1 if page else None)
     post_sheet(wb, mapa)
     m = wb.create_sheet("_mapa")
     m.append(["hoja", "clave", "celda"])
@@ -426,27 +404,36 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--codigo", help="código fuera del sorteo (p. ej. PRUEBA)")
     ap.add_argument("--orden", help="orden de lectura, p. ej. avanzado,facil,intermedio")
+    ap.add_argument("--automatica", choices=COMPARED_PAGES, help="página leída con ayuda automática")
     args = ap.parse_args()
 
     if args.codigo:
         order = [p.strip() for p in (args.orden or "").split(",")]
         if sorted(order) != sorted(PAGE_KEYS):
             ap.error("--orden debe tener facil, intermedio y avanzado separados por comas")
-        targets = [(args.codigo.strip().upper(), order)]
+        if not args.automatica:
+            ap.error("--automatica debe ser intermedio o avanzado (la página con ayuda automática)")
+        targets = [(args.codigo.strip().upper(), order, args.automatica)]
     else:
-        n = build_workbook(PAGE_KEYS, OUT)
-        print(f"Plantilla {OUT.relative_to(ROOT)}: {n} respuestas")
+        # La plantilla se editó a mano el 2026-10-28 y es la versión final que
+        # responden los participantes: este script ya no la reescribe.
+        if OUT.exists():
+            print(f"Plantilla {OUT.relative_to(ROOT)} ya existe (versión final editada): no se toca")
+        else:
+            n = build_workbook(PAGE_KEYS, OUT)
+            print(f"Plantilla {OUT.relative_to(ROOT)}: {n} respuestas")
         with ASSIGNMENT_CSV.open(encoding="utf-8-sig") as f:
-            targets = [(r["participante"], [r["posicion_1"], r["posicion_2"], r["posicion_3"]])
+            targets = [(r["participante"], [r["posicion_1"], r["posicion_2"], r["posicion_3"]],
+                        next(p for p in COMPARED_PAGES if r[f"metodo_{p}"] == "ayuda"))
                        for r in csv.DictReader(f)]
 
-    for code, order in targets:
+    for code, order, auto_page in targets:
         path = ANSWERS_DIR / f"{code}.xlsx"
         if path.exists():
             print(f"  {path.name} ya existe: no se toca")
             continue
-        build_workbook(order, path)
-        print(f"  {path.name}: páginas en orden {' > '.join(order)}")
+        build_workbook(order, path, auto_page)
+        print(f"  {path.name}: páginas en orden {' > '.join(order)}; automática en {auto_page}")
 
 
 if __name__ == "__main__":

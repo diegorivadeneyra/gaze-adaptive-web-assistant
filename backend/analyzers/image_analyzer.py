@@ -88,23 +88,25 @@ def _page_line(language, page_context):
 def _build_prompt(context, language, chart_text="", page_context=None):
     page = _page_line(language, page_context)
     # Prompt en el idioma de la respuesta. En gráficas se pasan sus textos
-    # (ejes, valores) y se pide explicar qué mide, no describir la línea.
+    # (ejes, valores). Se pide lo que la figura quiere mostrar (su conclusión):
+    # pidiendo "qué mide", la ayuda repetía título y unidad o definía un término.
     if language == "English":
         caption = f"Figure caption: {context}\n" if context else ""
         texts = (f"Text written in the chart, in document order (title, axes, values, labels): {chart_text}\n"
                  "Use these exact values instead of reading them from the image.\n") if chart_text else ""
         explanation = (
-            "at most 25 words, in English, explaining what the chart measures (the quantity, unit or "
-            "reference) and its main pattern, without just describing it"
+            "at most 25 words, in English, saying what conclusion follows from the chart's values: which "
+            "is largest and how far the others are, or whether it rises or falls over time. Do not repeat the "
+            "title, define terms, list every value or interpret beyond the values and the caption"
         ) if chart_text else (
-            "at most 25 words, in English, explaining the hardest term, concept "
-            "or data pattern shown, without just describing the image"
+            "at most 25 words, in English, saying what idea the image is trying to show, "
+            "according to the caption, without just describing what is seen"
         )
         return (
             "You are an assistant that helps people understand visual content on a web page.\n"
             f"{page}{caption}{texts}"
             "Reply with ONLY a one-line JSON, no markdown: "
-            '{"concept": "3 to 5 words", "complexity": "Low, Medium or High", '
+            '{"concept": "the main idea in 3 to 5 words", "complexity": "Low, Medium or High", '
             f'"explanation": "{explanation}"}}. '
             'Use only what is visible in the image and the caption; do not invent data. '
             'If complexity is Low, "explanation" must be an empty string.'
@@ -114,17 +116,18 @@ def _build_prompt(context, language, chart_text="", page_context=None):
     texts = (f"Textos escritos en la gráfica, en el orden del documento (título, ejes, valores, etiquetas): {chart_text}\n"
              "Usa estos valores exactos en lugar de leerlos de la imagen.\n") if chart_text else ""
     explanation = (
-        "máximo 25 palabras, en español, que expliquen qué mide la gráfica (la magnitud, la unidad o la "
-        "referencia) y su patrón principal, sin limitarse a describirla"
+        "máximo 25 palabras, en español, que digan qué conclusión se saca de la gráfica según sus valores: "
+        "cuál es el mayor y qué tan lejos quedan los demás, o si aumenta o disminuye con el tiempo. No repitas "
+        "el título, no definas términos, no enumeres todos los valores ni interpretes más allá de los valores y el pie"
     ) if chart_text else (
-        "máximo 25 palabras, en español, que expliquen lo más difícil de la imagen "
-        "(un término, concepto o patrón de los datos) sin limitarse a describirla"
+        "máximo 25 palabras, en español, que digan qué idea quiere mostrar la imagen "
+        "según el pie de figura, sin limitarse a describir lo que se ve"
     )
     return (
         "Eres un asistente que ayuda a entender contenido visual de una página web en español.\n"
         f"{page}{caption}{texts}"
         "Responde SOLO con un JSON en una línea, sin markdown: "
-        '{"concept": "3 a 5 palabras", "complexity": "Low, Medium o High", '
+        '{"concept": "la idea principal en 3 a 5 palabras", "complexity": "Low, Medium o High", '
         f'"explanation": "{explanation}"}}. '
         'Usa solo lo que se ve en la imagen y el pie de figura; no inventes datos. '
         'Si la complejidad es Low, "explanation" debe ser una cadena vacía.'

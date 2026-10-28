@@ -102,18 +102,12 @@ para probar sin el Tobii.)
    - Se abre **sola** otra ventana: el puente del Tobii (`gaze_server.exe`).
      **No cerrarla** durante la sesión.
    - Esperar **`[WARMUP] Modelos listos.`** (~20 s) y **`[TOBII] Conectado`**.
-3. **Preparar el Excel** (una sola vez, antes de la primera sesión): crea un Excel
-   por participante (`data/respuestas/P01.xlsx` … `P06.xlsx`), con las páginas de
-   comprensión numeradas en el orden en que esa persona las leerá. Si ya existen,
-   no los toca:
-
-   ```bash
-   python evaluation/crear_cuestionarios_excel.py
-   ```
-
-   Para un código de prueba (fuera del sorteo), con el orden que muestra la
-   pantalla de inicio: `python evaluation/crear_cuestionarios_excel.py --codigo PRUEBA --orden avanzado,facil,intermedio`.
-   En cada sesión, abrir el Excel de ese participante y dejarlo listo, sin mostrarlo.
+3. **Preparar el Excel** (desde el 2026-10-28): todos responden la **misma versión
+   final**, `evaluation/cuestionarios_participante.xlsx` (editada a mano), que se
+   entrega por Drive. Las páginas de comprensión van por posición ("Página web 1 = la
+   primera que leíste"); la puntuación las traduce a fácil/intermedia/avanzada con el
+   orden de cada participante (sorteo o su sesión). **No usar** los Excel que genera
+   `crear_cuestionarios_excel.py` (diseño anterior); ese script ya no toca la plantilla.
 4. Abrir Chrome en **`http://127.0.0.1:5000`**.
 
 ---
@@ -150,14 +144,17 @@ para probar sin el Tobii.)
       la siguiente página se abre sola. Tras la tercera página no hay descanso.
 4. **Cierre:** al terminar la tercera página aparece *"¡Gracias!"*. Responde en
    el Excel, en orden, las hojas **«Comprensión»** (escribe lo que entendió de cada página, sin volver a
-   las páginas), **«NASA-TLX»** (una sola vez, sobre toda la tarea), **«SUS»** y
-   **«Post-experimento»**.
+   las páginas), **«NASA-TLX Método 1»** y **«NASA-TLX Método 2»** (uno por método; cada hoja
+   dice en qué página pensar) y **«Post-experimento»**.
 
 ### 3.3 Terminar (lo hace el investigador)
 
 1. En la pantalla de cierre, pulsar **"Investigador: ver sesión"** y luego
    **Finalizar sesión**.
-2. **Guardar el Excel** (`data/respuestas/P01.xlsx`).
+2. **Guardar el Excel respondido como `data/respuestas/P01.xlsx`**: el nombre del
+   archivo debe ser el código de la sesión (lo usa la puntuación para saber el orden
+   de páginas). Antes del primer participante, quitar de esa carpeta los P01–P06 del
+   diseño anterior (vacíos, generados el 2026-10-27).
 3. **Copiar la carpeta `data/`** a un USB o a la nube. No está en git: si se daña
    la computadora, se pierde.
 4. Para el siguiente participante, se puede dejar `python app.py` encendido
@@ -186,8 +183,8 @@ Los resultados quedan en `data/sessions/resumen/`:
 | `visitas.csv` | Cada visita a un párrafo, tabla o figura (tiempo, relecturas, fijaciones) |
 | `ayudas.csv` | Cada ayuda: cuándo, por qué, si se pidió, cuánto se miró, texto (columna `calificacion` para calificar a mano) |
 | `comprension_textos.csv` | Lo que cada persona escribió de cada página; columnas `ideas_correctas`, `ideas_incorrectas` y `notas` para calificar a mano (se conservan al volver a correr el script) |
-| `nasa_tlx.csv` | NASA-TLX de toda la tarea (bruto y ponderado, con los pesos) |
-| `sus.csv`, `post_experimento.csv`, `post_metodos.csv` | SUS y cuestionario post-experimento |
+| `nasa_tlx.csv` | NASA-TLX de cada método (bruto y ponderado, con los pesos) |
+| `post_experimento.csv`, `post_metodos.csv` | Cuestionario post-experimento (`post_metodos.csv` incluye el NASA de cada método) |
 | `avisos.txt` | Respuestas vacías o incoherentes en los Excel: revisarlo después de cada participante |
 
 **Conviene correr ambos después de cada participante**: si algo no se guardó, se

@@ -335,6 +335,8 @@ body[data-level="advanced"] .page-footer a { color: #c9d6ea; }
 .pause-step { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280 !important; }
 .pause-note { font-size: 0.85rem; color: #6b7280 !important; }
 .pause-card .btn-primary { margin-top: 10px; padding: 10px 20px; font-size: 1rem; }
+.pause-row { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 8px; }
+.pause-row .pause-skip { padding: 8px 16px; font-size: 0.9rem; }
 .pause-countdown { font-size: 2.4rem; font-weight: 700; font-variant-numeric: tabular-nums; color: #1d2330 !important; margin: 8px 0 0 !important; }
 
 /* ─── Ajustes de orden y espacios (comunes) ──────────────────── */

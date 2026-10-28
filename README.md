@@ -69,7 +69,7 @@ guarda en la sesión (`order`), la navegación lo sigue (`marking.js`) y
 investigador ve una **pantalla de bienvenida** que tapa los parámetros (las mismas
 instrucciones para todos, sin mencionar niveles ni métodos); el participante pulsa
 **Iniciar** y va a la primera página sorteada. Al terminar la última página, una
-**pantalla de cierre** pide responder las hojas «SUS» y «Post-experimento» (con un
+**pantalla de cierre** pide responder las hojas del Excel (con un
 botón pequeño para que el investigador vea la sesión y la finalice).
 **Tooltip:** al apartar la mirada se mantiene 2.5 s (`TOOLTIP_HOLD_MS`) en todas las
 condiciones y con mouse o Tobii (antes, en "automática" con mouse se ocultaba al
@@ -83,10 +83,20 @@ que **tapa el texto** y **no pide nada**: ni botones ni cuestionarios (todo va a
 final, después de las 3 páginas). Una cuenta regresiva lo muestra y al terminar pasa
 **sola** a la siguiente página. Tras la última página no hay descanso: va al cierre.
 Por qué 1.5 min (era 2 min; el usuario lo bajó el 2026-10-25): cada lectura dura ~2–5 min (367 / 502 / 666 palabras a 150–200
-palabras por minuto, más el tiempo con la ayuda; la lectura NO tiene límite de
-tiempo, porque la ayuda depende de leer al ritmo natural). Sesión completa ≈ 25–30
-min sin los cuestionarios (comprobación de la mirada ~1 min, 3 lecturas, 2
-descansos). `PAUSE_MS` en `marking.js`. Durante el descanso **no se registra nada**
+palabras por minuto, más el tiempo con la ayuda). **Tiempo máximo de lectura
+(2026-10-28, pedido del usuario): fácil 4 min, intermedia 7 min, avanzada 10 min**
+(`READING_LIMIT_MS` en `marking.js`, contados desde que carga la página), **sin aviso
+previo** (se probó un aviso un minuto antes y el usuario lo quitó). Al cumplirse pasa
+lo mismo que con "Terminé esta página" (marcado de lo difícil → descanso), con la
+barra "Se acabó el tiempo de esta página". `reading_end` lleva `timed_out` y
+`limit_ms`; `paginas.csv` la columna `lectura_por_tiempo` (1/0). Antes la lectura no
+tenía límite, para no forzar el ritmo natural del que depende la ayuda; con estos
+máximos (más del doble de la lectura estimada) solo debería cortarse a quien se
+quede mucho tiempo en una página. Probado en el navegador con el límite reducido a
+15 s. Sesión completa ≈ 25–30 min sin los cuestionarios (máximo ≈ 25 min de
+lectura; comprobación de la mirada ~1 min, 3 lecturas, 2 descansos). `PAUSE_MS` en `marking.js`. **Botón "Saltar descanso" (2026-10-26)** junto a la
+cuenta regresiva: pasa de inmediato a la siguiente página; `pause_end` lleva `skipped`
+y `paginas.csv` la columna `pausa_saltada` (1/0). Durante el descanso **no se registra nada**
 (ni la mirada), solo su inicio y fin. `paginas.csv`: `duracion_ms` = solo la
 lectura; `pausa_ms` = el descanso. (Antes el marcado iba después de la pausa y la
 pausa terminaba con un botón "Listo".) En el
@@ -140,9 +150,9 @@ pausas no se puede aplicar ningún cuestionario), en este orden: **Comprensión*
 por **recuerdo libre** (desde el 2026-10-25: un recuadro por página, numeradas en el orden
 en que esa persona las leyó —"Página web 1 (la primera que leíste)"—, sin títulos, para
 escribir con sus palabras lo que entendió; reemplaza a las 12 preguntas de opción
-múltiple de `prueba_comprension.md`), **un
-solo NASA-TLX del Anexo 3** sobre toda la tarea (6 dimensiones, 15 comparaciones
-por pares y definiciones), **SUS** y el **post-experimento del Anexo 4** adaptado
+múltiple de `prueba_comprension.md`), **un NASA-TLX del Anexo 3 por método**
+(hojas «NASA-TLX Método 1» y «NASA-TLX Método 2»; 6 dimensiones, 15 comparaciones
+por pares y definiciones) y el **post-experimento del Anexo 4** adaptado
 a 2 métodos (Método 1 = automática, Método 2 = a pedido). **Anexo 4 adaptado a la lectura
 (2026-10-25; avisar a la asesora/CIEI):** el original era de una técnica de interacción
 con la mirada. Orden de métodos: "más rápido" → ayuda en mejor momento; "menos errores"
@@ -152,23 +162,42 @@ de las explicaciones; "precisa" → la ayuda apareció cuando la necesitabas; "a
 interfaces" → agradable leer con el método; confianza, aprender y vida diaria iguales
 (esta última "al leer en internet"); nueva: **¿qué tanto te distrajo o interrumpió la
 ayuda?** (inversa: alto = negativo), el costo de interrupción que discute la tesis. Diseño: en las escalas
-de 1 a 5 (SUS, calificaciones y orden de métodos) se muestra al inicio qué significa
-cada número y las opciones lo incluyen ("4 = De acuerdo"; la puntuación lee el
+de 1 a 5 (calificaciones y orden de métodos) se muestra al inicio qué significa
+cada número y las opciones lo incluyen ("4 = Alto"; la puntuación lee el
 número); en el NASA-TLX las definiciones del Anexo 3 van junto a cada dimensión.
-Costo: el NASA-TLX ya no
-compara métodos ni páginas (la comparación de métodos queda en el post-experimento),
-y la comprensión de la primera página leída se responde más tarde (más olvido;
+**Cambio del 2026-10-27 (pedido del usuario): se quitó el SUS y el NASA-TLX se duplicó,
+uno por método** (antes era uno solo sobre toda la tarea). Cada hoja dice en qué página
+pensar ("Fue la página web 3, la tercera que leíste"), tomada del sorteo: Método 1 = la
+página con ayuda automática; Método 2 = la **intermedia o avanzada** leída a pedido (la
+fácil también es "a pedido", pero no entra en la comparación de métodos). Para un código
+fuera del sorteo: `--automatica intermedio|avanzado`. Así el NASA-TLX compara la carga de
+los dos métodos dentro de cada persona; costo: compara además páginas distintas
+(intermedia vs. avanzada), que el sorteo reparte entre métodos. La comprensión de la primera página leída se responde más tarde (más olvido;
 el orden aleatorio lo reparte entre métodos). Una hoja oculta `_mapa`
 dice qué celda tiene cada respuesta. El archivo que se guarda como `data/respuestas/P01.xlsx` (el código igual
 al de la sesión; `data/` está fuera de git). `python evaluation/puntuar_cuestionarios.py`
 lee todos y genera en `data/sessions/resumen/`: `comprension_textos.csv` (por
 participante y página: el texto escrito, su número de palabras y columnas para
 **calificarlo a mano**: `ideas_correctas`, `ideas_incorrectas`, `notas`; al volver a
-correr el script, lo ya calificado se conserva), `nasa_tlx.csv` (bruto y **ponderado**, con los pesos), `sus.csv`,
-`post_experimento.csv`, `post_metodos.csv` (una fila por método) y `avisos.txt`
+correr el script, lo ya calificado se conserva), `nasa_tlx.csv` (una fila por participante y
+método: bruto y **ponderado**, con los pesos),
+`post_experimento.csv`, `post_metodos.csv` (una fila por método, con su NASA) y `avisos.txt`
 (respuestas vacías, empates en el orden de métodos, archivos de versiones
 anteriores). Probado con Excel de prueba: NASA ponderado calculado a mano 34.0 =
-34.0 del script.
+34.0 del script; con la versión por método (2026-10-27), un Excel lleno con 50 en el
+Método 1 y 70 en el Método 2 dio 50.0 y 70.0, sin avisos.
+
+**Versión final del Excel (2026-10-28):** el usuario editó a mano la plantilla
+`evaluation/cuestionarios_participante.xlsx` y es la que responden todos (se entrega por
+Drive). Post-experimento: 4 órdenes (ayuda más rápida, más cómodo, mayor control,
+elegiría) y 7 calificaciones (completar la tarea, comodidad, **aprender — solo 1 o 5**,
+rapidez, precisión, confianza, uso futuro); ya no está "distracción". Se reescribió su
+`_mapa` (las claves `resumen_pos1..3` de comprensión van por posición, y los
+comentarios habían subido una fila) y `puntuar_cuestionarios.py` traduce la posición
+a la página con el orden del participante (sorteo; si no, su `session_start`).
+`crear_cuestionarios_excel.py` ya no reescribe la plantilla. Probado con tres Excel
+llenos (código del sorteo, código con sesión y código sin orden): páginas, NASA por
+método, órdenes, calificaciones y comentarios leídos en su lugar.
 
 **Antes de cada sesión:** arrancar `python app.py` y esperar el mensaje
 `[WARMUP] Modelos listos.` (~20 s). Medido el 2026-10-17: sin ese
@@ -398,6 +427,14 @@ Definida en un solo lugar, `backend/analyzers/decision_engine.py`
     (revisión del 2026-10-05): leyendo solo la imagen dijo "transporte e
     industria" en orden invertido (8.2 vs 10.4) y describía la línea sin
     explicarla. Las fotos usan el prompt de siempre (no tienen textos).
+  - **Qué quiere mostrar la figura o la tabla (2026-10-26).** Pedir "qué mide"
+    hacía que la ayuda de las gráficas repitiera título y unidad, o definiera un
+    término; las **tablas** usaban el prompt de párrafos y definían una columna o
+    sigla ("Variación respecto a 1900: es…"). Ahora las gráficas piden la
+    **conclusión** según los valores (cuál es el mayor y qué tan lejos quedan los
+    demás, o si aumenta o disminuye), y las tablas tienen su propio prompt
+    (`build_table_prompt`): qué compara y su conclusión principal, en palabras.
+    Las fotos piden la idea que ilustran según el pie. Medición en la sección 7.
 - **Contexto de sección** (2026-10-06): con cada análisis de **texto y tablas**
   se envía el subtítulo de la sección donde está el elemento
   (`getSectionHeading` en `gaze.js`), presentado al modelo "solo como contexto".
@@ -613,6 +650,12 @@ reconstruida en el script, sobre el mismo contenido real de las páginas.
 | | Gráfica de avanzado: orden de sectores invertido, en el navegador | 2/2 | **0/2** (ya no enumera el orden) | 2 |
 | | ⚠ Nuevo error: dice "toneladas" cuando la unidad es *giga*toneladas | 0/3 | 3/3 | 3 |
 | | Latencia por imagen | 2.6 s | **2.6 s** | 9 |
+| Ayuda de tablas y gráficas: "qué quiere mostrar" en vez de "qué mide" / término *(2026-10-26; payloads exactos de `payloads_paginas.json` y, para las gráficas nuevas, el navegador con el backend real; juicio del revisor)* | Tablas: la ayuda dice qué muestra la tabla (no solo define un término) | 0/4 | **6/6** | 2 tablas |
+| | Gráficas: la ayuda dice la conclusión correcta | 4/8 (avanzado: solo título y unidad) | **8/8** payloads + **10/10** navegador (sin la radial) | 4 + 5 gráficas |
+| | ⚠ Tablas: largo de la ayuda (pide ≤ 35 palabras) | 20–35 | 35–50 (recortadas a 55) | 6 |
+| | *Descartado:* pista "si hay valores negativos" (ERF: "los negativos indican disminución con el tiempo") y "si el eje muestra años" (ERF: frase rota) | — | — | 2 c/u |
+| | Gráfica radial: título sin "1991–2024" (decía "aumenta con el tiempo") y mes antes de su valor en el SVG | 0/2 | **3/3** | 3 |
+| | Latencia por gráfica / tabla | 2.7–4.4 s / 2.5–8 s | **2.5–3.3 s / 3.0–3.5 s** | — |
 | Contexto de página al modelo: título (`h1`) + sección *(2026-10-06, `python evaluation/ab_contexto.py --reps 2`; 51 elementos, cada uno sin y con contexto seguidos)* | Ayudas que se mostrarían (corrida 1 / 2) | 26 / 26 | 25 / 24 | 51 |
 | | Ayudas bloqueadas por término fuera del texto | 1 / 1 | **4 / 5** | 51 |
 | | Ayudas cuyo término está en el título de la página | 0 / 1 | **3 / 4** | — |

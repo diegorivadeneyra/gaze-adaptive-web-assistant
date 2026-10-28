@@ -27,7 +27,7 @@ HELP_COLUMNS = ["sesion", "participante", "pagina", "condicion", "help_id", "ele
                 "nivel", "regla", "senal", "ratio_tiempo", "dwell_al_aparecer_ms", "relectura",
                 "visible_ms", "mirada_dentro_ms", "reapariciones", "pedida", "nivel_ayuda",
                 "concepto", "explicacion", "calificacion"]
-PAGE_COLUMNS = ["sesion", "participante", "pagina", "condicion", "posicion", "duracion_ms", "pausa_ms", "elementos_distintos",
+PAGE_COLUMNS = ["sesion", "participante", "pagina", "condicion", "posicion", "duracion_ms", "lectura_por_tiempo", "pausa_ms", "pausa_saltada", "elementos_distintos",
                 "visitas", "relecturas", "visitas_elegibles", "relecturas_elegibles",
                 "dwell_prom_elegibles_ms", "ayudas_mostradas", "ayudas_suprimidas",
                 "ayudas_leidas", "disparos_en_low", "botones_ofrecidos", "ayudas_pedidas",
@@ -66,7 +66,7 @@ def summarize(events_path):
     visits, helps = [], {}
     open_visit = {}          # página -> visita en curso
     last_visit = {}          # página -> última visita cerrada (para reading_state)
-    pages = defaultdict(lambda: {"duracion_ms": None, "pausa_ms": None})
+    pages = defaultdict(lambda: {"duracion_ms": None, "lectura_por_tiempo": "", "pausa_ms": None, "pausa_saltada": ""})
     marks = defaultdict(set)         # página -> elementos marcados como difíciles
     low_triggers = defaultdict(int)  # página -> disparos de la regla en Low
     offered = defaultdict(int)       # página -> botones "Ver ayuda" mostrados (a pedido)
@@ -150,8 +150,14 @@ def summarize(events_path):
         elif kind == "reading_end":
             # Duración de la LECTURA (hasta "Terminé"), sin la pausa ni el marcado.
             pages[page]["duracion_ms"] = e.get("duration_ms")
+            # 1 si la lectura terminó por el tiempo máximo; vacío en sesiones anteriores al límite
+            if "timed_out" in e:
+                pages[page]["lectura_por_tiempo"] = int(e["timed_out"])
         elif kind == "pause_end":
             pages[page]["pausa_ms"] = e.get("duration_ms")
+            # 1 si pulsó "Saltar descanso"; vacío en sesiones anteriores al botón
+            if "skipped" in e:
+                pages[page]["pausa_saltada"] = int(e["skipped"])
         elif kind == "page_exit" and pages[page]["duracion_ms"] is None:
             pages[page]["duracion_ms"] = e.get("duration_ms")   # sesiones anteriores a la pausa
 
@@ -185,7 +191,9 @@ def summarize(events_path):
             # 1, 2 o 3: en qué lugar leyó esta página (el orden es aleatorio).
             "posicion": order.index(page) + 1 if page in order else "",
             "duracion_ms": pages[page]["duracion_ms"],
+            "lectura_por_tiempo": pages[page]["lectura_por_tiempo"],
             "pausa_ms": pages[page]["pausa_ms"],
+            "pausa_saltada": pages[page]["pausa_saltada"],
             "elementos_distintos": len({v["elemento"] for v in pv}), "visitas": len(pv),
             "relecturas": sum(v["relectura"] for v in pv), "visitas_elegibles": len(eligible),
             "relecturas_elegibles": sum(v["relectura"] for v in eligible),
